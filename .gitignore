@@ -1,0 +1,12 @@
+# Root-level ignores. Each app also has its own .gitignore for
+# app-specific build artifacts.
+
+.DS_Store
+*.log
+.env
+.env.local
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea/
