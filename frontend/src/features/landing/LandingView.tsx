@@ -1,8 +1,11 @@
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
-import { TrustIndicators } from './components/TrustIndicators';
-import { ServicesPreview } from './components/ServicesPreview';
-import { CTASection } from './components/CTASection';
+import { TrustStatistics } from './components/TrustStatistics';
+import { WhyChooseNAC } from './components/WhyChooseNAC';
+import { HowItWorks } from './components/HowItWorks';
+import { IndustriesServed } from './components/IndustriesServed';
+import { Testimonials } from './components/Testimonials';
+import { FinalCTABanner } from './components/FinalCTABanner';
 import { Footer } from './components/Footer';
 
 /**
@@ -16,9 +19,12 @@ export function LandingView() {
       <Navbar />
       <main>
         <Hero />
-        <TrustIndicators />
-        <ServicesPreview />
-        <CTASection />
+        <TrustStatistics />
+        <WhyChooseNAC />
+        <HowItWorks />
+        <IndustriesServed />
+        <Testimonials />
+        <FinalCTABanner />
       </main>
       <Footer />
     </div>

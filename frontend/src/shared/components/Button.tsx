@@ -2,7 +2,7 @@ import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import { clsx } from '@/shared/utils/clsx';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'ghost' | 'inverse';
   size?: 'md' | 'lg';
   children: ReactNode;
 }
@@ -12,6 +12,8 @@ const VARIANT_CLASSES: Record<NonNullable<ButtonProps['variant']>, string> = {
   primary: 'bg-brand text-white hover:bg-accent hover:text-ink',
   secondary: 'bg-white text-brand border border-brand hover:border-accent hover:text-accent-dark',
   ghost: 'bg-transparent text-brand hover:bg-accent/10 hover:text-accent-dark',
+  // White button for use on navy surfaces (e.g. the final CTA banner card).
+  inverse: 'bg-white text-brand hover:bg-accent hover:text-ink',
 };
 
 const SIZE_CLASSES: Record<NonNullable<ButtonProps['size']>, string> = {
