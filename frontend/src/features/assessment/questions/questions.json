@@ -1,0 +1,56 @@
+{
+  "modules": [
+    { "id": "inventory-accuracy", "title": "Inventory Accuracy" },
+    { "id": "warehouse-operations", "title": "Warehouse Operations" },
+    { "id": "process-documentation", "title": "Process & Documentation" }
+  ],
+  "defaultScale": [
+    { "value": 1, "label": "Poor" },
+    { "value": 2, "label": "Below Average" },
+    { "value": 3, "label": "Average" },
+    { "value": 4, "label": "Good" },
+    { "value": 5, "label": "Excellent" }
+  ],
+  "questions": [
+    {
+      "id": "q1",
+      "moduleId": "inventory-accuracy",
+      "text": "How often does your recorded inventory match actual physical stock counts?"
+    },
+    {
+      "id": "q2",
+      "moduleId": "inventory-accuracy",
+      "text": "How frequently do you conduct physical inventory counts, such as cycle counts or full counts?"
+    },
+    {
+      "id": "q3",
+      "moduleId": "inventory-accuracy",
+      "text": "How confident are you in the accuracy of your current inventory records?"
+    },
+    {
+      "id": "q4",
+      "moduleId": "warehouse-operations",
+      "text": "How would you rate the organization and layout of your warehouse or storage space?"
+    },
+    {
+      "id": "q5",
+      "moduleId": "warehouse-operations",
+      "text": "How efficiently can staff locate and retrieve items when needed?"
+    },
+    {
+      "id": "q6",
+      "moduleId": "warehouse-operations",
+      "text": "How well is incoming inventory processed and put away in a timely manner?"
+    },
+    {
+      "id": "q7",
+      "moduleId": "process-documentation",
+      "text": "Do you have documented standard operating procedures for inventory handling?"
+    },
+    {
+      "id": "q8",
+      "moduleId": "process-documentation",
+      "text": "How consistently are inventory processes followed across shifts or locations?"
+    }
+  ]
+}
