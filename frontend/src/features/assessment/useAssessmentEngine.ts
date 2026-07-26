@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { Question } from './questions';
 
-export type AnswerMap = Record<string, number>;
+// number for 'scale' questions, string for 'textarea' questions (e.g. FIN-01).
+export type AnswerValue = number | string;
+export type AnswerMap = Record<string, AnswerValue>;
 
 const STORAGE_KEY = 'nac-assessment-answers';
 
@@ -22,7 +24,7 @@ export interface AssessmentEngine {
   isFirst: boolean;
   isLast: boolean;
   isCurrentAnswered: boolean;
-  answerCurrent: (value: number) => void;
+  answerCurrent: (value: AnswerValue) => void;
   goNext: () => void;
   goBack: () => void;
   clearSavedProgress: () => void;
@@ -46,7 +48,7 @@ export function useAssessmentEngine(questions: Question[]): AssessmentEngine {
   const currentQuestion = questions[currentIndex];
 
   const answerCurrent = useCallback(
-    (value: number) => {
+    (value: AnswerValue) => {
       if (!currentQuestion) return;
       setAnswers((previous) => ({ ...previous, [currentQuestion.id]: value }));
     },

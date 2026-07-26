@@ -11,9 +11,12 @@ if (!parsed.success) {
 }
 
 /**
- * The active question bank. Swapping in NAC's real 52-question bank
- * later means replacing questions.json's contents with data in the
- * same shape — nothing in the engine (hook/components) needs to change.
+ * The active question bank — the real 41-question "FREE Inventory
+ * Health Check Assessment" (Nitin Anand Consulting), extracted from
+ * the live Google Form. Any future revision to the question set
+ * (wording, options, added/removed questions) means editing
+ * questions.json's contents in this same shape — nothing in the
+ * engine (hook/components) needs to change.
  */
 export const QUESTION_BANK = parsed.data;
 
@@ -22,5 +25,5 @@ export function getModuleTitle(moduleId: string): string {
 }
 
 export function getQuestionOptions(question: Question): AnswerOption[] {
-  return question.options ?? QUESTION_BANK.defaultScale;
+  return question.options ?? [];
 }

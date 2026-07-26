@@ -16,9 +16,15 @@ export const questionSchema = z.object({
   moduleId: z.string().min(1),
   text: z.string().min(1),
   helperText: z.string().optional(),
-  // Per-question options are optional — most questions share the
-  // bank's defaultScale; only override where a question needs its
-  // own wording.
+  /** 'scale' renders selectable options; 'textarea' renders free text (e.g. FIN-01). */
+  type: z.enum(['scale', 'textarea']).default('scale'),
+  /**
+   * Metadata only — no scoring is implemented yet. Recorded now so a
+   * future scoring engine knows which questions to skip (FIN-01 is
+   * explicitly excluded per the source assessment).
+   */
+  scorable: z.boolean().default(true),
+  // Required for 'scale' questions; omitted for 'textarea' questions.
   options: z.array(answerOptionSchema).min(2).optional(),
 });
 
@@ -29,7 +35,6 @@ export const questionModuleSchema = z.object({
 
 export const questionBankSchema = z.object({
   modules: z.array(questionModuleSchema).min(1),
-  defaultScale: z.array(answerOptionSchema).min(2),
   questions: z.array(questionSchema).min(1),
 });
 
