@@ -9,11 +9,12 @@ import { z } from 'zod';
  * "FREE Inventory Health Check Assessment" Google Form (Nitin Anand
  * Consulting) — with one exception: the form's "Industry" field is a
  * dropdown that renders as a collapsed "Choose ▾" menu in the
- * exported PDF, so its real option list isn't visible in that source
- * document. INDUSTRY_OPTIONS below reuses NAC's already-established
- * industry list from the landing page (features/landing/landing.data.ts)
- * as a best-effort placeholder — confirm against the live form and
- * replace if the exact wording differs.
+ * exported PDF, so its full option list isn't visible in that source
+ * document. The responses spreadsheet ("... (Responses).xlsx") has a
+ * single test submission confirming "Medical" as one real option —
+ * included below alongside NAC's landing-page industry list as the
+ * best-effort placeholder for the rest. Replace with the full list
+ * once available from the live form.
  */
 export const BUSINESS_TYPE_OPTIONS = [
   'Retail Store',
@@ -28,6 +29,7 @@ export const BUSINESS_TYPE_OPTIONS = [
 export const INDUSTRY_OPTIONS = [
   'Manufacturing',
   'Pharmaceutical',
+  'Medical',
   'Medical Distribution',
   'Electrical & Hardware',
   'Warehousing',
