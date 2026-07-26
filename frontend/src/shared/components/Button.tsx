@@ -2,18 +2,16 @@ import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import { clsx } from '@/shared/utils/clsx';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'inverse' | 'outline';
+  variant?: 'primary' | 'secondary' | 'ghost';
   size?: 'md' | 'lg';
   children: ReactNode;
 }
 
 const VARIANT_CLASSES: Record<NonNullable<ButtonProps['variant']>, string> = {
-  primary: 'bg-brand text-white hover:bg-brand-dark',
-  secondary: 'bg-white text-brand border border-brand hover:bg-brand/5',
-  ghost: 'bg-transparent text-brand hover:bg-brand/5',
-  // Solid/outline variants meant for use on dark surfaces (e.g. the hero section).
-  inverse: 'bg-white text-ink shadow-lg shadow-black/30 hover:bg-white/90 hover:shadow-xl',
-  outline: 'border border-white/40 bg-white/5 text-white hover:bg-white/15',
+  // Navy fill, gold on hover — the site's primary CTA treatment.
+  primary: 'bg-brand text-white hover:bg-accent hover:text-ink',
+  secondary: 'bg-white text-brand border border-brand hover:border-accent hover:text-accent-dark',
+  ghost: 'bg-transparent text-brand hover:bg-accent/10 hover:text-accent-dark',
 };
 
 const SIZE_CLASSES: Record<NonNullable<ButtonProps['size']>, string> = {

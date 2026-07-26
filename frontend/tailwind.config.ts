@@ -1,10 +1,9 @@
 import type { Config } from 'tailwindcss';
 
 /**
- * Tailwind theme. Brand palette is a placeholder navy/gold pairing
- * (professional/corporate) until NAC's official brand assets are
- * provided (see PRD Section 30, Question 4) — swap the `brand`,
- * `ink`, and `accent` scales in one place when that happens.
+ * Tailwind theme. Premium light consulting palette — navy primary,
+ * gold accent — matching NAC's official brand colors. Swap `brand`,
+ * `ink`, and `accent` scales in one place if the brand palette changes.
  */
 const config: Config = {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
@@ -12,20 +11,25 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          DEFAULT: '#1E3A5F',
+          DEFAULT: '#0F2A52',
           light: '#3B5A80',
-          dark: '#0F2340',
+          dark: '#0A1D3B',
           50: '#EEF3F8',
           100: '#DCE7F0',
         },
+        // Dark navy reserved for the footer — the one section that
+        // stays dark against an otherwise white/light-gray site.
         ink: {
           DEFAULT: '#0A1628',
           900: '#0A1628',
           800: '#0F1F35',
         },
         accent: {
-          DEFAULT: '#C89B4C',
+          DEFAULT: '#C89B3C',
           light: '#E0C07E',
+          // Deeper gold for text/hover states on light backgrounds,
+          // where the DEFAULT gold doesn't have enough contrast.
+          dark: '#8A6A1E',
         },
       },
       fontFamily: {

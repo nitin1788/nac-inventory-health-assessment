@@ -27,17 +27,14 @@ export function Navbar() {
       )}
     >
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
-        <NavbarLogo theme={isScrolled ? 'dark' : 'light'} />
+        <NavbarLogo />
 
         <div className="hidden items-center gap-8 lg:flex">
           {NAV_LINKS.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className={clsx(
-                'text-sm font-medium transition-colors',
-                isScrolled ? 'text-slate-600 hover:text-brand' : 'text-white/80 hover:text-white'
-              )}
+              className="text-sm font-medium text-slate-600 transition-colors hover:text-brand"
             >
               {link.label}
             </a>
@@ -46,17 +43,14 @@ export function Navbar() {
 
         <div className="hidden lg:block">
           <Link to={ROUTES.assessmentStart}>
-            <Button variant={isScrolled ? 'primary' : 'inverse'}>Start Free Assessment</Button>
+            <Button variant="primary">Start Free Assessment</Button>
           </Link>
         </div>
 
         <button
           type="button"
           onClick={() => setIsMobileOpen((open) => !open)}
-          className={clsx(
-            'inline-flex items-center justify-center rounded-md p-2 lg:hidden',
-            isScrolled ? 'text-slate-900' : 'text-white'
-          )}
+          className="inline-flex items-center justify-center rounded-md p-2 text-slate-900 lg:hidden"
           aria-label="Toggle navigation menu"
           aria-expanded={isMobileOpen}
         >

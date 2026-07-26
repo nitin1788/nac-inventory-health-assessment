@@ -3,7 +3,7 @@ import { SERVICES } from '../landing.data';
 
 export function ServicesPreview() {
   return (
-    <section id="services" className="scroll-mt-20 bg-slate-50 py-20 sm:py-28">
+    <section id="services" className="scroll-mt-20 bg-white py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-sm font-semibold uppercase tracking-wide text-brand">What We Do</p>
