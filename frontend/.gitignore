@@ -5,4 +5,5 @@ dist-ssr/
 .env.local
 *.local
 *.log
+*.tsbuildinfo
 .DS_Store
