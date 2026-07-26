@@ -77,3 +77,50 @@ export const companyProfileSchema = z
   });
 
 export type CompanyProfile = z.infer<typeof companyProfileSchema>;
+
+export type CompanyProfileFieldType = 'text' | 'email' | 'tel' | 'select';
+
+export interface CompanyProfileField {
+  name: keyof CompanyProfile;
+  label: string;
+  type: CompanyProfileFieldType;
+  placeholder?: string;
+  options?: readonly string[];
+}
+
+/**
+ * Drives the dynamically-generated Company Info form
+ * (features/assessment/components/CompanyInfoForm.tsx) — the form
+ * has no hardcoded fields; it maps over this list. Adding, removing,
+ * or reordering a field here is the only change needed to change
+ * what the form collects. `businessTypeOther` is deliberately
+ * excluded — it's rendered conditionally by the form itself only
+ * when `businessType === 'Other'`, not as a standalone field.
+ */
+export const COMPANY_PROFILE_FIELDS: CompanyProfileField[] = [
+  { name: 'companyName', label: 'Company Name', type: 'text', placeholder: 'Acme Manufacturing Pvt. Ltd.' },
+  { name: 'contactPerson', label: 'Contact Person', type: 'text', placeholder: 'Jane Doe' },
+  { name: 'designation', label: 'Designation', type: 'text', placeholder: 'Operations Manager' },
+  { name: 'mobileNumber', label: 'Mobile Number', type: 'tel', placeholder: '+91 98765 43210' },
+  { name: 'email', label: 'Email Address', type: 'email', placeholder: 'jane@company.com' },
+  { name: 'businessType', label: 'Business Type', type: 'select', options: BUSINESS_TYPE_OPTIONS },
+  { name: 'industry', label: 'Industry', type: 'select', options: INDUSTRY_OPTIONS },
+  {
+    name: 'numberOfEmployees',
+    label: 'Number of Employees',
+    type: 'select',
+    options: EMPLOYEE_COUNT_OPTIONS,
+  },
+  {
+    name: 'numberOfInventoryLocations',
+    label: 'Number of Inventory Locations',
+    type: 'select',
+    options: INVENTORY_LOCATIONS_OPTIONS,
+  },
+  {
+    name: 'approximateActiveSkus',
+    label: 'Approximate Number of Active SKUs',
+    type: 'select',
+    options: ACTIVE_SKU_OPTIONS,
+  },
+];

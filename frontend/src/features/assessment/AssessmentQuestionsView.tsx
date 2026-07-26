@@ -7,12 +7,12 @@ import { QuestionCard } from './components/QuestionCard';
 import { AssessmentNavigation } from './components/AssessmentNavigation';
 import { useAssessmentEngine } from './useAssessmentEngine';
 import { QUESTION_BANK } from './questions';
-import type { CompanyInfoFormValues } from './assessment.schema';
+import type { CompanyProfile } from './companyProfile';
 
 export function AssessmentQuestionsView() {
   const navigate = useNavigate();
   const location = useLocation();
-  const companyInfo = location.state as CompanyInfoFormValues | null;
+  const companyInfo = location.state as CompanyProfile | null;
 
   const engine = useAssessmentEngine(QUESTION_BANK.questions);
 
