@@ -7,7 +7,7 @@ import { QuestionCard } from './components/QuestionCard';
 import { AssessmentNavigation } from './components/AssessmentNavigation';
 import { useAssessmentEngine } from './useAssessmentEngine';
 import { QUESTION_BANK } from './questions';
-import type { CompanyProfile } from './companyProfile';
+import type { CompanyProfile } from './questions/companyProfile';
 
 export function AssessmentQuestionsView() {
   const navigate = useNavigate();

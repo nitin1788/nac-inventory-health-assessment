@@ -8,7 +8,11 @@ import { Input } from '@/shared/components/Input';
 import { Select } from '@/shared/components/Select';
 import { FormField } from '@/shared/components/FormField';
 import { ROUTES } from '@/config/constants';
-import { companyProfileSchema, COMPANY_PROFILE_FIELDS, type CompanyProfile } from '../companyProfile';
+import {
+  companyProfileSchema,
+  COMPANY_PROFILE_FIELDS,
+  type CompanyProfile,
+} from '../questions/companyProfile';
 
 /**
  * Captures the Company Profile before the assessment questions (PRD
