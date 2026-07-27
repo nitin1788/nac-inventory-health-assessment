@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { Download, Loader2 } from 'lucide-react';
 import { Link, Navigate, useLocation } from 'react-router-dom';
 import { ROUTES } from '@/config/constants';
 import { Button } from '@/shared/components/Button';
@@ -129,6 +131,8 @@ function ModuleRecommendationCard({ moduleRecommendation }: { moduleRecommendati
 export function ResultsView() {
   const location = useLocation();
   const state = location.state as ResultsLocationState | null;
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadError, setDownloadError] = useState(false);
 
   if (!state) {
     return <Navigate to={ROUTES.assessmentStart} replace />;
@@ -136,6 +140,19 @@ export function ResultsView() {
 
   const { companyInfo, scoringResult } = state;
   const recommendationResult = generateRecommendations(scoringResult);
+
+  const handleDownload = async () => {
+    setIsDownloading(true);
+    setDownloadError(false);
+    try {
+      const { downloadPdfReport } = await import('./pdf/pdfGenerator');
+      await downloadPdfReport({ companyInfo, scoringResult, recommendationResult, generatedAt: new Date() });
+    } catch {
+      setDownloadError(true);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -251,10 +268,25 @@ export function ResultsView() {
           </div>
         </section>
 
-        <div className="mt-12 flex justify-center">
-          <Link to={ROUTES.landing}>
-            <Button variant="secondary">Back to Home</Button>
-          </Link>
+        <div className="mt-12 flex flex-col items-center gap-3">
+          <div className="flex flex-col items-center gap-3 sm:flex-row">
+            <Button type="button" variant="primary" onClick={handleDownload} disabled={isDownloading}>
+              {isDownloading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4" />
+              )}
+              {isDownloading ? 'Generating PDF…' : 'Download PDF Report'}
+            </Button>
+            <Link to={ROUTES.landing}>
+              <Button variant="secondary">Back to Home</Button>
+            </Link>
+          </div>
+          {downloadError ? (
+            <p className="text-sm text-red-600">
+              Something went wrong generating your PDF. Please try again.
+            </p>
+          ) : null}
         </div>
       </main>
     </div>
