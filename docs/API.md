@@ -124,6 +124,13 @@ partial/draft submission endpoint in MVP (see PRD Section 17).
 }
 ```
 
+**Side effect (Milestone 11):** after the response is sent, the server generates the PDF
+report and emails it to `company.email` (subject, body, and attachment per
+`backend/src/modules/email/email.service.ts`). This happens asynchronously — it never
+blocks or fails the request, since the assessment is already durably saved by the time
+it runs (see docs/PRD.md §7). If Resend isn't configured (`RESEND_API_KEY`/
+`RESEND_FROM_EMAIL` unset), the email step is skipped and logged, not retried.
+
 ---
 
 ### `GET /api/v1/assessments/:id`
