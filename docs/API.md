@@ -143,8 +143,27 @@ Status: **Implemented (Milestone 9)**
 Same lookup and response shape as `GET /api/v1/assessments/:id`, exposed as a distinct
 route so report-specific behavior (view tracking, expiry, etc.) has a natural home
 later without reshaping the assessments resource. There is no separate `reports` table
-in this milestone — the PDF report itself is still generated entirely client-side (see
-the PDF Generator).
+— report data is assembled on demand from `assessments`, `companies`,
+`assessment_answers`, and `module_scores`.
+
+---
+
+### `GET /api/v1/reports/:id/pdf`
+
+Status: **Implemented (Milestone 10)**
+
+Renders the same assessment as a premium, branded A4 PDF report — server-side, via
+`@react-pdf/renderer` (`backend/src/modules/pdf/`), per the architecture in
+`docs/PRD.md` Section 8. Includes: NAC branding/logo, assessment number, company
+details, overall score and health rating, module-wise score table, top findings,
+priority-ranked recommendations, and a footer with Nitin Anand Consulting's contact
+details. Recommendation copy is generated from the module ratings already stored on
+the assessment (`backend/src/modules/recommendations/`) — no score is recalculated.
+
+`:id` must be the assessment UUID (not the human-readable assessment number). No
+request body. `404 NOT_FOUND` if the assessment doesn't exist.
+
+**Response:** binary `application/pdf`, `Content-Disposition: attachment; filename="nac-inventory-health-assessment-<company-slug>.pdf"`.
 
 ---
 

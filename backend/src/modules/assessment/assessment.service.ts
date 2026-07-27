@@ -1,5 +1,6 @@
 import { isSupabaseConfigured } from '../../database/supabaseClient';
 import { AppError } from '../../utils/AppError';
+import { generateAssessmentReportPdf, type GeneratedReportPdf } from '../pdf/pdf.service';
 import { createAssessment, findAssessmentById } from './assessment.repository';
 import type { AssessmentDetail, CreateAssessmentInput, CreateAssessmentResult } from './assessment.types';
 
@@ -25,4 +26,9 @@ export async function getAssessmentById(id: string): Promise<AssessmentDetail> {
   }
 
   return assessment;
+}
+
+export async function getAssessmentReportPdf(id: string): Promise<GeneratedReportPdf> {
+  const assessment = await getAssessmentById(id);
+  return generateAssessmentReportPdf(assessment);
 }

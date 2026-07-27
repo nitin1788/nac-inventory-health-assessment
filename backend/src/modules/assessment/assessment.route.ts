@@ -4,7 +4,11 @@ import { validateRequest } from '../../middleware/validateRequest.middleware';
 import { createRateLimiter } from '../../middleware/rateLimiter.middleware';
 import { ASSESSMENT_SUBMIT_RATE_LIMIT } from '../../config/constants';
 import { assessmentIdParamsSchema, createAssessmentSchema } from './assessment.validation';
-import { createAssessmentController, getAssessmentController } from './assessment.controller';
+import {
+  createAssessmentController,
+  getAssessmentController,
+  getAssessmentReportPdfController,
+} from './assessment.controller';
 
 const submitAssessmentRateLimiter = createRateLimiter({
   windowMs: ASSESSMENT_SUBMIT_RATE_LIMIT.WINDOW_MS,
@@ -41,4 +45,15 @@ reportRouter.get(
   '/:id',
   validateRequest(assessmentIdParamsSchema, 'params'),
   asyncHandler(getAssessmentController)
+);
+
+/**
+ * Server-side rendered PDF of the same report (Milestone 10) — built
+ * with @react-pdf/renderer from the persisted assessment, per the
+ * PDF-generation approach in docs/PRD.md Section 8.
+ */
+reportRouter.get(
+  '/:id/pdf',
+  validateRequest(assessmentIdParamsSchema, 'params'),
+  asyncHandler(getAssessmentReportPdfController)
 );
