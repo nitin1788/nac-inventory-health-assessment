@@ -8,6 +8,7 @@ import { AssessmentNavigation } from './components/AssessmentNavigation';
 import { useAssessmentEngine } from './useAssessmentEngine';
 import { QUESTION_BANK } from './questions';
 import type { CompanyProfile } from './questions/companyProfile';
+import { calculateScore } from './scoring/scoreCalculator';
 
 export function AssessmentQuestionsView() {
   const navigate = useNavigate();
@@ -28,9 +29,9 @@ export function AssessmentQuestionsView() {
 
   const handleNext = () => {
     if (engine.isLast) {
-      const finalAnswers = { ...engine.answers };
+      const scoringResult = calculateScore(QUESTION_BANK, engine.answers);
       engine.clearSavedProgress();
-      navigate(ROUTES.thankYou, { state: { companyInfo, answers: finalAnswers } });
+      navigate(ROUTES.results, { state: { companyInfo, scoringResult } });
       return;
     }
     engine.goNext();

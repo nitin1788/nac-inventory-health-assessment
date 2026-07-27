@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import { LandingPage } from '@/pages/LandingPage';
 import { AssessmentStartPage } from '@/pages/AssessmentStartPage';
 import { AssessmentQuestionsPage } from '@/pages/AssessmentQuestionsPage';
-import { ThankYouPage } from '@/pages/ThankYouPage';
+import { ResultsPage } from '@/pages/ResultsPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { ROUTES } from '@/config/constants';
 
@@ -16,7 +16,7 @@ export function AppRoutes() {
       <Route path={ROUTES.landing} element={<LandingPage />} />
       <Route path={ROUTES.assessmentStart} element={<AssessmentStartPage />} />
       <Route path={ROUTES.assessmentQuestions} element={<AssessmentQuestionsPage />} />
-      <Route path={ROUTES.thankYou} element={<ThankYouPage />} />
+      <Route path={ROUTES.results} element={<ResultsPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

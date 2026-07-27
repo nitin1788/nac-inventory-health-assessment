@@ -13,5 +13,5 @@ export const ROUTES = {
   landing: '/',
   assessmentStart: '/assessment/start',
   assessmentQuestions: '/assessment/questions',
-  thankYou: '/assessment/thank-you',
+  results: '/assessment/results',
 } as const;
