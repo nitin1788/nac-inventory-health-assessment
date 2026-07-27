@@ -4,6 +4,8 @@ import { Button } from '@/shared/components/Button';
 import { clsx } from '@/shared/utils/clsx';
 import { AssessmentHeader } from './components/AssessmentHeader';
 import type { CompanyProfile } from './questions/companyProfile';
+import { generateRecommendations } from './recommendations/recommendationEngine';
+import type { ModuleRecommendation, PriorityLevel } from './recommendations/recommendationTypes';
 import { getHealthRating } from './scoring/scoreHelpers';
 import type { HealthRating, ModuleScore, ScoringResult } from './scoring/scoreTypes';
 
@@ -24,6 +26,13 @@ const RATING_BAR_CLASSES: Record<HealthRating, string> = {
   Good: 'bg-teal-500',
   'Needs Improvement': 'bg-amber-500',
   Critical: 'bg-red-500',
+};
+
+const PRIORITY_BADGE_CLASSES: Record<PriorityLevel, string> = {
+  High: 'bg-red-50 text-red-700 border-red-200',
+  Medium: 'bg-amber-50 text-amber-700 border-amber-200',
+  Low: 'bg-teal-50 text-teal-700 border-teal-200',
+  Maintain: 'bg-emerald-50 text-emerald-700 border-emerald-200',
 };
 
 function ModuleScoreCard({ moduleScore }: { moduleScore: ModuleScore }) {
@@ -58,6 +67,58 @@ function ModuleScoreCard({ moduleScore }: { moduleScore: ModuleScore }) {
   );
 }
 
+function ModuleRecommendationCard({ moduleRecommendation }: { moduleRecommendation: ModuleRecommendation }) {
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white p-5">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <span className="font-semibold text-slate-900">{moduleRecommendation.moduleTitle}</span>
+        <div className="flex flex-wrap items-center gap-2">
+          <span
+            className={clsx(
+              'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium',
+              RATING_BADGE_CLASSES[moduleRecommendation.rating]
+            )}
+          >
+            {moduleRecommendation.rating}
+          </span>
+          <span
+            className={clsx(
+              'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium',
+              PRIORITY_BADGE_CLASSES[moduleRecommendation.priority]
+            )}
+          >
+            {moduleRecommendation.priority} priority
+          </span>
+        </div>
+      </div>
+
+      <p className="mt-3 text-sm text-slate-600">{moduleRecommendation.summary}</p>
+
+      <div className="mt-4">
+        <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+          Recommended Actions
+        </span>
+        <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700">
+          {moduleRecommendation.recommendations.map((recommendation) => (
+            <li key={recommendation}>{recommendation}</li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="mt-4">
+        <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+          Expected Business Benefits
+        </span>
+        <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700">
+          {moduleRecommendation.expectedBenefits.map((benefit) => (
+            <li key={benefit}>{benefit}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
 /**
  * Reads the scoring result handed off by the assessment flow's final
  * "Finish" action (see AssessmentQuestionsView) — there is no
@@ -74,6 +135,7 @@ export function ResultsView() {
   }
 
   const { companyInfo, scoringResult } = state;
+  const recommendationResult = generateRecommendations(scoringResult);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -108,6 +170,9 @@ export function ResultsView() {
           >
             {scoringResult.overallRating}
           </span>
+          <p className="mx-auto mt-4 max-w-xl text-sm text-slate-600">
+            {recommendationResult.overallSummary}
+          </p>
         </div>
 
         <section className="mt-10">
@@ -168,6 +233,23 @@ export function ResultsView() {
             </div>
           </section>
         </div>
+
+        <section className="mt-10">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+            Recommendations
+          </h2>
+          <p className="mt-1 text-sm text-slate-500">
+            Ordered by priority — highest-priority modules appear first.
+          </p>
+          <div className="mt-4 space-y-4">
+            {recommendationResult.moduleRecommendations.map((moduleRecommendation) => (
+              <ModuleRecommendationCard
+                key={moduleRecommendation.moduleId}
+                moduleRecommendation={moduleRecommendation}
+              />
+            ))}
+          </div>
+        </section>
 
         <div className="mt-12 flex justify-center">
           <Link to={ROUTES.landing}>
