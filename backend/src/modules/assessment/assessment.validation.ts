@@ -18,7 +18,9 @@ const companySchema = z.object({
 
 const answerSchema = z.object({
   questionId: z.string().min(1),
-  selectedOption: z.string().min(1),
+  // Blank is valid: FIN-01 is an optional, non-scored free-text question
+  // (see finalAssessment.ts) that the frontend allows submitting empty.
+  selectedOption: z.string(),
   selectedScore: z.number().int().nullable(),
 });
 
