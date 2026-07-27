@@ -1,7 +1,9 @@
-import { useState } from 'react';
-import { Download, Loader2 } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import { AlertTriangle, CheckCircle2, Download, Loader2, RefreshCw } from 'lucide-react';
 import { Link, Navigate, useLocation } from 'react-router-dom';
 import { ROUTES } from '@/config/constants';
+import { ApiError } from '@/services/api/apiClient';
+import { submitAssessment } from '@/services/api/assessmentApi';
 import { Button } from '@/shared/components/Button';
 import { clsx } from '@/shared/utils/clsx';
 import { AssessmentHeader } from './components/AssessmentHeader';
@@ -10,11 +12,16 @@ import { generateRecommendations } from './recommendations/recommendationEngine'
 import type { ModuleRecommendation, PriorityLevel } from './recommendations/recommendationTypes';
 import { getHealthRating } from './scoring/scoreHelpers';
 import type { HealthRating, ModuleScore, ScoringResult } from './scoring/scoreTypes';
+import { buildAssessmentPayload } from './submission/buildAssessmentPayload';
+import type { AnswerMap } from './useAssessmentEngine';
 
 export interface ResultsLocationState {
   companyInfo: CompanyProfile;
   scoringResult: ScoringResult;
+  answers: AnswerMap;
 }
+
+type SubmissionStatus = 'saving' | 'success' | 'error';
 
 const RATING_BADGE_CLASSES: Record<HealthRating, string> = {
   Excellent: 'bg-emerald-50 text-emerald-700 border-emerald-200',
@@ -121,6 +128,59 @@ function ModuleRecommendationCard({ moduleRecommendation }: { moduleRecommendati
   );
 }
 
+interface SubmissionStatusBannerProps {
+  status: SubmissionStatus;
+  assessmentNumber: string | null;
+  errorMessage: string | null;
+  onRetry: () => void;
+}
+
+function SubmissionStatusBanner({
+  status,
+  assessmentNumber,
+  errorMessage,
+  onRetry,
+}: SubmissionStatusBannerProps) {
+  if (status === 'saving') {
+    return (
+      <div className="mt-6 flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
+        <Loader2 className="h-4 w-4 shrink-0 animate-spin text-brand" />
+        Saving your assessment…
+      </div>
+    );
+  }
+
+  if (status === 'success') {
+    return (
+      <div className="mt-6 flex flex-wrap items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+        <CheckCircle2 className="h-4 w-4 shrink-0" />
+        <span>
+          Assessment saved successfully.
+          {assessmentNumber ? (
+            <>
+              {' '}
+              Your Assessment Number: <span className="font-semibold">{assessmentNumber}</span>
+            </>
+          ) : null}
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+      <span className="flex items-center gap-2">
+        <AlertTriangle className="h-4 w-4 shrink-0" />
+        {errorMessage ?? "We couldn't save your assessment right now."}
+      </span>
+      <Button type="button" variant="secondary" onClick={onRetry}>
+        <RefreshCw className="h-4 w-4" />
+        Retry
+      </Button>
+    </div>
+  );
+}
+
 /**
  * Reads the scoring result handed off by the assessment flow's final
  * "Finish" action (see AssessmentQuestionsView) — there is no
@@ -133,6 +193,30 @@ export function ResultsView() {
   const state = location.state as ResultsLocationState | null;
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadError, setDownloadError] = useState(false);
+  const [submissionStatus, setSubmissionStatus] = useState<SubmissionStatus>('saving');
+  const [assessmentNumber, setAssessmentNumber] = useState<string | null>(null);
+  const [submissionErrorMessage, setSubmissionErrorMessage] = useState<string | null>(null);
+
+  const runSubmission = useCallback(async () => {
+    if (!state) return;
+    setSubmissionStatus('saving');
+    setSubmissionErrorMessage(null);
+    try {
+      const payload = buildAssessmentPayload(state.companyInfo, state.scoringResult, state.answers);
+      const result = await submitAssessment(payload);
+      setAssessmentNumber(result.assessmentNumber);
+      setSubmissionStatus('success');
+    } catch (error) {
+      setSubmissionErrorMessage(
+        error instanceof ApiError ? error.message : "We couldn't save your assessment right now."
+      );
+      setSubmissionStatus('error');
+    }
+  }, [state]);
+
+  useEffect(() => {
+    void runSubmission();
+  }, [runSubmission]);
 
   if (!state) {
     return <Navigate to={ROUTES.assessmentStart} replace />;
@@ -167,6 +251,13 @@ export function ResultsView() {
         <p className="mt-2 text-sm text-slate-500">
           Based on your answers across {scoringResult.moduleScores.length} assessment modules.
         </p>
+
+        <SubmissionStatusBanner
+          status={submissionStatus}
+          assessmentNumber={assessmentNumber}
+          errorMessage={submissionErrorMessage}
+          onRetry={() => void runSubmission()}
+        />
 
         <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm sm:p-10">
           <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">

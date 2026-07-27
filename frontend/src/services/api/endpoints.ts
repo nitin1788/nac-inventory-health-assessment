@@ -5,5 +5,6 @@
  */
 export const endpoints = {
   health: '/health',
-  // Milestone 4+: assessments: '/assessments', questions: '/questions'
+  assessments: '/assessments',
+  // Milestone 4+: questions: '/questions'
 } as const;

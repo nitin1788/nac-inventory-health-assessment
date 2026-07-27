@@ -1,16 +1,25 @@
 /**
- * Domain types for the company module. Full repository/service
- * implementation lands in the Database/Backend-logic milestone once
- * the Supabase schema is migrated.
+ * Domain types for the company module. Mirrors the `companies` table
+ * (see backend/src/database/migrations/0001_create_companies.sql) and
+ * the frontend's CompanyProfile — field names here are the wire/DB
+ * names (camelCase over HTTP, snake_case in Postgres), not the
+ * frontend form's own field names.
  */
 
-export interface CompanyRecord {
-  id: string;
-  name: string;
-  industry: string | null;
-  companySize: string | null;
-  contactName: string | null;
+export interface CompanyInput {
+  companyName: string;
+  contactPerson: string;
+  designation: string;
+  mobile: string;
   email: string;
-  phone: string | null;
+  businessType: string;
+  industry: string;
+  employeeCount: string;
+  inventoryLocations: string;
+  activeSkus: string;
+}
+
+export interface CompanyRecord extends CompanyInput {
+  id: string;
   createdAt: string;
 }

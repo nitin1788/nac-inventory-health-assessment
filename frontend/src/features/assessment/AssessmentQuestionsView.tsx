@@ -29,9 +29,10 @@ export function AssessmentQuestionsView() {
 
   const handleNext = () => {
     if (engine.isLast) {
-      const scoringResult = calculateScore(QUESTION_BANK, engine.answers);
+      const finalAnswers = { ...engine.answers };
+      const scoringResult = calculateScore(QUESTION_BANK, finalAnswers);
       engine.clearSavedProgress();
-      navigate(ROUTES.results, { state: { companyInfo, scoringResult } });
+      navigate(ROUTES.results, { state: { companyInfo, scoringResult, answers: finalAnswers } });
       return;
     }
     engine.goNext();

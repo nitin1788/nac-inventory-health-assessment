@@ -77,10 +77,74 @@ Returns the active question bank so the frontend never hardcodes questions.
 
 ### `POST /api/v1/assessments`
 
-Status: **Planned — Milestone 4**
+Status: **Implemented (Milestone 9)**
 
-Submits a complete assessment (company info + all 52 answers) in a single atomic
-request. No partial/draft submission endpoint in MVP (see PRD Section 17).
+Submits a complete assessment (company info + all answers + computed module scores) in
+a single atomic request. Persists company → assessment → answers → module scores via
+one transactional Postgres function (`submit_assessment`, see
+`backend/src/database/migrations/0007_submit_assessment_function.sql`) — a failure at
+any step rolls back the whole submission. Rate-limited to 5 requests/hour/IP. No
+partial/draft submission endpoint in MVP (see PRD Section 17).
+
+**Request body:**
+```ts
+{
+  company: {
+    companyName: string;
+    contactPerson: string;
+    designation: string;
+    mobile: string;
+    email: string;
+    businessType: string;
+    industry: string;
+    employeeCount: string;
+    inventoryLocations: string;
+    activeSkus: string;
+  };
+  overallScore: number;
+  overallPercentage: number;
+  healthRating: 'Excellent' | 'Good' | 'Needs Improvement' | 'Critical';
+  answers: { questionId: string; selectedOption: string; selectedScore: number | null }[];
+  moduleScores: {
+    moduleId: string;
+    moduleName: string;
+    score: number;
+    maxScore: number;
+    percentage: number;
+    rating: 'Excellent' | 'Good' | 'Needs Improvement' | 'Critical';
+  }[];
+}
+```
+
+**Response `data`:**
+```ts
+{
+  id: string;             // assessment UUID
+  assessmentNumber: string; // e.g. "NAC-2026-000001"
+}
+```
+
+---
+
+### `GET /api/v1/assessments/:id`
+
+Status: **Implemented (Milestone 9)**
+
+Fetches the full detail of one assessment: assessment fields, its company, module
+scores, and answers. `:id` must be the assessment UUID (not the human-readable
+assessment number).
+
+---
+
+### `GET /api/v1/reports/:id`
+
+Status: **Implemented (Milestone 9)**
+
+Same lookup and response shape as `GET /api/v1/assessments/:id`, exposed as a distinct
+route so report-specific behavior (view tracking, expiry, etc.) has a natural home
+later without reshaping the assessments resource. There is no separate `reports` table
+in this milestone — the PDF report itself is still generated entirely client-side (see
+the PDF Generator).
 
 ---
 
@@ -88,5 +152,3 @@ request. No partial/draft submission endpoint in MVP (see PRD Section 17).
 
 - `PUT` / `DELETE` on assessments — submissions are immutable once created, by design
   (see PRD Section 7, API Structure).
-- `GET /api/v1/assessments/:id` — reserved for a future authenticated admin view, not
-  exposed publicly in MVP.
