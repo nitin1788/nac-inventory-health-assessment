@@ -14,4 +14,12 @@ export const ROUTES = {
   assessmentStart: '/assessment/start',
   assessmentQuestions: '/assessment/questions',
   results: '/assessment/results',
+  about: '/about',
+  faq: '/faq',
+  contactUs: '/contact-us',
+  privacyPolicy: '/privacy-policy',
+  termsAndConditions: '/terms-and-conditions',
 } as const;
+
+/** Production origin — used to build absolute URLs (sitemap, canonical links). */
+export const SITE_URL = 'https://nitinanandconsulting.in';

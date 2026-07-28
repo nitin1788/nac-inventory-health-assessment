@@ -10,7 +10,7 @@ export function Footer() {
   return (
     <footer id="contact" className="scroll-mt-20 border-t border-slate-800 bg-[#14233d] py-16 text-white/70">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-5">
           <div className="lg:col-span-2">
             <FooterLogo />
             <p className="mt-4 max-w-sm text-sm leading-relaxed">
@@ -43,6 +43,37 @@ export function Footer() {
               {SERVICES.map((service) => (
                 <li key={service.title}>{service.title}</li>
               ))}
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-white">Company</h3>
+            <ul className="mt-4 space-y-3 text-sm">
+              <li>
+                <Link to={ROUTES.about} className="transition-colors hover:text-white">
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link to={ROUTES.faq} className="transition-colors hover:text-white">
+                  FAQ
+                </Link>
+              </li>
+              <li>
+                <Link to={ROUTES.contactUs} className="transition-colors hover:text-white">
+                  Contact Us
+                </Link>
+              </li>
+              <li>
+                <Link to={ROUTES.privacyPolicy} className="transition-colors hover:text-white">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link to={ROUTES.termsAndConditions} className="transition-colors hover:text-white">
+                  Terms &amp; Conditions
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
