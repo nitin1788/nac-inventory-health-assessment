@@ -24,6 +24,8 @@ import {
   Building2,
   Gauge,
   LayoutGrid,
+  Settings,
+  GraduationCap,
 } from 'lucide-react';
 
 export interface NavLink {
@@ -86,6 +88,84 @@ export const SERVICES: ServiceItem[] = [
     title: 'Business Process Improvement',
     description:
       'End-to-end process redesign that removes bottlenecks and aligns inventory operations with broader business goals.',
+  },
+];
+
+export interface ServiceCategory {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  services: string[];
+}
+
+/** The six consulting service categories shown on the landing page's Services section. */
+export const SERVICE_CATEGORIES: ServiceCategory[] = [
+  {
+    icon: ClipboardList,
+    title: 'Inventory Consulting',
+    description: 'Improve inventory accuracy, visibility, and control across your business.',
+    services: [
+      'Physical Inventory Verification',
+      'Inventory Audit',
+      'Inventory Reconciliation',
+      'Inventory Analysis',
+      'ABC & FSN Analysis',
+      'Inventory Health Check',
+    ],
+  },
+  {
+    icon: Warehouse,
+    title: 'Warehouse Consulting',
+    description: 'Optimize warehouse operations for speed, accuracy, and space utilization.',
+    services: [
+      'Warehouse Audit',
+      'Warehouse Layout Assessment',
+      'Bin Location System',
+      'FIFO / FEFO Implementation',
+      'Space Utilization',
+      'Warehouse Process Improvement',
+    ],
+  },
+  {
+    icon: Settings,
+    title: 'Operations Consulting',
+    description: 'Improve operational efficiency and reduce business costs.',
+    services: [
+      'Operations Audit',
+      'Business Process Improvement',
+      'Workflow Optimization',
+      'Productivity Improvement',
+      'Cost Reduction Initiatives',
+    ],
+  },
+  {
+    icon: FileText,
+    title: 'SOP Development',
+    description: 'Create standardized processes for consistent business operations.',
+    services: ['Warehouse SOPs', 'Inventory SOPs', 'Process Documentation', 'Standard Operating Procedures'],
+  },
+  {
+    icon: BarChart3,
+    title: 'Business Analytics',
+    description: 'Turn operational data into actionable business insights.',
+    services: [
+      'Excel Inventory Management System',
+      'Google Sheets Solutions',
+      'KPI Dashboards',
+      'MIS Reports',
+      'Inventory Performance Reports',
+    ],
+  },
+  {
+    icon: GraduationCap,
+    title: 'Training & Implementation',
+    description: 'Train teams and implement operational improvements successfully.',
+    services: [
+      'Inventory Management Training',
+      'Warehouse Staff Training',
+      'SOP Implementation',
+      'Continuous Improvement Support',
+    ],
   },
 ];
 

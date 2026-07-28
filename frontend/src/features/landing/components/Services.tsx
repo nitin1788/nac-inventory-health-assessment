@@ -1,5 +1,9 @@
 import { motion } from 'framer-motion';
-import { SERVICES } from '../landing.data';
+import { Link } from 'react-router-dom';
+import { CheckCircle2 } from 'lucide-react';
+import { Button } from '@/shared/components/Button';
+import { ROUTES } from '@/config/constants';
+import { SERVICE_CATEGORIES } from '../landing.data';
 
 export function Services() {
   return (
@@ -17,25 +21,47 @@ export function Services() {
         </div>
 
         <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {SERVICES.map((service, index) => {
-            const Icon = service.icon;
+          {SERVICE_CATEGORIES.map((category, index) => {
+            const Icon = category.icon;
             return (
               <motion.div
-                key={service.title}
+                key={category.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-80px' }}
                 transition={{ duration: 0.5, delay: index * 0.08 }}
-                className="group rounded-2xl border border-slate-200 bg-white p-7 transition-all hover:-translate-y-1 hover:border-brand/30 hover:shadow-lg"
+                className="group flex flex-col rounded-2xl border border-slate-200 bg-white p-7 transition-all hover:-translate-y-1 hover:border-brand/30 hover:shadow-lg"
               >
-                <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand text-white transition-transform group-hover:scale-105">
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand text-white transition-transform group-hover:scale-105">
                   <Icon className="h-6 w-6" />
                 </span>
-                <h3 className="mt-5 text-lg font-semibold text-slate-900">{service.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-600">{service.description}</p>
+                <h3 className="mt-5 text-lg font-semibold text-slate-900">{category.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-slate-600">{category.description}</p>
+
+                <ul className="mt-5 space-y-2.5 border-t border-slate-100 pt-5">
+                  {category.services.map((service) => (
+                    <li key={service} className="flex items-start gap-2 text-sm text-slate-700">
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
+                      <span>{service}</span>
+                    </li>
+                  ))}
+                </ul>
               </motion.div>
             );
           })}
+        </div>
+
+        <div className="mt-14 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <Link to={ROUTES.assessmentStart} className="w-full sm:w-auto">
+            <Button variant="primary" size="lg" className="w-full sm:w-auto">
+              Start Free Inventory Health Assessment
+            </Button>
+          </Link>
+          <Link to={ROUTES.contactUs} className="w-full sm:w-auto">
+            <Button variant="secondary" size="lg" className="w-full sm:w-auto">
+              Book Free Consultation
+            </Button>
+          </Link>
         </div>
       </div>
     </section>
