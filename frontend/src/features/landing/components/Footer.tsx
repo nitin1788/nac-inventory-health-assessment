@@ -1,8 +1,14 @@
 import { Link } from 'react-router-dom';
 import { Mail, Phone } from 'lucide-react';
 import { COMPANY_NAME, CONTACT, ROUTES } from '@/config/constants';
-import { SERVICES, NAV_LINKS } from '../landing.data';
+import { SERVICES } from '../landing.data';
 import { FooterLogo } from './FooterLogo';
+
+const FOOTER_QUICK_LINKS = [
+  { label: 'Services', href: '/#services' },
+  { label: 'Why NAC', href: '/#why-nac' },
+  { label: 'How It Works', href: '/#how-it-works' },
+];
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -23,7 +29,7 @@ export function Footer() {
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wide text-white">Quick Links</h3>
             <ul className="mt-4 space-y-3 text-sm">
-              {NAV_LINKS.map((link) => (
+              {FOOTER_QUICK_LINKS.map((link) => (
                 <li key={link.href}>
                   <Link to={link.href} className="transition-colors hover:text-white">
                     {link.label}
