@@ -103,7 +103,7 @@ export async function sendAssessmentReportEmail(
   }
 
   const resend = getResendClient();
-  const { error } = await resend.emails.send({
+  const { data, error } = await resend.emails.send({
     from: env.RESEND_FROM_EMAIL as string,
     to: assessment.company.email,
     subject: buildEmailSubject(assessment),
@@ -116,5 +116,8 @@ export async function sendAssessmentReportEmail(
     throw new Error(`Failed to send assessment report email: ${error.message}`);
   }
 
-  logger.info({ assessmentId: assessment.id }, 'Assessment report email sent.');
+  logger.info(
+    { assessmentId: assessment.id, resendMessageId: data?.id },
+    'Assessment report email sent.'
+  );
 }
