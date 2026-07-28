@@ -322,7 +322,7 @@ export function ResultsView() {
   return (
     <div className="min-h-screen bg-slate-50">
       <AssessmentHeader />
-      <main className="mx-auto max-w-3xl px-6 py-16 lg:px-8">
+      <main id="main-content" className="mx-auto max-w-3xl px-6 py-16 lg:px-8">
         <p className="text-xs font-semibold uppercase tracking-wide text-brand">
           {companyInfo.companyName}
         </p>

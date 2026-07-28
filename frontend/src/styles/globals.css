@@ -10,4 +10,26 @@
   body {
     @apply font-sans text-slate-900 antialiased;
   }
+
+  /* Visible keyboard-focus indicator site-wide (WCAG 2.4.7) — covers every
+     native button/link/input without needing per-component focus classes. */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  [tabindex]:focus-visible {
+    @apply outline-none ring-2 ring-brand ring-offset-2 ring-offset-white;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

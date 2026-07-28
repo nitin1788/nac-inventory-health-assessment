@@ -14,7 +14,7 @@ export function NavbarLogo({ theme = 'dark' }: NavbarLogoProps) {
       <img src={nacLogoIcon} alt={`${COMPANY_NAME} logo`} className="h-[42px] w-auto shrink-0" />
       <span
         className={clsx(
-          'whitespace-nowrap text-sm font-semibold tracking-tight sm:text-base',
+          'hidden whitespace-nowrap text-sm font-semibold tracking-tight sm:inline sm:text-base',
           theme === 'light' ? 'text-white' : 'text-slate-900'
         )}
       >

@@ -28,7 +28,7 @@ export function MarketingPageLayout({
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
-      <main className="mx-auto max-w-3xl px-6 pb-20 pt-32 sm:pb-24 sm:pt-36 lg:px-8">
+      <main id="main-content" className="mx-auto max-w-3xl px-6 pb-20 pt-32 sm:pb-24 sm:pt-36 lg:px-8">
         <p className="text-xs font-semibold uppercase tracking-wide text-brand">{eyebrow}</p>
         <h1 className="mt-2 text-3xl font-semibold text-slate-900 sm:text-4xl">{heading}</h1>
         <div className="mt-8 space-y-6 text-sm leading-relaxed text-slate-700 sm:text-base">

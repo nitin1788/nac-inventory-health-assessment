@@ -4,6 +4,7 @@ import { TrustStatistics } from './components/TrustStatistics';
 import { WhyChooseNAC } from './components/WhyChooseNAC';
 import { Services } from './components/Services';
 import { HowItWorks } from './components/HowItWorks';
+import { ReportPreview } from './components/ReportPreview';
 import { IndustriesServed } from './components/IndustriesServed';
 import { Testimonials } from './components/Testimonials';
 import { FinalCTABanner } from './components/FinalCTABanner';
@@ -18,12 +19,13 @@ export function LandingView() {
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
-      <main>
+      <main id="main-content">
         <Hero />
         <TrustStatistics />
         <WhyChooseNAC />
         <Services />
         <HowItWorks />
+        <ReportPreview />
         <IndustriesServed />
         <Testimonials />
         <FinalCTABanner />

@@ -6,7 +6,7 @@ export function AssessmentStartView() {
   return (
     <div className="min-h-screen bg-slate-50">
       <AssessmentHeader />
-      <main className="mx-auto max-w-3xl px-6 py-16 lg:px-8">
+      <main id="main-content" className="mx-auto max-w-3xl px-6 py-16 lg:px-8">
         <AssessmentIntro />
         <CompanyInfoForm />
       </main>

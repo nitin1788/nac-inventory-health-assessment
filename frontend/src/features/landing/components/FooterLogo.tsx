@@ -14,6 +14,8 @@ export function FooterLogo() {
       <img
         src={nacLogoFull}
         alt={`${COMPANY_NAME} logo`}
+        loading="lazy"
+        decoding="async"
         className="h-16 w-full object-contain"
       />
     </Link>

@@ -37,7 +37,7 @@ export function QuestionCard({ question, selectedValue, onSelect }: QuestionCard
           className="mt-6 w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
         />
       ) : (
-        <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-5">
+        <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {options.map((option) => {
             const isSelected = selectedValue === option.value;
             return (
@@ -47,7 +47,7 @@ export function QuestionCard({ question, selectedValue, onSelect }: QuestionCard
                 onClick={() => onSelect(option.value)}
                 aria-pressed={isSelected}
                 className={clsx(
-                  'rounded-xl border px-3 py-3 text-center text-sm font-medium transition-colors',
+                  'min-h-[44px] rounded-xl border px-3 py-3 text-center text-sm font-medium transition-colors',
                   isSelected
                     ? 'border-brand bg-brand text-white'
                     : 'border-slate-200 bg-white text-slate-700 hover:border-brand/40 hover:bg-brand-50'
