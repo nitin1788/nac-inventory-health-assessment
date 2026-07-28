@@ -2,6 +2,7 @@ import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { TrustStatistics } from './components/TrustStatistics';
 import { WhyChooseNAC } from './components/WhyChooseNAC';
+import { Services } from './components/Services';
 import { HowItWorks } from './components/HowItWorks';
 import { IndustriesServed } from './components/IndustriesServed';
 import { Testimonials } from './components/Testimonials';
@@ -21,6 +22,7 @@ export function LandingView() {
         <Hero />
         <TrustStatistics />
         <WhyChooseNAC />
+        <Services />
         <HowItWorks />
         <IndustriesServed />
         <Testimonials />

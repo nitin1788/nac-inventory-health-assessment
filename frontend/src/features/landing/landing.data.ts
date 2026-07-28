@@ -22,6 +22,8 @@ import {
   PackageCheck,
   Ship,
   Building2,
+  Gauge,
+  LayoutGrid,
 } from 'lucide-react';
 
 export interface NavLink {
@@ -41,8 +43,14 @@ export interface ServiceItem {
   description: string;
 }
 
-/** Mirrors the footer services list approved in the PRD (Section 6). */
+/** Mirrors the footer services list and the landing page's Services section. */
 export const SERVICES: ServiceItem[] = [
+  {
+    icon: Gauge,
+    title: 'Inventory Health Assessment',
+    description:
+      'A free, 52-question diagnostic that scores your inventory health and points you toward the right next service.',
+  },
   {
     icon: ClipboardList,
     title: 'Inventory Audit',
@@ -66,6 +74,12 @@ export const SERVICES: ServiceItem[] = [
     title: 'SOP Development',
     description:
       'Clear, practical standard operating procedures that make consistent inventory practices repeatable across every shift.',
+  },
+  {
+    icon: LayoutGrid,
+    title: 'Warehouse Layout Optimization',
+    description:
+      'Redesigning storage layout and pick paths to cut travel time, reduce congestion, and lower mis-picks.',
   },
   {
     icon: Workflow,

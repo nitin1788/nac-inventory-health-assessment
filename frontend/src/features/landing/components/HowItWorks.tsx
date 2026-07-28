@@ -3,7 +3,7 @@ import { PROCESS_STEPS } from '../landing.data';
 
 export function HowItWorks() {
   return (
-    <section id="services" className="scroll-mt-20 bg-slate-50 py-20 sm:py-28">
+    <section id="how-it-works" className="scroll-mt-20 bg-slate-50 py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-sm font-semibold uppercase tracking-wide text-brand">How It Works</p>
