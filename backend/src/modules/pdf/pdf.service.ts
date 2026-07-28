@@ -1,4 +1,5 @@
 import { renderToBuffer } from '@react-pdf/renderer';
+import { logger } from '../../utils/logger';
 import type { AssessmentDetail } from '../assessment/assessment.types';
 import { buildReportDocument } from './pdfTemplates';
 
@@ -25,8 +26,19 @@ export interface GeneratedReportPdf {
  * recalculates a score.
  */
 export async function generateAssessmentReportPdf(assessment: AssessmentDetail): Promise<GeneratedReportPdf> {
+  const startedAt = Date.now();
   const buffer = await renderToBuffer(buildReportDocument(assessment));
   const filename = `nac-inventory-health-assessment-${slugifyCompanyName(assessment.company.companyName)}.pdf`;
+
+  logger.info(
+    {
+      assessmentId: assessment.id,
+      assessmentNumber: assessment.assessmentNumber,
+      companyName: assessment.company.companyName,
+      msToRender: Date.now() - startedAt,
+    },
+    'PDF generated.'
+  );
 
   return { buffer, filename };
 }

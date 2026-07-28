@@ -1,7 +1,7 @@
 import { isSupabaseConfigured } from '../../database/supabaseClient';
 import { AppError } from '../../utils/AppError';
 import { logger } from '../../utils/logger';
-import { sendAssessmentReportEmail } from '../email/email.service';
+import { sendAssessmentReportEmail, sendLeadAlertEmail } from '../email/email.service';
 import { generateAssessmentReportPdf, type GeneratedReportPdf } from '../pdf/pdf.service';
 import { createAssessment, findAssessmentById } from './assessment.repository';
 import type { AssessmentDetail, CreateAssessmentInput, CreateAssessmentResult } from './assessment.types';
@@ -14,16 +14,38 @@ function ensureSupabaseConfigured(): void {
   }
 }
 
-/** Generates the PDF and emails it to the customer for an already-persisted assessment. */
+/**
+ * Generates the PDF, then emails the customer's report and the
+ * internal lead alert for an already-persisted assessment. The two
+ * sends are independent — the customer report goes out first, and a
+ * failure in either one is logged without blocking or skipping the
+ * other.
+ */
 async function deliverAssessmentReportEmail(id: string): Promise<void> {
   const assessment = await getAssessmentById(id);
   const report = await generateAssessmentReportPdf(assessment);
-  await sendAssessmentReportEmail(assessment, report);
+
+  try {
+    await sendAssessmentReportEmail(assessment, report);
+  } catch (error) {
+    logger.error({ err: error, assessmentId: id }, 'Failed to email assessment report to customer.');
+  }
+
+  try {
+    await sendLeadAlertEmail(assessment, report);
+  } catch (error) {
+    logger.error({ err: error, assessmentId: id }, 'Failed to send internal lead alert email.');
+  }
 }
 
 export async function submitAssessment(input: CreateAssessmentInput): Promise<CreateAssessmentResult> {
   ensureSupabaseConfigured();
   const result = await createAssessment(input);
+
+  logger.info(
+    { assessmentId: result.id, assessmentNumber: result.assessmentNumber, companyName: input.company.companyName },
+    'Assessment saved.'
+  );
 
   // Fire-and-forget: the assessment is already durably saved, so a
   // failure generating the PDF or sending the email must never fail

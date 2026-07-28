@@ -32,7 +32,9 @@ export function AssessmentQuestionsView() {
       const finalAnswers = { ...engine.answers };
       const scoringResult = calculateScore(QUESTION_BANK, finalAnswers);
       engine.clearSavedProgress();
-      navigate(ROUTES.results, { state: { companyInfo, scoringResult, answers: finalAnswers } });
+      navigate(ROUTES.results, {
+        state: { companyInfo, scoringResult, answers: finalAnswers, submissionId: crypto.randomUUID() },
+      });
       return;
     }
     engine.goNext();

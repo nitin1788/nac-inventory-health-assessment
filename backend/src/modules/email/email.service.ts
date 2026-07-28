@@ -17,6 +17,10 @@ export function isEmailConfigured(): boolean {
   return Boolean(env.RESEND_API_KEY && env.RESEND_FROM_EMAIL);
 }
 
+export function isLeadAlertConfigured(): boolean {
+  return isEmailConfigured() && Boolean(env.NAC_LEAD_ALERT_EMAIL);
+}
+
 function getResendClient(): Resend {
   if (client) return client;
 
@@ -102,6 +106,16 @@ export async function sendAssessmentReportEmail(
     return;
   }
 
+  const startedAt = Date.now();
+  logger.info(
+    {
+      assessmentId: assessment.id,
+      assessmentNumber: assessment.assessmentNumber,
+      to: assessment.company.email,
+    },
+    'Customer email send starting.'
+  );
+
   const resend = getResendClient();
   const { data, error } = await resend.emails.send({
     from: env.RESEND_FROM_EMAIL as string,
@@ -117,7 +131,104 @@ export async function sendAssessmentReportEmail(
   }
 
   logger.info(
-    { assessmentId: assessment.id, resendMessageId: data?.id },
-    'Assessment report email sent.'
+    {
+      assessmentId: assessment.id,
+      assessmentNumber: assessment.assessmentNumber,
+      to: assessment.company.email,
+      resendMessageId: data?.id,
+      msToAccept: Date.now() - startedAt,
+    },
+    'Assessment report email accepted by Resend.'
+  );
+}
+
+function buildLeadAlertSubject(assessment: AssessmentDetail): string {
+  return `🚨 New Inventory Assessment Lead | ${assessment.company.companyName} | ${assessment.healthRating}`;
+}
+
+function formatSubmittedAt(createdAt: string): string {
+  return new Date(createdAt).toLocaleString('en-IN', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+    timeZone: 'Asia/Kolkata',
+  });
+}
+
+function buildLeadAlertText(assessment: AssessmentDetail): string {
+  const moduleLines = assessment.moduleScores.map(
+    (moduleScore) =>
+      `- ${moduleScore.moduleName}: ${moduleScore.score}/${moduleScore.maxScore} (${moduleScore.percentage}% — ${moduleScore.rating})`
+  );
+
+  return [
+    'A new assessment has been completed.',
+    '',
+    `Assessment Number: ${assessment.assessmentNumber}`,
+    `Company Name: ${assessment.company.companyName}`,
+    `Contact Person: ${assessment.company.contactPerson}`,
+    `Mobile: ${assessment.company.mobile}`,
+    `Email: ${assessment.company.email}`,
+    `Overall Score: ${assessment.overallScore} (${assessment.overallPercentage}%)`,
+    `Health Rating: ${assessment.healthRating}`,
+    `Date & Time: ${formatSubmittedAt(assessment.createdAt)}`,
+    '',
+    'Modules Summary:',
+    ...moduleLines,
+    '',
+    'Action Required: Contact this lead within 24 hours.',
+  ].join('\n');
+}
+
+/**
+ * Notifies the internal NAC sales team that a new lead completed an
+ * assessment — a separate send from sendAssessmentReportEmail, going
+ * to NAC_LEAD_ALERT_EMAIL rather than the customer. Same no-op-when-
+ * unconfigured pattern; only requires NAC_LEAD_ALERT_EMAIL in addition
+ * to the base Resend config.
+ */
+export async function sendLeadAlertEmail(
+  assessment: AssessmentDetail,
+  report: GeneratedReportPdf
+): Promise<void> {
+  if (!isLeadAlertConfigured()) {
+    logger.warn(
+      { assessmentId: assessment.id },
+      'Skipping internal lead alert email — NAC_LEAD_ALERT_EMAIL or Resend not configured.'
+    );
+    return;
+  }
+
+  const startedAt = Date.now();
+  logger.info(
+    {
+      assessmentId: assessment.id,
+      assessmentNumber: assessment.assessmentNumber,
+      to: env.NAC_LEAD_ALERT_EMAIL,
+    },
+    'Internal lead alert email send starting.'
+  );
+
+  const resend = getResendClient();
+  const { data, error } = await resend.emails.send({
+    from: env.RESEND_FROM_EMAIL as string,
+    to: env.NAC_LEAD_ALERT_EMAIL as string,
+    subject: buildLeadAlertSubject(assessment),
+    text: buildLeadAlertText(assessment),
+    attachments: [{ filename: report.filename, content: report.buffer }],
+  });
+
+  if (error) {
+    throw new Error(`Failed to send internal lead alert email: ${error.message}`);
+  }
+
+  logger.info(
+    {
+      assessmentId: assessment.id,
+      assessmentNumber: assessment.assessmentNumber,
+      to: env.NAC_LEAD_ALERT_EMAIL,
+      resendMessageId: data?.id,
+      msToAccept: Date.now() - startedAt,
+    },
+    'Internal lead alert email accepted by Resend.'
   );
 }
