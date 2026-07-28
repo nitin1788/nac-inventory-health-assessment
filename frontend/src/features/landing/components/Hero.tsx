@@ -19,7 +19,11 @@ export function Hero() {
     <section className="relative overflow-hidden bg-white pb-24 pt-40 sm:pb-32 sm:pt-48">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(15,42,82,0.05),_transparent_60%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(15,42,82,0.06),_transparent_60%)]"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.035] [background-image:linear-gradient(#0F2A52_1px,transparent_1px),linear-gradient(90deg,#0F2A52_1px,transparent_1px)] [background-size:56px_56px]"
       />
       <div
         aria-hidden
@@ -48,12 +52,21 @@ export function Hero() {
           Free 52-Question Inventory Diagnostic
         </motion.div>
 
+        <motion.div
+          initial="hidden"
+          animate="show"
+          custom={0.15}
+          variants={fadeUp}
+          aria-hidden
+          className="mx-auto mt-6 h-1 w-14 rounded-full bg-accent"
+        />
+
         <motion.h1
           initial="hidden"
           animate="show"
           custom={0.2}
           variants={fadeUp}
-          className="mt-8 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl"
+          className="mt-6 text-4xl font-bold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl lg:text-6xl"
         >
           Know Exactly Where Your Inventory Operations Stand
         </motion.h1>
@@ -65,9 +78,10 @@ export function Hero() {
           variants={fadeUp}
           className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-slate-600"
         >
-          Answer 52 targeted questions and get a scored, expert-backed report — with clear
-          recommendations — delivered to your inbox in minutes. Built by Nitin Anand Consulting for
-          manufacturers, distributors, and warehouse operators.
+          A free, expert-backed diagnostic that scores your inventory, warehouse, and process
+          health — then points you toward the specific consulting, audit, or SOP work that will
+          move the needle. Built by Nitin Anand Consulting for manufacturers, distributors, and
+          warehouse operators.
         </motion.p>
 
         <motion.div
@@ -77,17 +91,17 @@ export function Hero() {
           variants={fadeUp}
           className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
         >
-          <Link to={ROUTES.assessmentStart}>
-            <Button variant="primary" size="lg">
+          <Link to={ROUTES.assessmentStart} className="w-full sm:w-auto">
+            <Button variant="primary" size="lg" className="w-full sm:w-auto">
               Start Free Assessment
               <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
-          <a href="#services">
-            <Button variant="secondary" size="lg">
-              Explore Our Services
+          <Link to={ROUTES.contactUs} className="w-full sm:w-auto">
+            <Button variant="secondary" size="lg" className="w-full sm:w-auto">
+              Book Free Consultation
             </Button>
-          </a>
+          </Link>
         </motion.div>
       </div>
     </section>

@@ -11,8 +11,8 @@ export function WhyChooseNAC() {
             Why Businesses Choose NAC
           </h2>
           <p className="mt-4 text-base leading-relaxed text-slate-600">
-            Built by consultants who've spent years inside real inventory operations — not a
-            generic online quiz.
+            Built by consultants with 16+ years inside real inventory and warehouse operations —
+            practical expertise, not a generic online quiz.
           </p>
         </div>
 
@@ -26,9 +26,13 @@ export function WhyChooseNAC() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-80px' }}
                 transition={{ duration: 0.5, delay: index * 0.08 }}
-                className="group rounded-2xl border border-slate-200 bg-white p-7 transition-all hover:-translate-y-1 hover:border-brand/30 hover:shadow-lg"
+                className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-7 shadow-sm transition-all hover:-translate-y-1.5 hover:border-brand/30 hover:shadow-xl"
               >
-                <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand text-white transition-transform group-hover:scale-105">
+                <span
+                  aria-hidden
+                  className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-accent transition-transform duration-300 group-hover:scale-x-100"
+                />
+                <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand text-white transition-transform duration-300 group-hover:scale-110">
                   <Icon className="h-6 w-6" />
                 </span>
                 <h3 className="mt-5 text-lg font-semibold text-slate-900">{item.title}</h3>

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { INDUSTRIES } from '../landing.data';
+import { INDUSTRIES_SERVED } from '../landing.data';
 
 export function IndustriesServed() {
   return (
@@ -12,10 +12,14 @@ export function IndustriesServed() {
           <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
             Built for Businesses That Move Inventory
           </h2>
+          <p className="mt-4 text-base leading-relaxed text-slate-600">
+            Practical experience across the sectors where inventory accuracy and warehouse
+            efficiency matter most.
+          </p>
         </div>
 
-        <div className="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-3">
-          {INDUSTRIES.map((industry, index) => {
+        <div className="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+          {INDUSTRIES_SERVED.map((industry, index) => {
             const Icon = industry.icon;
             return (
               <motion.div
@@ -24,12 +28,12 @@ export function IndustriesServed() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-80px' }}
                 transition={{ duration: 0.4, delay: index * 0.05 }}
-                className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-5 py-4"
+                className="group flex flex-col items-center gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-7 text-center shadow-sm transition-all hover:-translate-y-1 hover:border-brand/30 hover:shadow-md"
               >
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand">
-                  <Icon className="h-5 w-5" />
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand transition-transform group-hover:scale-105">
+                  <Icon className="h-6 w-6" />
                 </span>
-                <span className="text-sm font-medium text-slate-800">{industry.name}</span>
+                <span className="text-sm font-semibold text-slate-800">{industry.name}</span>
               </motion.div>
             );
           })}

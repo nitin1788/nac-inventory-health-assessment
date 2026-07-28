@@ -26,6 +26,9 @@ import {
   LayoutGrid,
   Settings,
   GraduationCap,
+  Award,
+  Truck,
+  ShoppingCart,
 } from 'lucide-react';
 
 export interface NavLink {
@@ -183,6 +186,20 @@ export const TRUST_STATS: StatItem[] = [
   { icon: ShieldCheck, value: '100%', label: 'Confidential & Free' },
 ];
 
+export interface TrustPillar {
+  icon: LucideIcon;
+  label: string;
+}
+
+/** Core credibility pillars shown in the landing page's Trust section. */
+export const TRUST_PILLARS: TrustPillar[] = [
+  { icon: Award, label: '16+ Years Experience' },
+  { icon: Warehouse, label: 'Inventory & Warehouse Consulting' },
+  { icon: FileText, label: 'SOP Development' },
+  { icon: BarChart3, label: 'Business Analytics' },
+  { icon: CheckCircle2, label: 'Actionable Recommendations' },
+];
+
 export interface ValueProp {
   icon: LucideIcon;
   title: string;
@@ -193,24 +210,25 @@ export const WHY_CHOOSE_NAC: ValueProp[] = [
   {
     icon: LineChart,
     title: 'Data-Driven Diagnostics',
-    description: 'Every recommendation traces back to your actual answers — not generic advice.',
+    description:
+      'Every recommendation traces back to your actual responses — evidence-based findings, not generic advice.',
   },
   {
     icon: CheckCircle2,
     title: 'Rule-Based Recommendations',
     description:
-      'Consistent, quality-controlled guidance without the unpredictability of AI-generated content.',
+      'Consistent, quality-controlled guidance you can rely on — without the unpredictability of AI-generated content.',
   },
   {
     icon: Users,
     title: 'Built for Operators',
     description:
-      'Designed around real manufacturing, distribution, and warehouse workflows — not abstract theory.',
+      'Shaped by real manufacturing, distribution, and warehouse workflows — not abstract theory.',
   },
   {
     icon: Zap,
     title: 'Fast, Actionable Reporting',
-    description: 'A scored report and clear next steps delivered in minutes, not weeks.',
+    description: 'A scored report with clear next steps, delivered to your inbox in minutes, not weeks.',
   },
 ];
 
@@ -264,6 +282,18 @@ export const INDUSTRIES: Industry[] = [
   { icon: PackageCheck, name: 'FMCG Distribution' },
   { icon: Ship, name: 'Import & Export' },
   { icon: Building2, name: 'SMEs' },
+];
+
+/** The landing page's "Industries We Serve" section — a focused subset for a cleaner grid. */
+export const INDUSTRIES_SERVED: Industry[] = [
+  { icon: Factory, name: 'Manufacturing' },
+  { icon: Plug, name: 'Electrical' },
+  { icon: Pill, name: 'Pharmaceutical' },
+  { icon: PackageCheck, name: 'FMCG' },
+  { icon: Store, name: 'Retail' },
+  { icon: Warehouse, name: 'Warehousing' },
+  { icon: Truck, name: 'Distributors' },
+  { icon: ShoppingCart, name: 'E-commerce' },
 ];
 
 export interface Testimonial {

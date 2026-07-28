@@ -14,9 +14,9 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer id="contact" className="scroll-mt-20 border-t border-slate-800 bg-[#14233d] py-16 text-white/70">
+    <footer id="contact" className="scroll-mt-20 border-t border-slate-800 bg-[#14233d] py-20 text-white/70">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-5">
           <div className="lg:col-span-2">
             <FooterLogo />
             <p className="mt-4 max-w-sm text-sm leading-relaxed">
@@ -85,26 +85,32 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col gap-4 border-t border-white/10 pt-8 text-sm sm:flex-row sm:items-center sm:justify-between">
-          <p>
-            &copy; {year} {COMPANY_NAME}. All rights reserved.
-          </p>
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-6">
+        <div className="mt-16 border-t border-white/10 pt-10">
+          <p className="text-xs font-semibold uppercase tracking-wide text-white/50">Get in Touch</p>
+          <div className="mt-4 flex flex-col gap-3 text-sm sm:flex-row sm:items-center sm:gap-8">
             <a
               href={`mailto:${CONTACT.email}`}
-              className="flex items-center gap-2 transition-colors hover:text-white"
+              className="flex items-center gap-3 transition-colors hover:text-white"
             >
-              <Mail className="h-4 w-4" />
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/5">
+                <Mail className="h-4 w-4" />
+              </span>
               {CONTACT.email}
             </a>
             <a
               href={`tel:${CONTACT.phone.replace(/\s+/g, '')}`}
-              className="flex items-center gap-2 transition-colors hover:text-white"
+              className="flex items-center gap-3 transition-colors hover:text-white"
             >
-              <Phone className="h-4 w-4" />
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/5">
+                <Phone className="h-4 w-4" />
+              </span>
               {CONTACT.phone}
             </a>
           </div>
+
+          <p className="mt-8 border-t border-white/10 pt-6 text-sm">
+            &copy; {year} {COMPANY_NAME}. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>
