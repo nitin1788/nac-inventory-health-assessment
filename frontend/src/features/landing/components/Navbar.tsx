@@ -31,13 +31,13 @@ export function Navbar() {
 
         <div className="hidden items-center gap-8 lg:flex">
           {NAV_LINKS.map((link) => (
-            <a
+            <Link
               key={link.href}
-              href={link.href}
+              to={link.href}
               className="text-sm font-medium text-slate-600 transition-colors hover:text-brand"
             >
               {link.label}
-            </a>
+            </Link>
           ))}
         </div>
 
@@ -69,14 +69,14 @@ export function Navbar() {
           >
             <div className="flex flex-col gap-1 px-6 py-4">
               {NAV_LINKS.map((link) => (
-                <a
+                <Link
                   key={link.href}
-                  href={link.href}
+                  to={link.href}
                   onClick={() => setIsMobileOpen(false)}
                   className="rounded-md px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
                 >
                   {link.label}
-                </a>
+                </Link>
               ))}
               <Link to={ROUTES.assessmentStart} onClick={() => setIsMobileOpen(false)} className="mt-2">
                 <Button variant="primary" className="w-full">

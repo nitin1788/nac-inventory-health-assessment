@@ -14,8 +14,9 @@ export function Footer() {
           <div className="lg:col-span-2">
             <FooterLogo />
             <p className="mt-4 max-w-sm text-sm leading-relaxed">
-              A free, expert-backed inventory health assessment for manufacturers, distributors, and
-              warehouse operators — the starting point for a more efficient inventory operation.
+              Helping businesses optimize inventory, warehouse operations, and business processes
+              through expert consulting, audits, SOP development, analytics, and implementation
+              support. Start with a FREE Inventory Health Assessment.
             </p>
           </div>
 
@@ -24,9 +25,9 @@ export function Footer() {
             <ul className="mt-4 space-y-3 text-sm">
               {NAV_LINKS.map((link) => (
                 <li key={link.href}>
-                  <a href={link.href} className="transition-colors hover:text-white">
+                  <Link to={link.href} className="transition-colors hover:text-white">
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
               <li>

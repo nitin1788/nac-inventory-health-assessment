@@ -34,9 +34,9 @@ export interface NavLink {
 }
 
 export const NAV_LINKS: NavLink[] = [
-  { label: 'Services', href: '#services' },
-  { label: 'Why NAC', href: '#why-nac' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Services', href: '/#services' },
+  { label: 'Why NAC', href: '/#why-nac' },
+  { label: 'Contact', href: '/#contact' },
 ];
 
 export interface ServiceItem {
