@@ -5,7 +5,12 @@ services:
     plan: starter
     region: singapore
     rootDir: backend
-    buildCommand: npm install && npm run build
+    # --include=dev is required here: NODE_ENV=production (below) is
+    # visible to this build step too, and plain `npm install` skips
+    # devDependencies whenever NODE_ENV=production is set — which would
+    # otherwise drop typescript, @types/node, and @types/express before
+    # `npm run build` (tsc) ever runs.
+    buildCommand: npm install --include=dev && npm run build
     startCommand: npm start
     healthCheckPath: /api/v1/health
     autoDeployTrigger: commit
