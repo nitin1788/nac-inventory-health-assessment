@@ -1,4 +1,5 @@
-import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient, type WebSocketLikeConstructor } from '@supabase/supabase-js';
+import WebSocket from 'ws';
 import { env } from '../config/env';
 import { logger } from '../utils/logger';
 
@@ -28,6 +29,23 @@ export function getSupabaseClient(): SupabaseClient {
 
   client = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY, {
     auth: { persistSession: false },
+    // This backend only ever uses the PostgREST API (plain table
+    // inserts/selects via repositories) — Realtime (WebSocket)
+    // subscriptions are never used. Even so, supabase-js unconditionally
+    // constructs a RealtimeClient in its constructor, which eagerly
+    // resolves a WebSocket implementation and throws if none is found.
+    // Node 20 (our pinned runtime, see render.yaml) has no native global
+    // WebSocket — that's the "Node.js detected but native WebSocket not
+    // found" crash. Supplying the `ws` package here satisfies that eager
+    // check; it's never actually used to open a connection since no
+    // code in this backend calls .channel()/.connect() on Realtime.
+    // `ws`'s constructor signature isn't structurally identical to the
+    // DOM WebSocket type WebSocketLikeConstructor is modeled on (e.g. it
+    // accepts a required `address` argument), hence the cast — this is
+    // the standard, expected way to bridge `ws` into this option.
+    realtime: {
+      transport: WebSocket as unknown as WebSocketLikeConstructor,
+    },
   });
 
   return client;
