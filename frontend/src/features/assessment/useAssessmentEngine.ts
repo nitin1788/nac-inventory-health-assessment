@@ -16,6 +16,23 @@ function loadSavedAnswers(): AnswerMap {
   }
 }
 
+/**
+ * Wipes any autosaved answers from a previous, abandoned assessment
+ * attempt. Call this when a *new* attempt begins (Company Info
+ * submission) — not from inside useAssessmentEngine itself, since the
+ * hook can't tell "fresh start" apart from "user refreshed mid-attempt"
+ * on its own; both look like a plain new mount. Without this, a stale
+ * answer for a question ID reused in the new attempt would load
+ * pre-selected the first time that question is shown.
+ */
+export function clearSavedAssessmentProgress(): void {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    // Storage unavailable (e.g. private browsing) — nothing to clear.
+  }
+}
+
 export interface AssessmentEngine {
   currentQuestion: Question | undefined;
   currentIndex: number;

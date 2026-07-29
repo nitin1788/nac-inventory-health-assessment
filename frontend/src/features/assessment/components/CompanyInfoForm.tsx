@@ -13,6 +13,7 @@ import {
   COMPANY_PROFILE_FIELDS,
   type CompanyProfile,
 } from '../questions/companyProfile';
+import { clearSavedAssessmentProgress } from '../useAssessmentEngine';
 
 /**
  * Captures the Company Profile before the assessment questions (PRD
@@ -40,6 +41,10 @@ export function CompanyInfoForm() {
   const businessType = watch('businessType');
 
   const onSubmit = (values: CompanyProfile) => {
+    // Starting a brand-new assessment — clear any answers autosaved from
+    // a previous, abandoned attempt so the first question doesn't load
+    // with a stale option pre-selected.
+    clearSavedAssessmentProgress();
     navigate(ROUTES.assessmentQuestions, { state: values });
   };
 
