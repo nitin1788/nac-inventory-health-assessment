@@ -24,7 +24,7 @@ export const CONSULTATION = {
 
 /** Website + footer contact used in outbound emails. */
 export const SITE_URL = 'https://nitinanandconsulting.in';
-export const FOOTER_EMAIL = 'info@nitinanandconsulting.in';
+export const FOOTER_EMAIL = 'nitinanandconsulting@gmail.com';
 
 export const SERVICES_LIST =
   'Inventory Audit · Warehouse Audit · Inventory Optimization · SOP Development · Business Process Improvement';
