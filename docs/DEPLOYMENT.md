@@ -61,14 +61,15 @@ Local values already exist in `backend/.env` (verified present, not printed abov
 1. In Render: **New → Blueprint**, point it at this repo. Render will read `render.yaml` from the repo root and provision the `nac-inventory-assessment-api` web service (root dir `backend/`, build `npm install && npm run build`, start `npm start`, health check `/api/v1/health`).
 2. Fill in the env vars marked `sync: false` in `render.yaml` (table above) in the service's **Environment** tab.
 3. Confirm the region (`singapore` was chosen as closest to India/`nitinanandconsulting.in` traffic among Render's regions — change in `render.yaml` if you'd prefer a different one).
-4. Deploy, then confirm: `curl https://<your-service>.onrender.com/api/v1/health` returns `"supabase": "configured"`.
-5. Note the resulting `https://<your-service>.onrender.com` URL — it's needed for the frontend's `VITE_API_BASE_URL`.
+4. Node runtime is pinned to **Node 20 LTS** three ways (Render otherwise defaults to its newest available runtime, which broke the first deploy attempt at Node 26): the `NODE_VERSION=20` env var in `render.yaml` (highest precedence), `backend/.node-version`, and `"engines": { "node": "20.x" }` in `backend/package.json`. Nothing to configure manually here — just confirm the Render build log shows Node 20.x during the next deploy.
+5. Deploy, then confirm: `curl https://<your-service>.onrender.com/api/v1/health` returns `"supabase": "configured"`.
+6. Note the resulting `https://<your-service>.onrender.com` URL — it's needed for the frontend's `VITE_API_BASE_URL`.
 
 ## 4. Vercel setup (frontend)
 
 1. In Vercel: **New Project**, import this repo, set **Root Directory** to `frontend`.
 2. Vercel should auto-detect Vite (build command `npm run build`, output `dist`) — `frontend/vercel.json` pins these explicitly plus SPA rewrites (so client-side routes like `/about` don't 404 on refresh) and baseline security headers.
-3. Add `VITE_API_BASE_URL` (see §2) in **Project Settings → Environment Variables**, pointing at the Render URL from step 5 above.
+3. Add `VITE_API_BASE_URL` (see §2) in **Project Settings → Environment Variables**, pointing at the Render URL from step 6 above.
 4. Deploy, then set `CORS_ORIGIN` on the Render side (§3.2) to match the resulting Vercel URL (and your custom domain, once attached).
 
 ## 5. Supabase

@@ -12,6 +12,12 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      # Pins the runtime to Node 20 LTS (highest-precedence method Render
+      # supports — takes priority over .node-version and package.json's
+      # engines field, both also set to 20 as fallbacks). Render otherwise
+      # defaults to its newest available runtime.
+      - key: NODE_VERSION
+        value: "20"
       # All values below are secrets or environment-specific and must be
       # set manually in the Render dashboard — never committed to the repo.
       - key: SUPABASE_URL
