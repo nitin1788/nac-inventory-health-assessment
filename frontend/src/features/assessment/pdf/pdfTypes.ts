@@ -13,4 +13,6 @@ export interface PdfReportData {
   scoringResult: ScoringResult;
   recommendationResult: RecommendationResult;
   generatedAt: Date;
+  /** May be unavailable if downloaded before the server-side save completes. */
+  assessmentNumber?: string;
 }

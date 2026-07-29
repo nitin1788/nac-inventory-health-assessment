@@ -2,7 +2,8 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { CheckCircle2 } from 'lucide-react';
 import { Button } from '@/shared/components/Button';
-import { ROUTES } from '@/config/constants';
+import { CONSULTATION, ROUTES } from '@/config/constants';
+import { buildConsultationWhatsAppUrl } from '@/shared/utils/whatsapp';
 import { SERVICE_CATEGORIES } from '../landing.data';
 
 export function Services() {
@@ -57,11 +58,16 @@ export function Services() {
               Start Free Inventory Health Assessment
             </Button>
           </Link>
-          <Link to={ROUTES.contactUs} className="w-full sm:w-auto">
+          <a
+            href={buildConsultationWhatsAppUrl()}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full sm:w-auto"
+          >
             <Button variant="secondary" size="lg" className="w-full sm:w-auto">
-              Book Free Consultation
+              {CONSULTATION.ctaLabel}
             </Button>
-          </Link>
+          </a>
         </div>
       </div>
     </section>

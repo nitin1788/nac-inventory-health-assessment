@@ -9,6 +9,16 @@ export const CONTACT = {
   phone: '+91 9619994347',
 } as const;
 
+export const CONSULTATION = {
+  serviceName: 'Inventory Assessment Review & Consultation',
+  description:
+    'Get expert guidance to review your Inventory Health Assessment report, understand key findings, identify improvement opportunities, and receive practical recommendations to improve your inventory and store / warehouse operations.',
+  duration: '30 Minutes',
+  mode: 'Zoom Meeting',
+  fee: '₹499',
+  ctaLabel: 'Book Consultation – ₹499',
+} as const;
+
 export const ROUTES = {
   landing: '/',
   assessmentStart: '/assessment/start',

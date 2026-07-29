@@ -1,7 +1,8 @@
 import { Resend } from 'resend';
 import { env } from '../../config/env';
 import { logger } from '../../utils/logger';
-import { COMPANY_NAME, CONTACT, SERVICES_LIST } from '../../config/constants';
+import { COMPANY_NAME, CONSULTATION, FOOTER_EMAIL, SERVICES_LIST, SITE_URL } from '../../config/constants';
+import { buildConsultationWhatsAppUrl } from '../../utils/whatsapp';
 import type { AssessmentDetail } from '../assessment/assessment.types';
 import type { GeneratedReportPdf } from '../pdf/pdf.service';
 
@@ -43,6 +44,8 @@ function buildEmailSubject(assessment: AssessmentDetail): string {
 }
 
 function buildEmailText(assessment: AssessmentDetail): string {
+  const whatsappUrl = buildConsultationWhatsAppUrl(assessment.assessmentNumber);
+
   return [
     `Dear ${assessment.company.contactPerson},`,
     '',
@@ -55,13 +58,30 @@ function buildEmailText(assessment: AssessmentDetail): string {
     'The attached report includes your module-wise scores, top findings, and recommendations.',
     '',
     '—',
+    '',
+    'Need Expert Guidance?',
+    '',
+    `Book a ${CONSULTATION.duration} ${CONSULTATION.serviceName} to review your assessment report and receive practical recommendations for improving your inventory and store / warehouse operations.`,
+    '',
+    'Consultation Details',
+    `- Duration: ${CONSULTATION.duration}`,
+    `- Mode: ${CONSULTATION.mode}`,
+    `- Consultation Fee: ${CONSULTATION.fee}`,
+    '',
+    `${CONSULTATION.ctaLabel}: ${whatsappUrl}`,
+    '',
+    '—',
     COMPANY_NAME,
     SERVICES_LIST,
-    `${CONTACT.email} · ${CONTACT.phone}`,
+    SITE_URL,
+    FOOTER_EMAIL,
+    '© Nitin Anand Consulting. All Rights Reserved.',
   ].join('\n');
 }
 
 function buildEmailHtml(assessment: AssessmentDetail): string {
+  const whatsappUrl = buildConsultationWhatsAppUrl(assessment.assessmentNumber);
+
   return `
     <div style="font-family: Helvetica, Arial, sans-serif; color: #1E293B; max-width: 560px; margin: 0 auto; line-height: 1.5;">
       <p>Dear ${assessment.company.contactPerson},</p>
@@ -81,10 +101,35 @@ function buildEmailHtml(assessment: AssessmentDetail): string {
         </tr>
       </table>
       <p>The attached report includes your module-wise scores, top findings, and recommendations.</p>
+
+      <div style="margin-top: 24px; padding: 16px 20px; background-color: #EEF3F8; border-radius: 8px;">
+        <p style="margin: 0 0 8px; font-size: 15px; font-weight: bold; color: #0F2A52;">Need Expert Guidance?</p>
+        <p style="margin: 0 0 12px; font-size: 13px; color: #334155;">
+          Book a ${CONSULTATION.duration} ${CONSULTATION.serviceName} to review your assessment report and
+          receive practical recommendations for improving your inventory and store / warehouse operations.
+        </p>
+        <p style="margin: 0 0 4px; font-size: 13px; color: #334155;"><strong>Consultation Details</strong></p>
+        <ul style="margin: 0 0 16px; padding-left: 18px; font-size: 13px; color: #334155;">
+          <li>Duration: ${CONSULTATION.duration}</li>
+          <li>Mode: ${CONSULTATION.mode}</li>
+          <li>Consultation Fee: ${CONSULTATION.fee}</li>
+        </ul>
+        <a
+          href="${whatsappUrl}"
+          style="display: inline-block; background-color: #0F2A52; color: #ffffff; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-size: 14px; font-weight: bold;"
+        >
+          ${CONSULTATION.ctaLabel}
+        </a>
+      </div>
+
       <p style="margin-top: 28px; padding-top: 12px; border-top: 1px solid #E2E8F0; font-size: 12px; color: #64748B;">
         <strong style="color: #0F2A52;">${COMPANY_NAME}</strong><br />
         ${SERVICES_LIST}<br />
-        ${CONTACT.email} · ${CONTACT.phone}
+        <a href="${SITE_URL}" style="color: #0F2A52; text-decoration: underline;">${SITE_URL}</a>
+        &nbsp;·&nbsp;
+        <a href="mailto:${FOOTER_EMAIL}" style="color: #0F2A52; text-decoration: underline;">${FOOTER_EMAIL}</a>
+        <br />
+        © Nitin Anand Consulting. All Rights Reserved.
       </p>
     </div>
   `;

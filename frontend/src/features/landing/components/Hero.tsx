@@ -2,7 +2,8 @@ import { Link } from 'react-router-dom';
 import { motion, type Variants } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '@/shared/components/Button';
-import { COMPANY_NAME, ROUTES } from '@/config/constants';
+import { COMPANY_NAME, CONSULTATION, ROUTES } from '@/config/constants';
+import { buildConsultationWhatsAppUrl } from '@/shared/utils/whatsapp';
 import nacLogoIcon from '@/assets/images/nac-logo-icon.png';
 
 const fadeUp: Variants = {
@@ -97,11 +98,16 @@ export function Hero() {
               <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
-          <Link to={ROUTES.contactUs} className="w-full sm:w-auto">
+          <a
+            href={buildConsultationWhatsAppUrl()}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full sm:w-auto"
+          >
             <Button variant="secondary" size="lg" className="w-full sm:w-auto">
-              Book Free Consultation
+              {CONSULTATION.ctaLabel}
             </Button>
-          </Link>
+          </a>
         </motion.div>
       </div>
     </section>

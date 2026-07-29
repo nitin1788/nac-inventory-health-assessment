@@ -1,6 +1,7 @@
 import { createElement as h } from 'react';
-import { Document, Image, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
-import { COMPANY_NAME, CONTACT, SERVICES_LIST } from '../../config/constants';
+import { Document, Image, Link, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
+import { COMPANY_NAME, CONSULTATION, CONTACT, SERVICES_LIST } from '../../config/constants';
+import { buildConsultationWhatsAppUrl } from '../../utils/whatsapp';
 import { NAC_LOGO_FULL_DATA_URI } from '../../assets/nacLogo';
 import type { AssessmentDetail, HealthRating, ModuleScoreInput } from '../assessment/assessment.types';
 import { generateRecommendations } from '../recommendations/recommendationEngine';
@@ -314,6 +315,36 @@ const styles = StyleSheet.create({
     color: '#64748B',
     lineHeight: 1.5,
   },
+  consultationBox: {
+    marginTop: 20,
+    padding: 14,
+    backgroundColor: '#EEF3F8',
+    borderRadius: 6,
+  },
+  consultationTitle: {
+    fontSize: 12,
+    fontFamily: 'Helvetica-Bold',
+    color: '#0F2A52',
+    marginBottom: 6,
+  },
+  consultationText: {
+    fontSize: 9,
+    lineHeight: 1.4,
+    color: '#334155',
+    marginBottom: 6,
+  },
+  consultationButton: {
+    alignSelf: 'flex-start',
+    marginTop: 4,
+    backgroundColor: '#0F2A52',
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontFamily: 'Helvetica-Bold',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 4,
+    textDecoration: 'none',
+  },
 });
 
 function formatDate(iso: string): string {
@@ -561,7 +592,30 @@ function buildRecommendationsPage(moduleRecommendations: ModuleRecommendation[])
   );
 }
 
-function buildPriorityActionPlanPage(moduleRecommendations: ModuleRecommendation[]) {
+function buildConsultationSection(assessmentNumber: string) {
+  return h(
+    View,
+    { style: styles.consultationBox },
+    h(Text, { style: styles.consultationTitle }, 'Need Expert Guidance?'),
+    h(
+      Text,
+      { style: styles.consultationText },
+      `Book a ${CONSULTATION.duration} ${CONSULTATION.serviceName} to review your assessment report and receive practical recommendations for improving your inventory and store / warehouse operations.`
+    ),
+    h(
+      Text,
+      { style: styles.consultationText },
+      `Duration: ${CONSULTATION.duration}   ·   Mode: ${CONSULTATION.mode}   ·   Consultation Fee: ${CONSULTATION.fee}`
+    ),
+    h(
+      Link,
+      { href: buildConsultationWhatsAppUrl(assessmentNumber), style: styles.consultationButton },
+      CONSULTATION.ctaLabel
+    )
+  );
+}
+
+function buildPriorityActionPlanPage(assessment: AssessmentDetail, moduleRecommendations: ModuleRecommendation[]) {
   const grouped = PRIORITY_ORDER.map((priority) => ({
     priority,
     recommendations: moduleRecommendations.filter((r) => r.priority === priority),
@@ -578,6 +632,7 @@ function buildPriorityActionPlanPage(moduleRecommendations: ModuleRecommendation
     ),
     ...grouped.map(({ priority, recommendations }) => buildPriorityGroup(priority, recommendations)),
     h(Text, { style: styles.disclaimer }, DISCLAIMER_TEXT),
+    buildConsultationSection(assessment.assessmentNumber),
     buildBrandFooter(),
     buildFooter()
   );
@@ -606,6 +661,6 @@ export function buildReportDocument(assessment: AssessmentDetail) {
     buildSummaryPage(assessment, overallSummary, overallMaxScore),
     buildModuleScoresPage(assessment),
     buildRecommendationsPage(moduleRecommendations),
-    buildPriorityActionPlanPage(moduleRecommendations)
+    buildPriorityActionPlanPage(assessment, moduleRecommendations)
   );
 }

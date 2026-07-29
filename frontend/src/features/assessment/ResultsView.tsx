@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AlertTriangle, CheckCircle2, Loader2, Mail, RefreshCw } from 'lucide-react';
 import { Link, Navigate, useLocation } from 'react-router-dom';
-import { CONTACT, ROUTES } from '@/config/constants';
+import { CONSULTATION, ROUTES } from '@/config/constants';
 import { ApiError } from '@/services/api/apiClient';
 import { submitAssessment } from '@/services/api/assessmentApi';
 import { Button } from '@/shared/components/Button';
 import { clsx } from '@/shared/utils/clsx';
+import { buildConsultationWhatsAppUrl } from '@/shared/utils/whatsapp';
 import { AssessmentHeader } from './components/AssessmentHeader';
 import type { CompanyProfile } from './questions/companyProfile';
 import { generateRecommendations } from './recommendations/recommendationEngine';
@@ -311,7 +312,13 @@ export function ResultsView() {
     setDownloadError(false);
     try {
       const { downloadPdfReport } = await import('./pdf/pdfGenerator');
-      await downloadPdfReport({ companyInfo, scoringResult, recommendationResult, generatedAt: new Date() });
+      await downloadPdfReport({
+        companyInfo,
+        scoringResult,
+        recommendationResult,
+        generatedAt: new Date(),
+        assessmentNumber: assessmentNumber ?? undefined,
+      });
     } catch {
       setDownloadError(true);
     } finally {
@@ -458,7 +465,7 @@ export function ResultsView() {
             </li>
             <li className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" />
-              Book a FREE Inventory Consultation with Nitin Anand Consulting.
+              Book an {CONSULTATION.serviceName} with Nitin Anand Consulting.
             </li>
           </ul>
 
@@ -474,16 +481,12 @@ export function ResultsView() {
               {isDownloading ? 'Generating PDF…' : '⬇ Download Full PDF Report'}
             </Button>
             <a
-              href={`mailto:${CONTACT.email}?subject=${encodeURIComponent(
-                'Free Inventory Consultation Request'
-              )}&body=${encodeURIComponent(
-                `Hi,\n\nI'd like to book a free inventory consultation.\n\nAssessment Number: ${
-                  assessmentNumber ?? ''
-                }\nCompany: ${companyInfo.companyName}\n`
-              )}`}
+              href={buildConsultationWhatsAppUrl(assessmentNumber ?? undefined)}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-brand bg-white px-5 py-2.5 text-sm font-medium text-brand transition-colors hover:border-accent hover:text-accent-dark sm:w-auto"
             >
-              📅 Book FREE Consultation
+              📅 {CONSULTATION.ctaLabel}
             </a>
             <Link to={ROUTES.landing} className="w-full sm:w-auto">
               <Button variant="secondary" className="w-full sm:w-auto">

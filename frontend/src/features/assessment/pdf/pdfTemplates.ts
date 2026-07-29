@@ -1,6 +1,7 @@
 import { createElement as h } from 'react';
-import { Document, Image, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
-import { COMPANY_NAME, CONTACT } from '@/config/constants';
+import { Document, Image, Link, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
+import { COMPANY_NAME, CONSULTATION, CONTACT } from '@/config/constants';
+import { buildConsultationWhatsAppUrl } from '@/shared/utils/whatsapp';
 import nacLogoFull from '@/assets/images/nac-logo-full.png';
 import type { ModuleRecommendation, PriorityLevel } from '../recommendations/recommendationTypes';
 import type { HealthRating, ModuleScore } from '../scoring/scoreTypes';
@@ -285,6 +286,36 @@ const styles = StyleSheet.create({
     color: '#64748B',
     lineHeight: 1.5,
   },
+  consultationBox: {
+    marginTop: 20,
+    padding: 14,
+    backgroundColor: '#EEF3F8',
+    borderRadius: 6,
+  },
+  consultationTitle: {
+    fontSize: 12,
+    fontFamily: 'Helvetica-Bold',
+    color: '#0F2A52',
+    marginBottom: 6,
+  },
+  consultationText: {
+    fontSize: 9,
+    lineHeight: 1.4,
+    color: '#334155',
+    marginBottom: 6,
+  },
+  consultationButton: {
+    alignSelf: 'flex-start',
+    marginTop: 4,
+    backgroundColor: '#0F2A52',
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontFamily: 'Helvetica-Bold',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 4,
+    textDecoration: 'none',
+  },
 });
 
 function formatDate(date: Date): string {
@@ -516,6 +547,29 @@ function buildPriorityGroup(priority: PriorityLevel, recommendations: ModuleReco
   );
 }
 
+function buildConsultationSection(assessmentNumber: string | undefined) {
+  return h(
+    View,
+    { style: styles.consultationBox },
+    h(Text, { style: styles.consultationTitle }, 'Need Expert Guidance?'),
+    h(
+      Text,
+      { style: styles.consultationText },
+      `Book a ${CONSULTATION.duration} ${CONSULTATION.serviceName} to review your assessment report and receive practical recommendations for improving your inventory and store / warehouse operations.`
+    ),
+    h(
+      Text,
+      { style: styles.consultationText },
+      `Duration: ${CONSULTATION.duration}   ·   Mode: ${CONSULTATION.mode}   ·   Consultation Fee: ${CONSULTATION.fee}`
+    ),
+    h(
+      Link,
+      { href: buildConsultationWhatsAppUrl(assessmentNumber), style: styles.consultationButton },
+      CONSULTATION.ctaLabel
+    )
+  );
+}
+
 function buildPriorityActionPlanPage(data: PdfReportData) {
   const { recommendationResult } = data;
   const grouped = PRIORITY_ORDER.map((priority) => ({
@@ -532,6 +586,7 @@ function buildPriorityActionPlanPage(data: PdfReportData) {
     h(Text, { style: styles.paragraph }, 'A consolidated action plan across all modules, grouped by business urgency.'),
     ...grouped.map(({ priority, recommendations }) => buildPriorityGroup(priority, recommendations)),
     h(Text, { style: styles.disclaimer }, DISCLAIMER_TEXT),
+    buildConsultationSection(data.assessmentNumber),
     buildFooter()
   );
 }

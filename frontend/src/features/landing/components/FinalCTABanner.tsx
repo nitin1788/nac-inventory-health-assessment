@@ -2,7 +2,8 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/shared/components/Button';
-import { ROUTES } from '@/config/constants';
+import { CONSULTATION, ROUTES } from '@/config/constants';
+import { buildConsultationWhatsAppUrl } from '@/shared/utils/whatsapp';
 
 export function FinalCTABanner() {
   return (
@@ -32,11 +33,16 @@ export function FinalCTABanner() {
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
-            <Link to={ROUTES.contactUs} className="w-full sm:w-auto">
+            <a
+              href={buildConsultationWhatsAppUrl()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto"
+            >
               <Button variant="outline" size="lg" className="w-full sm:w-auto">
-                Book Free Consultation
+                {CONSULTATION.ctaLabel}
               </Button>
-            </Link>
+            </a>
           </div>
         </motion.div>
       </div>

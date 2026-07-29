@@ -36,7 +36,7 @@ const FAQS: FaqItem[] = [
   {
     question: 'Can I get help acting on my results?',
     answer:
-      `Yes — you can book a free consultation directly from your results page, or reach out via our Contact page. ${COMPANY_NAME} offers inventory audits, warehouse audits, optimization, SOP development, and process improvement services.`,
+      `Yes — you can book a consultation directly from your results page, or reach out via our Contact page. ${COMPANY_NAME} offers inventory audits, warehouse audits, optimization, SOP development, and process improvement services.`,
   },
   {
     question: 'Can I retake the assessment later?',
