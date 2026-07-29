@@ -9,7 +9,7 @@ export const riskComplianceQuestions: Question[] = [
   {
     id: 'RSK-01',
     moduleId: 'risk-compliance',
-    text: 'Are Standard Operating Procedures (SOPs) documented for inventory and warehouse operations?',
+    text: 'Are Standard Operating Procedures (SOPs) documented for inventory and store / warehouse operations?',
     options: [
       { value: 1, label: 'Fully documented and regularly updated' },
       { value: 2, label: 'Documented but not regularly updated' },
@@ -53,7 +53,7 @@ export const riskComplianceQuestions: Question[] = [
   {
     id: 'RSK-05',
     moduleId: 'risk-compliance',
-    text: 'Does your organization have a structured continuous improvement program for inventory and warehouse operations?',
+    text: 'Does your organization have a structured continuous improvement program for inventory and store / warehouse operations?',
     options: [
       { value: 1, label: 'Fully Implemented' },
       { value: 2, label: 'Partially Implemented' },

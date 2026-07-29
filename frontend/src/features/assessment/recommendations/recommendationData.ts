@@ -122,7 +122,7 @@ export const RECOMMENDATION_DATA: Record<string, ModuleRecommendationConfig> = {
 
   'warehouse-operations': {
     Excellent: {
-      summary: 'Warehouse operations are running efficiently, with well-organized layout and workflows.',
+      summary: 'Store / warehouse operations are running efficiently, with well-organized layout and workflows.',
       recommendations: [
         'Benchmark current productivity metrics so future changes can be measured against them.',
         'Cross-train staff to protect efficiency during peak periods or absences.',
@@ -130,7 +130,7 @@ export const RECOMMENDATION_DATA: Record<string, ModuleRecommendationConfig> = {
       expectedBenefits: ['Sustained fulfillment speed', 'Resilience to staffing changes'],
     },
     Good: {
-      summary: 'Warehouse operations are solid, with a few workflow bottlenecks worth addressing.',
+      summary: 'Store / warehouse operations are solid, with a few workflow bottlenecks worth addressing.',
       recommendations: [
         'Map your current pick/pack/ship workflow and identify the slowest step.',
         'Review warehouse layout for fast-moving SKUs to shorten travel distance.',
@@ -138,7 +138,7 @@ export const RECOMMENDATION_DATA: Record<string, ModuleRecommendationConfig> = {
       expectedBenefits: ['Faster order fulfillment', 'Reduced labor time per order'],
     },
     'Needs Improvement': {
-      summary: 'Warehouse operations have noticeable inefficiencies that are slowing down fulfillment.',
+      summary: 'Store / warehouse operations have noticeable inefficiencies that are slowing down fulfillment.',
       recommendations: [
         'Reorganize storage so high-velocity SKUs are closest to packing/shipping areas.',
         'Standardize picking and packing procedures across all staff.',
@@ -147,7 +147,7 @@ export const RECOMMENDATION_DATA: Record<string, ModuleRecommendationConfig> = {
       expectedBenefits: ['Shorter order turnaround time', 'More consistent output across shifts'],
     },
     Critical: {
-      summary: 'Warehouse operations are largely unstructured, creating significant delays and errors.',
+      summary: 'Store / warehouse operations are largely unstructured, creating significant delays and errors.',
       recommendations: [
         'Establish a documented layout with clearly labeled storage locations.',
         'Introduce a basic standard operating procedure for receiving, put-away, picking, and shipping.',

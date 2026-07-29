@@ -2,14 +2,14 @@ import type { Module, Question } from './types';
 
 export const warehouseOperationsModule: Module = {
   id: 'warehouse-operations',
-  title: 'Warehouse Operations',
+  title: 'Store / Warehouse Operations',
 };
 
 export const warehouseOperationsQuestions: Question[] = [
   {
     id: 'WAR-01',
     moduleId: 'warehouse-operations',
-    text: 'Are warehouse /Store storage locations (Rack, Row, Bin, Shelf) clearly identified and labeled?',
+    text: 'Are your store / warehouse storage locations (Rack, Row, Bin, Shelf) clearly identified and labeled?',
     options: [
       { value: 1, label: 'Fully labeled with a standardized location system' },
       { value: 2, label: 'Partially labeled' },
@@ -44,7 +44,7 @@ export const warehouseOperationsQuestions: Question[] = [
   {
     id: 'WAR-04',
     moduleId: 'warehouse-operations',
-    text: 'Is every dispatch verified before goods leave the warehouse?',
+    text: 'Is every dispatch verified before goods leave the store / warehouse?',
     options: [
       { value: 1, label: 'Every dispatch is verified and documented' },
       { value: 2, label: 'Most dispatches are verified' },
@@ -55,7 +55,7 @@ export const warehouseOperationsQuestions: Question[] = [
   {
     id: 'WAR-05',
     moduleId: 'warehouse-operations',
-    text: 'How would you rate the overall warehouse organization and housekeeping (5S)?',
+    text: 'How would you rate the overall store / warehouse organization and housekeeping (5S)?',
     options: [
       { value: 1, label: 'Excellent (Highly organized and well maintained)' },
       { value: 2, label: 'Good' },
