@@ -17,7 +17,7 @@ import { errorHandlerMiddleware } from './middleware/errorHandler.middleware';
 export function createApp(): Application {
   const app = express();
 
-  // Trust the first hop reverse proxy (Railway and similar PaaS hosts sit
+  // Trust the first hop reverse proxy (Render and similar PaaS hosts sit
   // in front of the app). Required for express-rate-limit to key off the
   // real client IP from X-Forwarded-For instead of the proxy's IP — and
   // to avoid express-rate-limit's ERR_ERL_UNEXPECTED_X_FORWARDED_FOR

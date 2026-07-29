@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: nac-inventory-assessment-api
+    runtime: node
+    plan: starter
+    region: singapore
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/v1/health
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # All values below are secrets or environment-specific and must be
+      # set manually in the Render dashboard — never committed to the repo.
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: RESEND_FROM_EMAIL
+        sync: false
+      - key: NAC_LEAD_ALERT_EMAIL
+        sync: false
+      # The deployed frontend origin(s), comma-separated if more than
+      # one (e.g. custom domain + Vercel project URL). See
+      # backend/src/config/cors.ts.
+      - key: CORS_ORIGIN
+        sync: false
+      - key: TURNSTILE_SECRET_KEY
+        sync: false

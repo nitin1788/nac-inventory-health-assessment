@@ -19,7 +19,7 @@ This is **not** a SaaS product. See `docs/PRD.md` for the full product requireme
 | Database | Supabase (Postgres + Storage) |
 | Email | Resend |
 | PDF | React PDF |
-| Deployment | Netlify (frontend), Railway (backend), Supabase (database) |
+| Deployment | Vercel (frontend), Render (backend), Supabase (database) |
 
 ---
 
@@ -162,11 +162,12 @@ Both should return:
 
 | App | Platform | Notes |
 |---|---|---|
-| `frontend/` | Netlify | Build: `npm run build`, publish dir: `frontend/dist` |
-| `backend/` | Railway | Root dir: `backend/`, build: `npm run build`, start: `npm start` |
+| `frontend/` | Vercel | Root dir: `frontend/`, build: `npm run build`, output: `dist` (see `frontend/vercel.json`) |
+| `backend/` | Render | Root dir: `backend/`, build: `npm run build`, start: `npm start` (see `render.yaml`) |
 | Database | Supabase | Migrations applied manually via Supabase CLI/dashboard (not auto-applied on deploy) |
 
-Environment variables are set in each platform's dashboard — never committed to the repo.
+Environment variables are set in each platform's dashboard — never committed to the repo. See
+`docs/DEPLOYMENT.md` for the full production deployment guide and go-live checklist.
 
 ---
 
