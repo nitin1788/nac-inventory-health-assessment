@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AlertTriangle, CheckCircle2, Loader2, Mail, RefreshCw } from 'lucide-react';
 import { Link, Navigate, useLocation } from 'react-router-dom';
-import { CONSULTATION, ROUTES } from '@/config/constants';
+import { COMPANY_NAME, CONSULTATION, ROUTES } from '@/config/constants';
 import { ApiError } from '@/services/api/apiClient';
 import { submitAssessment } from '@/services/api/assessmentApi';
 import { Button } from '@/shared/components/Button';
 import { clsx } from '@/shared/utils/clsx';
+import { useDocumentMeta } from '@/shared/hooks/useDocumentMeta';
 import { buildConsultationWhatsAppUrl } from '@/shared/utils/whatsapp';
 import { AssessmentHeader } from './components/AssessmentHeader';
 import type { CompanyProfile } from './questions/companyProfile';
@@ -250,6 +251,11 @@ function SubmissionStatusBanner({
  * means the assessment was never completed, so redirect to start.
  */
 export function ResultsView() {
+  useDocumentMeta(
+    `Assessment Results | ${COMPANY_NAME}`,
+    `Your personalized ${COMPANY_NAME} Inventory Health Assessment results — module-by-module scores, health rating, and tailored recommendations.`
+  );
+
   const location = useLocation();
   const state = location.state as ResultsLocationState | null;
   const [isDownloading, setIsDownloading] = useState(false);
