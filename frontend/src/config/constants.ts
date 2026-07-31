@@ -29,6 +29,12 @@ export const ROUTES = {
   contactUs: '/contact-us',
   privacyPolicy: '/privacy-policy',
   termsAndConditions: '/terms-and-conditions',
+  inventoryConsulting: '/inventory-consulting',
+  warehouseConsulting: '/warehouse-consulting',
+  operationsConsulting: '/operations-consulting',
+  sopDevelopment: '/sop-development',
+  businessAnalytics: '/business-analytics',
+  trainingImplementation: '/training-implementation',
 } as const;
 
 /** Production origin — used to build absolute URLs (sitemap, canonical links). */

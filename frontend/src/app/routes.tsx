@@ -21,6 +21,25 @@ const TermsAndConditionsPage = lazy(() =>
 );
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage').then((m) => ({ default: m.NotFoundPage })));
 
+const InventoryConsultingPage = lazy(() =>
+  import('@/pages/InventoryConsultingPage').then((m) => ({ default: m.InventoryConsultingPage }))
+);
+const WarehouseConsultingPage = lazy(() =>
+  import('@/pages/WarehouseConsultingPage').then((m) => ({ default: m.WarehouseConsultingPage }))
+);
+const OperationsConsultingPage = lazy(() =>
+  import('@/pages/OperationsConsultingPage').then((m) => ({ default: m.OperationsConsultingPage }))
+);
+const SopDevelopmentPage = lazy(() =>
+  import('@/pages/SopDevelopmentPage').then((m) => ({ default: m.SopDevelopmentPage }))
+);
+const BusinessAnalyticsPage = lazy(() =>
+  import('@/pages/BusinessAnalyticsPage').then((m) => ({ default: m.BusinessAnalyticsPage }))
+);
+const TrainingImplementationPage = lazy(() =>
+  import('@/pages/TrainingImplementationPage').then((m) => ({ default: m.TrainingImplementationPage }))
+);
+
 /**
  * Central route table. Pages stay thin (see pages/ convention in
  * ARCHITECTURE.md) — all business logic lives in features/.
@@ -43,6 +62,12 @@ export function AppRoutes() {
         <Route path={ROUTES.contactUs} element={<ContactUsPage />} />
         <Route path={ROUTES.privacyPolicy} element={<PrivacyPolicyPage />} />
         <Route path={ROUTES.termsAndConditions} element={<TermsAndConditionsPage />} />
+        <Route path={ROUTES.inventoryConsulting} element={<InventoryConsultingPage />} />
+        <Route path={ROUTES.warehouseConsulting} element={<WarehouseConsultingPage />} />
+        <Route path={ROUTES.operationsConsulting} element={<OperationsConsultingPage />} />
+        <Route path={ROUTES.sopDevelopment} element={<SopDevelopmentPage />} />
+        <Route path={ROUTES.businessAnalytics} element={<BusinessAnalyticsPage />} />
+        <Route path={ROUTES.trainingImplementation} element={<TrainingImplementationPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Suspense>

@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { CheckCircle2 } from 'lucide-react';
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/shared/components/Button';
 import { CONSULTATION, ROUTES } from '@/config/constants';
 import { buildConsultationWhatsAppUrl } from '@/shared/utils/whatsapp';
@@ -31,22 +31,31 @@ export function Services() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-80px' }}
                 transition={{ duration: 0.5, delay: index * 0.08 }}
-                className="group flex flex-col rounded-2xl border border-slate-200 bg-white p-7 shadow-sm transition-all hover:-translate-y-1.5 hover:border-brand/30 hover:shadow-xl"
               >
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand text-white transition-transform duration-300 group-hover:scale-110">
-                  <Icon className="h-6 w-6" />
-                </span>
-                <h3 className="mt-5 text-lg font-semibold text-slate-900">{category.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-600">{category.description}</p>
+                <Link
+                  to={category.path}
+                  className="group flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-7 shadow-sm transition-all hover:-translate-y-1.5 hover:border-brand/30 hover:shadow-xl"
+                >
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand text-white transition-transform duration-300 group-hover:scale-110">
+                    <Icon className="h-6 w-6" />
+                  </span>
+                  <h3 className="mt-5 text-lg font-semibold text-slate-900">{category.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-slate-600">{category.description}</p>
 
-                <ul className="mt-5 space-y-2.5 border-t border-slate-100 pt-5">
-                  {category.services.map((service) => (
-                    <li key={service} className="flex items-start gap-2 text-sm text-slate-700">
-                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
-                      <span>{service}</span>
-                    </li>
-                  ))}
-                </ul>
+                  <ul className="mt-5 space-y-2.5 border-t border-slate-100 pt-5">
+                    {category.services.map((service) => (
+                      <li key={service} className="flex items-start gap-2 text-sm text-slate-700">
+                        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
+                        <span>{service}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <span className="mt-5 inline-flex items-center gap-1 border-t border-slate-100 pt-5 text-sm font-medium text-brand">
+                    Learn more
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                  </span>
+                </Link>
               </motion.div>
             );
           })}
