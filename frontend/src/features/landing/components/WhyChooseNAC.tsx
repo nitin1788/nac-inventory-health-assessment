@@ -1,9 +1,10 @@
 import { motion } from 'framer-motion';
+import { fadeUpItem, VIEWPORT_ONCE } from '@/shared/motion/variants';
 import { WHY_CHOOSE_NAC } from '../landing.data';
 
 export function WhyChooseNAC() {
   return (
-    <section id="why-nac" className="scroll-mt-20 bg-white py-20 sm:py-28">
+    <section id="why-nac" className="scroll-mt-20 bg-white py-20 sm:py-28 lg:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-sm font-semibold uppercase tracking-wide text-brand">Why NAC</p>
@@ -22,17 +23,18 @@ export function WhyChooseNAC() {
             return (
               <motion.div
                 key={item.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-80px' }}
-                transition={{ duration: 0.5, delay: index * 0.08 }}
-                className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-7 shadow-sm transition-all hover:-translate-y-1.5 hover:border-brand/30 hover:shadow-xl"
+                initial="hidden"
+                whileInView="show"
+                viewport={VIEWPORT_ONCE}
+                variants={fadeUpItem}
+                transition={{ delay: index * 0.08 }}
+                className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-7 shadow-soft transition-all hover:-translate-y-1.5 hover:border-brand/30 hover:shadow-soft-lg"
               >
                 <span
                   aria-hidden
-                  className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-accent transition-transform duration-300 group-hover:scale-x-100"
+                  className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-gradient-to-r from-brand to-accent transition-transform duration-300 group-hover:scale-x-100"
                 />
-                <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand text-white transition-transform duration-300 group-hover:scale-110">
+                <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-brand to-brand-dark text-white transition-transform duration-300 group-hover:scale-110">
                   <Icon className="h-6 w-6" />
                 </span>
                 <h3 className="mt-5 text-lg font-semibold text-slate-900">{item.title}</h3>

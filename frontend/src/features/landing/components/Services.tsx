@@ -2,13 +2,14 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/shared/components/Button';
+import { fadeUpItem, VIEWPORT_ONCE } from '@/shared/motion/variants';
 import { CONSULTATION, ROUTES } from '@/config/constants';
 import { buildConsultationWhatsAppUrl } from '@/shared/utils/whatsapp';
 import { SERVICE_CATEGORIES } from '../landing.data';
 
 export function Services() {
   return (
-    <section id="services" className="scroll-mt-20 bg-white py-20 sm:py-28">
+    <section id="services" className="scroll-mt-20 bg-white py-20 sm:py-28 lg:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-sm font-semibold uppercase tracking-wide text-brand">Services</p>
@@ -27,16 +28,21 @@ export function Services() {
             return (
               <motion.div
                 key={category.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-80px' }}
-                transition={{ duration: 0.5, delay: index * 0.08 }}
+                initial="hidden"
+                whileInView="show"
+                viewport={VIEWPORT_ONCE}
+                variants={fadeUpItem}
+                transition={{ delay: index * 0.08 }}
               >
                 <Link
                   to={category.path}
-                  className="group flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-7 shadow-sm transition-all hover:-translate-y-1.5 hover:border-brand/30 hover:shadow-xl"
+                  className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-7 shadow-soft transition-all hover:-translate-y-1.5 hover:border-brand/30 hover:shadow-soft-lg"
                 >
-                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand text-white transition-transform duration-300 group-hover:scale-110">
+                  <span
+                    aria-hidden
+                    className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-gradient-to-r from-brand to-accent transition-transform duration-300 group-hover:scale-x-100"
+                  />
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand to-brand-dark text-white transition-transform duration-300 group-hover:scale-110">
                     <Icon className="h-6 w-6" />
                   </span>
                   <h3 className="mt-5 text-lg font-semibold text-slate-900">{category.title}</h3>

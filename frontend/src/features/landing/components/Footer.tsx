@@ -14,7 +14,11 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer id="contact" className="scroll-mt-20 border-t border-slate-800 bg-[#14233d] py-20 text-white/70">
+    <footer id="contact" className="relative scroll-mt-20 bg-[#14233d] py-20 text-white/70">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-light to-transparent"
+      />
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-5">
           <div className="lg:col-span-2">

@@ -67,7 +67,7 @@ export function FaqPage() {
     >
       <div className="space-y-6">
         {FAQS.map((faq) => (
-          <div key={faq.question} className="rounded-xl border border-slate-200 p-5">
+          <div key={faq.question} className="rounded-xl border border-slate-200 p-5 shadow-soft transition-shadow hover:shadow-soft-lg">
             <h2 className="text-sm font-semibold text-slate-900 sm:text-base">{faq.question}</h2>
             <p className="mt-2 text-sm text-slate-600">{faq.answer}</p>
           </div>

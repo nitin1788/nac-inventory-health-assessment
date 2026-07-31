@@ -21,10 +21,10 @@ export function ContactUsPage() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <a
           href={`mailto:${CONTACT.email}`}
-          className="flex items-center gap-3 rounded-xl border border-slate-200 p-5 transition-colors hover:border-brand"
+          className="flex items-center gap-3 rounded-xl border border-slate-200 p-5 shadow-soft transition-all hover:-translate-y-0.5 hover:border-brand hover:shadow-soft-lg"
         >
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand/10">
-            <Mail className="h-5 w-5 text-brand" />
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-dark">
+            <Mail className="h-5 w-5 text-white" />
           </span>
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Email</p>
@@ -34,10 +34,10 @@ export function ContactUsPage() {
 
         <a
           href={`tel:${CONTACT.phone.replace(/\s+/g, '')}`}
-          className="flex items-center gap-3 rounded-xl border border-slate-200 p-5 transition-colors hover:border-brand"
+          className="flex items-center gap-3 rounded-xl border border-slate-200 p-5 shadow-soft transition-all hover:-translate-y-0.5 hover:border-brand hover:shadow-soft-lg"
         >
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand/10">
-            <Phone className="h-5 w-5 text-brand" />
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-dark">
+            <Phone className="h-5 w-5 text-white" />
           </span>
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Phone</p>

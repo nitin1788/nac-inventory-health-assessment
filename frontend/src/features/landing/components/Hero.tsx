@@ -1,30 +1,21 @@
 import { Link } from 'react-router-dom';
-import { motion, type Variants } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '@/shared/components/Button';
+import { SectionGlow } from '@/shared/components/SectionGlow';
+import { fadeUp } from '@/shared/motion/variants';
 import { COMPANY_NAME, CONSULTATION, ROUTES } from '@/config/constants';
 import { buildConsultationWhatsAppUrl } from '@/shared/utils/whatsapp';
+import { TRUST_PILLARS } from '../landing.data';
 import nacLogoIcon from '@/assets/images/nac-logo-icon.png';
-
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 24 },
-  show: (delay: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, delay, ease: 'easeOut' },
-  }),
-};
 
 export function Hero() {
   return (
     <section className="relative overflow-hidden bg-white pb-24 pt-40 sm:pb-32 sm:pt-48">
+      <SectionGlow tone="navy" grid />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(15,42,82,0.06),_transparent_60%)]"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.035] [background-image:linear-gradient(#0F2A52_1px,transparent_1px),linear-gradient(90deg,#0F2A52_1px,transparent_1px)] [background-size:56px_56px]"
+        className="pointer-events-none absolute -right-24 top-24 h-72 w-72 rounded-full bg-mesh-gold blur-3xl"
       />
       <div
         aria-hidden
@@ -70,9 +61,13 @@ export function Hero() {
           animate="show"
           custom={0.2}
           variants={fadeUp}
-          className="mt-6 text-4xl font-bold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl lg:text-6xl"
+          className="mt-6 text-4xl font-bold leading-[1.08] tracking-tighter text-slate-900 sm:text-5xl lg:text-7xl"
         >
-          Know Exactly Where Your Inventory Operations Stand
+          Know Exactly Where Your{' '}
+          <span className="bg-gradient-to-r from-brand to-accent-dark bg-clip-text text-transparent">
+            Inventory Operations
+          </span>{' '}
+          Stand
         </motion.h1>
 
         <motion.p
@@ -111,6 +106,27 @@ export function Hero() {
               {CONSULTATION.ctaLabel}
             </Button>
           </a>
+        </motion.div>
+
+        <motion.div
+          initial="hidden"
+          animate="show"
+          custom={0.5}
+          variants={fadeUp}
+          className="mx-auto mt-12 flex max-w-3xl flex-wrap items-center justify-center gap-3"
+        >
+          {TRUST_PILLARS.map((pillar) => {
+            const Icon = pillar.icon;
+            return (
+              <span
+                key={pillar.label}
+                className="inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/60 px-4 py-1.5 text-xs font-medium text-slate-700 shadow-soft backdrop-blur-sm"
+              >
+                <Icon className="h-3.5 w-3.5 text-brand" />
+                {pillar.label}
+              </span>
+            );
+          })}
         </motion.div>
       </div>
     </section>

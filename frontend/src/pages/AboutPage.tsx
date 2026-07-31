@@ -52,7 +52,7 @@ export function AboutPage() {
         <h2 className="text-lg font-semibold text-slate-900">By the Numbers</h2>
         <dl className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-4">
           {TRUST_STATS.map((stat) => (
-            <div key={stat.label} className="rounded-xl border border-slate-200 p-4 text-center">
+            <div key={stat.label} className="rounded-xl border border-slate-200 p-4 text-center shadow-soft">
               <dt className="text-xs text-slate-500">{stat.label}</dt>
               <dd className="mt-1 text-xl font-bold text-brand">{stat.value}</dd>
             </div>

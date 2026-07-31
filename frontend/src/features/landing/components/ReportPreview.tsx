@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { BarChart3, FileText } from 'lucide-react';
+import { fadeUpItem, VIEWPORT_ONCE } from '@/shared/motion/variants';
 
 /**
  * Illustrative sample data only — this is a mocked preview of the report
@@ -25,7 +26,7 @@ function SampleBadge() {
 
 function KpiDashboardPreview() {
   return (
-    <div className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+    <div className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-soft-lg sm:p-8">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-sm font-semibold uppercase tracking-wide text-brand">
@@ -81,7 +82,7 @@ function KpiDashboardPreview() {
 
 function SamplePdfPreview() {
   return (
-    <div className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+    <div className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-soft-lg sm:p-8">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-sm font-semibold uppercase tracking-wide text-brand">
@@ -136,7 +137,7 @@ function SamplePdfPreview() {
 
 export function ReportPreview() {
   return (
-    <section id="report-preview" className="scroll-mt-20 bg-white py-20 sm:py-28">
+    <section id="report-preview" className="scroll-mt-20 bg-white py-20 sm:py-28 lg:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-sm font-semibold uppercase tracking-wide text-brand">
@@ -153,19 +154,15 @@ export function ReportPreview() {
         </div>
 
         <div className="mt-14 grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.5 }}
-          >
+          <motion.div initial="hidden" whileInView="show" viewport={VIEWPORT_ONCE} variants={fadeUpItem}>
             <KpiDashboardPreview />
           </motion.div>
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.5, delay: 0.08 }}
+            initial="hidden"
+            whileInView="show"
+            viewport={VIEWPORT_ONCE}
+            variants={fadeUpItem}
+            transition={{ delay: 0.08 }}
           >
             <SamplePdfPreview />
           </motion.div>

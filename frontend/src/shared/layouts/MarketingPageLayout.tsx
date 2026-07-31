@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Navbar } from '@/features/landing/components/Navbar';
 import { Footer } from '@/features/landing/components/Footer';
+import { SectionGlow } from '@/shared/components/SectionGlow';
 import { useSeo } from '@/shared/hooks/useSeo';
 import { useJsonLd } from '@/shared/hooks/useJsonLd';
 import { SITE_URL } from '@/config/constants';
@@ -40,11 +41,15 @@ export function MarketingPageLayout({
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
-      <main id="main-content" className="mx-auto max-w-3xl px-6 pb-20 pt-32 sm:pb-24 sm:pt-36 lg:px-8">
-        <p className="text-xs font-semibold uppercase tracking-wide text-brand">{eyebrow}</p>
-        <h1 className="mt-2 text-3xl font-semibold text-slate-900 sm:text-4xl">{heading}</h1>
-        <div className="mt-8 space-y-6 text-sm leading-relaxed text-slate-700 sm:text-base">
-          {children}
+      <main id="main-content" className="relative mx-auto max-w-3xl px-6 pb-20 pt-32 sm:pb-24 sm:pt-36 lg:px-8">
+        <SectionGlow tone="navy" />
+        <div className="relative">
+          <p className="text-xs font-semibold uppercase tracking-wide text-brand">{eyebrow}</p>
+          <span aria-hidden className="mt-3 block h-1 w-14 rounded-full bg-accent" />
+          <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">{heading}</h1>
+          <div className="mt-8 space-y-6 text-sm leading-relaxed text-slate-700 sm:text-base">
+            {children}
+          </div>
         </div>
       </main>
       <Footer />

@@ -22,8 +22,10 @@ export function Navbar() {
   return (
     <header
       className={clsx(
-        'fixed inset-x-0 top-0 z-50 transition-colors duration-300',
-        isScrolled ? 'bg-white/90 shadow-sm backdrop-blur-md' : 'bg-transparent'
+        'fixed inset-x-0 top-0 z-50 transition-all duration-300',
+        isScrolled
+          ? 'border-b border-slate-200/60 bg-white/80 shadow-soft backdrop-blur-lg'
+          : 'border-b border-transparent bg-transparent'
       )}
     >
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
@@ -34,9 +36,10 @@ export function Navbar() {
             <Link
               key={link.href}
               to={link.href}
-              className="text-sm font-medium text-slate-600 transition-colors hover:text-brand"
+              className="group relative text-sm font-medium text-slate-600 transition-colors hover:text-brand"
             >
               {link.label}
+              <span className="absolute -bottom-1 left-0 h-px w-full origin-left scale-x-0 bg-gradient-to-r from-brand to-accent transition-transform duration-300 group-hover:scale-x-100" />
             </Link>
           ))}
         </div>

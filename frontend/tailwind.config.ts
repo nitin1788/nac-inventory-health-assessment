@@ -35,6 +35,18 @@ const config: Config = {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
+      boxShadow: {
+        // Layered, soft-edged navy shadow — replaces flat shadow-sm on
+        // cards that need more depth without looking harsh.
+        soft: '0 2px 8px -2px rgba(15,42,82,0.08), 0 12px 32px -12px rgba(15,42,82,0.14)',
+        'soft-lg': '0 4px 16px -4px rgba(15,42,82,0.10), 0 24px 48px -16px rgba(15,42,82,0.18)',
+        // Subtle gold-tinted glow for hover/CTA emphasis.
+        glow: '0 0 0 1px rgba(200,155,60,0.15), 0 8px 32px -8px rgba(200,155,60,0.25)',
+      },
+      backgroundImage: {
+        'mesh-brand': 'linear-gradient(135deg, #0F2A52 0%, #0A1D3B 100%)',
+        'mesh-gold': 'radial-gradient(circle at 30% 20%, rgba(200,155,60,0.16), transparent 60%)',
+      },
     },
   },
   plugins: [],

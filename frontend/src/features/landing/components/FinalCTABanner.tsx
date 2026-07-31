@@ -7,7 +7,8 @@ import { buildConsultationWhatsAppUrl } from '@/shared/utils/whatsapp';
 
 export function FinalCTABanner() {
   return (
-    <section className="relative overflow-hidden bg-brand py-20 sm:py-24">
+    <section className="relative overflow-hidden bg-mesh-brand py-20 sm:py-24">
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent to-transparent" />
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(255,255,255,0.06),_transparent_65%)]"

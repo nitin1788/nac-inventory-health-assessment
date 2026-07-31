@@ -1,9 +1,10 @@
 import { motion } from 'framer-motion';
 import { Quote } from 'lucide-react';
+import { fadeUpItem, VIEWPORT_ONCE } from '@/shared/motion/variants';
 
 export function Testimonials() {
   return (
-    <section className="bg-slate-50 py-20 sm:py-28">
+    <section className="bg-gradient-to-b from-slate-50 to-white py-20 sm:py-28 lg:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-sm font-semibold uppercase tracking-wide text-brand">
@@ -15,11 +16,11 @@ export function Testimonials() {
         </div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.5 }}
-          className="mx-auto mt-14 flex max-w-2xl flex-col items-center gap-4 rounded-2xl border border-dashed border-slate-300 bg-white px-8 py-14 text-center shadow-sm"
+          initial="hidden"
+          whileInView="show"
+          viewport={VIEWPORT_ONCE}
+          variants={fadeUpItem}
+          className="mx-auto mt-14 flex max-w-2xl flex-col items-center gap-4 rounded-2xl border border-dashed border-slate-300 bg-white px-8 py-14 text-center shadow-soft"
         >
           <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-50 text-brand">
             <Quote className="h-6 w-6" />

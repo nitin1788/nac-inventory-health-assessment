@@ -1,9 +1,10 @@
 import { motion } from 'framer-motion';
+import { fadeUpItem, VIEWPORT_ONCE } from '@/shared/motion/variants';
 import { INDUSTRIES_SERVED } from '../landing.data';
 
 export function IndustriesServed() {
   return (
-    <section className="bg-white py-20 sm:py-28">
+    <section className="bg-white py-20 sm:py-28 lg:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-sm font-semibold uppercase tracking-wide text-brand">
@@ -24,11 +25,12 @@ export function IndustriesServed() {
             return (
               <motion.div
                 key={industry.name}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-80px' }}
-                transition={{ duration: 0.4, delay: index * 0.05 }}
-                className="group flex flex-col items-center gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-7 text-center shadow-sm transition-all hover:-translate-y-1 hover:border-brand/30 hover:shadow-md"
+                initial="hidden"
+                whileInView="show"
+                viewport={VIEWPORT_ONCE}
+                variants={fadeUpItem}
+                transition={{ delay: index * 0.05 }}
+                className="group flex flex-col items-center gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-7 text-center shadow-soft transition-all hover:-translate-y-1 hover:border-brand/30 hover:shadow-soft-lg"
               >
                 <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand transition-transform group-hover:scale-105">
                   <Icon className="h-6 w-6" />

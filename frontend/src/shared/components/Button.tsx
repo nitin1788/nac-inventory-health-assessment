@@ -9,11 +9,11 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const VARIANT_CLASSES: Record<NonNullable<ButtonProps['variant']>, string> = {
   // Navy fill, gold on hover — the site's primary CTA treatment.
-  primary: 'bg-brand text-white hover:bg-accent hover:text-ink',
+  primary: 'bg-brand text-white shadow-soft hover:bg-accent hover:text-ink hover:shadow-glow',
   secondary: 'bg-white text-brand border border-brand hover:border-accent hover:text-accent-dark',
   ghost: 'bg-transparent text-brand hover:bg-accent/10 hover:text-accent-dark',
   // White button for use on navy surfaces (e.g. the final CTA banner card).
-  inverse: 'bg-white text-brand hover:bg-accent hover:text-ink',
+  inverse: 'bg-white text-brand shadow-soft hover:bg-accent hover:text-ink',
   // Outlined white button — the secondary CTA treatment on navy/brand surfaces.
   outline: 'border border-white/40 bg-transparent text-white hover:border-white hover:bg-white/10',
 };
@@ -39,7 +39,7 @@ export function Button({
   return (
     <button
       className={clsx(
-        'inline-flex items-center justify-center gap-2 rounded-md font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50',
+        'inline-flex items-center justify-center gap-2 rounded-md font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100',
         VARIANT_CLASSES[variant],
         SIZE_CLASSES[size],
         className

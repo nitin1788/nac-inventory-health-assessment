@@ -6,6 +6,8 @@ import { Footer } from '@/features/landing/components/Footer';
 import { FinalCTABanner } from '@/features/landing/components/FinalCTABanner';
 import { SERVICE_CATEGORIES, type ServiceCategory } from '@/features/landing/landing.data';
 import { Button } from '@/shared/components/Button';
+import { SectionGlow } from '@/shared/components/SectionGlow';
+import { fadeUpItem, VIEWPORT_ONCE } from '@/shared/motion/variants';
 import { useSeo } from '@/shared/hooks/useSeo';
 import { useJsonLd } from '@/shared/hooks/useJsonLd';
 import { buildConsultationWhatsAppUrl } from '@/shared/utils/whatsapp';
@@ -78,10 +80,7 @@ export function ServiceLandingView({ service }: ServiceLandingViewProps) {
       <Navbar />
       <main id="main-content">
         <section className="relative overflow-hidden bg-white pb-16 pt-40 sm:pb-20 sm:pt-48">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(15,42,82,0.06),_transparent_60%)]"
-          />
+          <SectionGlow tone="navy" />
           <div className="relative mx-auto max-w-4xl px-6 text-center lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 16 }}
@@ -94,7 +93,7 @@ export function ServiceLandingView({ service }: ServiceLandingViewProps) {
               >
                 Services
               </Link>
-              <span className="mx-auto mt-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand text-white shadow-sm">
+              <span className="mx-auto mt-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand to-brand-dark text-white shadow-soft">
                 <Icon className="h-7 w-7" />
               </span>
               <h1 className="mt-6 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">{service.title}</h1>
@@ -121,18 +120,19 @@ export function ServiceLandingView({ service }: ServiceLandingViewProps) {
           </div>
         </section>
 
-        <section className="bg-white py-20 sm:py-28">
+        <section className="bg-white py-20 sm:py-28 lg:py-32">
           <div className="mx-auto max-w-5xl px-6 lg:px-8">
             <h2 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">What&apos;s Included</h2>
             <ul className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
               {service.services.map((item, index) => (
                 <motion.li
                   key={item}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-80px' }}
-                  transition={{ duration: 0.4, delay: index * 0.05 }}
-                  className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
+                  initial="hidden"
+                  whileInView="show"
+                  viewport={VIEWPORT_ONCE}
+                  variants={fadeUpItem}
+                  transition={{ delay: index * 0.05 }}
+                  className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-soft"
                 >
                   <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-brand" />
                   <span className="text-sm font-medium text-slate-800">{item}</span>
@@ -142,18 +142,19 @@ export function ServiceLandingView({ service }: ServiceLandingViewProps) {
           </div>
         </section>
 
-        <section className="bg-slate-50 py-20 sm:py-28">
+        <section className="bg-slate-50 py-20 sm:py-28 lg:py-32">
           <div className="mx-auto max-w-5xl px-6 lg:px-8">
             <h2 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">Why It Matters</h2>
             <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-3">
               {service.benefits.map((benefit, index) => (
                 <motion.div
                   key={benefit.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-80px' }}
-                  transition={{ duration: 0.5, delay: index * 0.08 }}
-                  className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
+                  initial="hidden"
+                  whileInView="show"
+                  viewport={VIEWPORT_ONCE}
+                  variants={fadeUpItem}
+                  transition={{ delay: index * 0.08 }}
+                  className="rounded-2xl border border-slate-200 bg-white p-6 shadow-soft"
                 >
                   <h3 className="text-base font-semibold text-slate-900">{benefit.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-slate-600">{benefit.description}</p>
@@ -163,14 +164,14 @@ export function ServiceLandingView({ service }: ServiceLandingViewProps) {
           </div>
         </section>
 
-        <section className="bg-white py-20 sm:py-28">
+        <section className="bg-white py-20 sm:py-28 lg:py-32">
           <div className="mx-auto max-w-3xl px-6 lg:px-8">
             <h2 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
               Frequently Asked Questions
             </h2>
             <div className="mt-10 space-y-6">
               {service.faqs.map((faq) => (
-                <div key={faq.question} className="rounded-xl border border-slate-200 p-5">
+                <div key={faq.question} className="rounded-xl border border-slate-200 p-5 shadow-soft">
                   <h3 className="text-sm font-semibold text-slate-900 sm:text-base">{faq.question}</h3>
                   <p className="mt-2 text-sm text-slate-600">{faq.answer}</p>
                 </div>
@@ -180,7 +181,7 @@ export function ServiceLandingView({ service }: ServiceLandingViewProps) {
         </section>
 
         {relatedServices.length > 0 ? (
-          <section className="bg-slate-50 py-20 sm:py-28">
+          <section className="bg-slate-50 py-20 sm:py-28 lg:py-32">
             <div className="mx-auto max-w-5xl px-6 lg:px-8">
               <h2 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">Related Services</h2>
               <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-3">
@@ -189,16 +190,21 @@ export function ServiceLandingView({ service }: ServiceLandingViewProps) {
                   return (
                     <motion.div
                       key={related.slug}
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true, margin: '-80px' }}
-                      transition={{ duration: 0.5, delay: index * 0.08 }}
+                      initial="hidden"
+                      whileInView="show"
+                      viewport={VIEWPORT_ONCE}
+                      variants={fadeUpItem}
+                      transition={{ delay: index * 0.08 }}
                     >
                       <Link
                         to={related.path}
-                        className="group flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:border-brand/30 hover:shadow-md"
+                        className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-soft transition-all hover:-translate-y-1 hover:border-brand/30 hover:shadow-soft-lg"
                       >
-                        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand text-white transition-transform duration-300 group-hover:scale-110">
+                        <span
+                          aria-hidden
+                          className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-gradient-to-r from-brand to-accent transition-transform duration-300 group-hover:scale-x-100"
+                        />
+                        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand to-brand-dark text-white transition-transform duration-300 group-hover:scale-110">
                           <RelatedIcon className="h-5 w-5" />
                         </span>
                         <h3 className="mt-4 text-base font-semibold text-slate-900">{related.title}</h3>
