@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { MarketingPageLayout } from '@/shared/layouts/MarketingPageLayout';
+import { useJsonLd } from '@/shared/hooks/useJsonLd';
 import { COMPANY_NAME, ROUTES } from '@/config/constants';
 
 interface FaqItem {
@@ -46,10 +47,21 @@ const FAQS: FaqItem[] = [
 ];
 
 export function FaqPage() {
+  useJsonLd({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: FAQS.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+    })),
+  });
+
   return (
     <MarketingPageLayout
-      title={`FAQ | ${COMPANY_NAME}`}
-      description="Frequently asked questions about the free Inventory Health Assessment, your report, and how it works."
+      title={`Frequently Asked Questions | ${COMPANY_NAME}`}
+      description="Answers to common questions about the free Inventory Health Assessment, your scored report, data privacy, and how the process works."
+      path={ROUTES.faq}
       eyebrow="Support"
       heading="Frequently Asked Questions"
     >

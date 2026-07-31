@@ -1,11 +1,14 @@
 import type { ReactNode } from 'react';
 import { Navbar } from '@/features/landing/components/Navbar';
 import { Footer } from '@/features/landing/components/Footer';
-import { useDocumentMeta } from '@/shared/hooks/useDocumentMeta';
+import { useSeo } from '@/shared/hooks/useSeo';
+import { useJsonLd } from '@/shared/hooks/useJsonLd';
+import { SITE_URL } from '@/config/constants';
 
 interface MarketingPageLayoutProps {
   title: string;
   description: string;
+  path: string;
   eyebrow: string;
   heading: string;
   children: ReactNode;
@@ -19,11 +22,20 @@ interface MarketingPageLayoutProps {
 export function MarketingPageLayout({
   title,
   description,
+  path,
   eyebrow,
   heading,
   children,
 }: MarketingPageLayoutProps) {
-  useDocumentMeta(title, description);
+  useSeo({ title, description, path });
+  useJsonLd({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+      { '@type': 'ListItem', position: 2, name: heading, item: `${SITE_URL}${path}` },
+    ],
+  });
 
   return (
     <div className="min-h-screen bg-white">

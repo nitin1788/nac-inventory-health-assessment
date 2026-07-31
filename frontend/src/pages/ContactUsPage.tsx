@@ -8,7 +8,8 @@ export function ContactUsPage() {
   return (
     <MarketingPageLayout
       title={`Contact Us | ${COMPANY_NAME}`}
-      description={`Get in touch with ${COMPANY_NAME} for inventory audits, warehouse audits, optimization, and consulting services.`}
+      description={`Get in touch with ${COMPANY_NAME} in Mumbai for inventory audits, warehouse audits, optimization, and consulting services.`}
+      path={ROUTES.contactUs}
       eyebrow="Get In Touch"
       heading="Contact Us"
     >

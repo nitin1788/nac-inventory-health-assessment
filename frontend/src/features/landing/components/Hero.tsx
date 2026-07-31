@@ -39,6 +39,9 @@ export function Hero() {
           variants={fadeUp}
           src={nacLogoIcon}
           alt={`${COMPANY_NAME} logo`}
+          width={743}
+          height={358}
+          fetchPriority="high"
           className="mx-auto h-16 w-auto sm:h-20"
         />
 

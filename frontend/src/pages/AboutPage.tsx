@@ -1,12 +1,13 @@
 import { MarketingPageLayout } from '@/shared/layouts/MarketingPageLayout';
 import { SERVICES, WHY_CHOOSE_NAC, TRUST_STATS, INDUSTRIES } from '@/features/landing/landing.data';
-import { COMPANY_NAME } from '@/config/constants';
+import { COMPANY_NAME, ROUTES } from '@/config/constants';
 
 export function AboutPage() {
   return (
     <MarketingPageLayout
-      title={`About Us | ${COMPANY_NAME}`}
+      title={`About Us | ${COMPANY_NAME} — Inventory & Warehouse Consulting`}
       description={`Learn about ${COMPANY_NAME} — practical, data-driven inventory and warehouse consulting for manufacturers, distributors, and warehouse operators.`}
+      path={ROUTES.about}
       eyebrow="About Us"
       heading={`About ${COMPANY_NAME}`}
     >

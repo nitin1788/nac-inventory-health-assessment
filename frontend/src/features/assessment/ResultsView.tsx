@@ -6,7 +6,7 @@ import { ApiError } from '@/services/api/apiClient';
 import { submitAssessment } from '@/services/api/assessmentApi';
 import { Button } from '@/shared/components/Button';
 import { clsx } from '@/shared/utils/clsx';
-import { useDocumentMeta } from '@/shared/hooks/useDocumentMeta';
+import { useSeo } from '@/shared/hooks/useSeo';
 import { buildConsultationWhatsAppUrl } from '@/shared/utils/whatsapp';
 import { AssessmentHeader } from './components/AssessmentHeader';
 import type { CompanyProfile } from './questions/companyProfile';
@@ -251,10 +251,12 @@ function SubmissionStatusBanner({
  * means the assessment was never completed, so redirect to start.
  */
 export function ResultsView() {
-  useDocumentMeta(
-    `Assessment Results | ${COMPANY_NAME}`,
-    `Your personalized ${COMPANY_NAME} Inventory Health Assessment results — module-by-module scores, health rating, and tailored recommendations.`
-  );
+  useSeo({
+    title: `Your Assessment Results | ${COMPANY_NAME}`,
+    description: `Your personalized ${COMPANY_NAME} Inventory Health Assessment results — module-by-module scores, health rating, and tailored recommendations.`,
+    path: ROUTES.results,
+    noindex: true,
+  });
 
   const location = useLocation();
   const state = location.state as ResultsLocationState | null;

@@ -33,3 +33,32 @@ export const ROUTES = {
 
 /** Production origin — used to build absolute URLs (sitemap, canonical links). */
 export const SITE_URL = 'https://nitinanandconsulting.in';
+
+/** Default social share image for Open Graph / Twitter Card tags. */
+export const DEFAULT_OG_IMAGE = `${SITE_URL}/android-chrome-512x512.png`;
+
+/** Registered business details — used for the ProfessionalService JSON-LD schema. */
+export const BUSINESS_INFO = {
+  name: COMPANY_NAME,
+  legalType: 'ProfessionalService',
+  telephone: '+91 8779295873',
+  address: {
+    streetAddress: 'Amboli, Andheri West',
+    addressLocality: 'Mumbai',
+    addressRegion: 'Maharashtra',
+    postalCode: '400058',
+    addressCountry: 'IN',
+  },
+  areaServed: ['Mumbai', 'MMR', 'Maharashtra', 'India'],
+  services: [
+    'Inventory Health Assessment',
+    'Inventory Audit',
+    'Warehouse Audit',
+    'Warehouse Consulting',
+    'Inventory Consulting',
+    'Operations Consulting',
+    'SOP Development',
+    'Process Improvement',
+    'Business Analytics',
+  ],
+} as const;

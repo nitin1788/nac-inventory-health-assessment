@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /assessment/questions
+Disallow: /assessment/results
 
 Sitemap: https://nitinanandconsulting.in/sitemap.xml

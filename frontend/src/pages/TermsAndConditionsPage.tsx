@@ -1,5 +1,5 @@
 import { MarketingPageLayout } from '@/shared/layouts/MarketingPageLayout';
-import { COMPANY_NAME, CONTACT } from '@/config/constants';
+import { COMPANY_NAME, CONTACT, ROUTES } from '@/config/constants';
 
 const LAST_UPDATED = 'July 2026';
 
@@ -8,6 +8,7 @@ export function TermsAndConditionsPage() {
     <MarketingPageLayout
       title={`Terms & Conditions | ${COMPANY_NAME}`}
       description={`The terms and conditions governing use of the ${COMPANY_NAME} Inventory Health Assessment.`}
+      path={ROUTES.termsAndConditions}
       eyebrow="Legal"
       heading="Terms & Conditions"
     >

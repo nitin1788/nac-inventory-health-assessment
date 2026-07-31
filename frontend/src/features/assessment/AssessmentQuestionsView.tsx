@@ -1,7 +1,7 @@
 import { AnimatePresence } from 'framer-motion';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { COMPANY_NAME, ROUTES } from '@/config/constants';
-import { useDocumentMeta } from '@/shared/hooks/useDocumentMeta';
+import { useSeo } from '@/shared/hooks/useSeo';
 import { AssessmentHeader } from './components/AssessmentHeader';
 import { AssessmentProgressBar } from './components/AssessmentProgressBar';
 import { QuestionCard } from './components/QuestionCard';
@@ -12,10 +12,12 @@ import type { CompanyProfile } from './questions/companyProfile';
 import { calculateScore } from './scoring/scoreCalculator';
 
 export function AssessmentQuestionsView() {
-  useDocumentMeta(
-    `Free Inventory Health Assessment | ${COMPANY_NAME}`,
-    `Take the free ${COMPANY_NAME} Inventory Health Assessment — a fast, expert-backed evaluation of your inventory, warehouse, and operations with a personalized scored report.`
-  );
+  useSeo({
+    title: `Assessment In Progress | ${COMPANY_NAME}`,
+    description: `Your in-progress ${COMPANY_NAME} Inventory Health Assessment.`,
+    path: ROUTES.assessmentQuestions,
+    noindex: true,
+  });
 
   const navigate = useNavigate();
   const location = useLocation();

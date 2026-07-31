@@ -1,9 +1,18 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { PageLayout } from '@/shared/layouts/PageLayout';
 import { Button } from '@/shared/components/Button';
-import { ROUTES } from '@/config/constants';
+import { useSeo } from '@/shared/hooks/useSeo';
+import { COMPANY_NAME, ROUTES } from '@/config/constants';
 
 export function NotFoundPage() {
+  const location = useLocation();
+  useSeo({
+    title: `Page Not Found | ${COMPANY_NAME}`,
+    description: "The page you're looking for doesn't exist or may have moved.",
+    path: location.pathname,
+    noindex: true,
+  });
+
   return (
     <PageLayout>
       <main

@@ -34,7 +34,10 @@
       content="Free Inventory Health Assessment from Nitin Anand Consulting. Get an instant, expert-backed report on your inventory management practices."
     />
     <meta property="og:url" content="https://nitinanandconsulting.in/" />
-    <meta property="og:image" content="https://nitinanandconsulting.in/favicon.png" />
+    <meta property="og:image" content="https://nitinanandconsulting.in/android-chrome-512x512.png" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
+    <meta property="og:locale" content="en_IN" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary" />
@@ -43,7 +46,53 @@
       name="twitter:description"
       content="Free Inventory Health Assessment from Nitin Anand Consulting. Get an instant, expert-backed report on your inventory management practices."
     />
-    <meta name="twitter:image" content="https://nitinanandconsulting.in/favicon.png" />
+    <meta name="twitter:image" content="https://nitinanandconsulting.in/android-chrome-512x512.png" />
+
+    <!-- Structured Data: ProfessionalService (Organization + Local Business) and WebSite -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "ProfessionalService",
+            "@id": "https://nitinanandconsulting.in/#organization",
+            "name": "Nitin Anand Consulting",
+            "url": "https://nitinanandconsulting.in/",
+            "logo": "https://nitinanandconsulting.in/android-chrome-512x512.png",
+            "image": "https://nitinanandconsulting.in/android-chrome-512x512.png",
+            "telephone": "+91 8779295873",
+            "email": "nitinanandconsulting@gmail.com",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Amboli, Andheri West",
+              "addressLocality": "Mumbai",
+              "addressRegion": "Maharashtra",
+              "postalCode": "400058",
+              "addressCountry": "IN"
+            },
+            "areaServed": ["Mumbai", "MMR", "Maharashtra", "India"],
+            "makesOffer": [
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Inventory Health Assessment" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Inventory Audit" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Warehouse Audit" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Warehouse Consulting" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Inventory Consulting" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Operations Consulting" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "SOP Development" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Process Improvement" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Business Analytics" } }
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://nitinanandconsulting.in/#website",
+            "url": "https://nitinanandconsulting.in/",
+            "name": "Nitin Anand Consulting",
+            "publisher": { "@id": "https://nitinanandconsulting.in/#organization" }
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

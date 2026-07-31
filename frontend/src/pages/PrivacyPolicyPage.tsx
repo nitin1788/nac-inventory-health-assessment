@@ -1,5 +1,5 @@
 import { MarketingPageLayout } from '@/shared/layouts/MarketingPageLayout';
-import { COMPANY_NAME, CONTACT } from '@/config/constants';
+import { COMPANY_NAME, CONTACT, ROUTES } from '@/config/constants';
 
 const LAST_UPDATED = 'July 2026';
 
@@ -8,6 +8,7 @@ export function PrivacyPolicyPage() {
     <MarketingPageLayout
       title={`Privacy Policy | ${COMPANY_NAME}`}
       description={`How ${COMPANY_NAME} collects, uses, and protects the information you provide through the Inventory Health Assessment.`}
+      path={ROUTES.privacyPolicy}
       eyebrow="Legal"
       heading="Privacy Policy"
     >
