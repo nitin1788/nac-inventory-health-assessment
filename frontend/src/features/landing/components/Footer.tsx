@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Mail, Phone } from 'lucide-react';
 import { COMPANY_NAME, CONTACT, ROUTES } from '@/config/constants';
-import { SERVICES } from '../landing.data';
+import { SERVICE_CATEGORIES } from '../landing.data';
 import { FooterLogo } from './FooterLogo';
 
 const FOOTER_QUICK_LINKS = [
@@ -9,6 +9,15 @@ const FOOTER_QUICK_LINKS = [
   { label: 'Why NAC', href: '/#why-nac' },
   { label: 'How It Works', href: '/#how-it-works' },
 ];
+
+/** Footer "Services" column — the free assessment plus each dedicated service page. */
+const FOOTER_SERVICE_LINKS = [
+  { label: 'Inventory Health Assessment', path: ROUTES.assessmentStart },
+  ...SERVICE_CATEGORIES.map((category) => ({ label: category.title, path: category.path })),
+];
+
+const FOOTER_LINK_CLASSES =
+  'rounded-sm transition-colors hover:text-white active:text-white/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#14233d]';
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -51,8 +60,12 @@ export function Footer() {
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wide text-white">Services</h3>
             <ul className="mt-4 space-y-3 text-sm">
-              {SERVICES.map((service) => (
-                <li key={service.title}>{service.title}</li>
+              {FOOTER_SERVICE_LINKS.map((service) => (
+                <li key={service.path}>
+                  <Link to={service.path} className={FOOTER_LINK_CLASSES}>
+                    {service.label}
+                  </Link>
+                </li>
               ))}
             </ul>
           </div>
