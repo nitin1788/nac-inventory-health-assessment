@@ -35,6 +35,11 @@ export const ROUTES = {
   sopDevelopment: '/sop-development',
   businessAnalytics: '/business-analytics',
   trainingImplementation: '/training-implementation',
+  blog: '/blog',
+  caseStudies: '/case-studies',
+  freeDownloads: '/free-downloads',
+  checklists: '/checklists',
+  templates: '/templates',
 } as const;
 
 /** Production origin — used to build absolute URLs (sitemap, canonical links). */

@@ -29,17 +29,70 @@ import {
   Award,
   Truck,
   ShoppingCart,
+  Newspaper,
+  BookOpen,
+  Download,
+  LayoutTemplate,
 } from 'lucide-react';
+import { ROUTES } from '@/config/constants';
 
 export interface NavLink {
   label: string;
   href: string;
 }
 
+/** Plain top-level nav links (no dropdown) — Services and Resources are rendered as dropdowns directly in Navbar.tsx. */
 export const NAV_LINKS: NavLink[] = [
-  { label: 'Services', href: '/#services' },
-  { label: 'Why NAC', href: '/#why-nac' },
-  { label: 'Contact', href: '/#contact' },
+  { label: 'Home', href: ROUTES.landing },
+  { label: 'About', href: ROUTES.about },
+  { label: 'FAQ', href: ROUTES.faq },
+  { label: 'Contact', href: ROUTES.contactUs },
+];
+
+export interface ResourceLink {
+  icon: LucideIcon;
+  label: string;
+  path: string;
+  description: string;
+}
+
+/**
+ * The Resources dropdown's entries. Each links to a real, reserved
+ * route today (see pages/*ComingSoonPage.tsx) — some are placeholders
+ * pending real content, but the URL and nav entry are stable so future
+ * pages can be filled in without any nav/routing changes.
+ */
+export const RESOURCE_LINKS: ResourceLink[] = [
+  {
+    icon: Newspaper,
+    label: 'Blog',
+    path: ROUTES.blog,
+    description: 'Articles on inventory, warehouse, and operations best practices.',
+  },
+  {
+    icon: BookOpen,
+    label: 'Case Studies',
+    path: ROUTES.caseStudies,
+    description: 'Real engagement outcomes across manufacturing, distribution, and retail.',
+  },
+  {
+    icon: Download,
+    label: 'Free Downloads',
+    path: ROUTES.freeDownloads,
+    description: 'Free tools and guides to help you get started on your own.',
+  },
+  {
+    icon: ListChecks,
+    label: 'Checklists',
+    path: ROUTES.checklists,
+    description: 'Practical, printable checklists for common inventory and warehouse tasks.',
+  },
+  {
+    icon: LayoutTemplate,
+    label: 'Templates',
+    path: ROUTES.templates,
+    description: 'Ready-to-use spreadsheet and document templates.',
+  },
 ];
 
 export interface ServiceItem {

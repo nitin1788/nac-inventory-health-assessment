@@ -40,6 +40,14 @@ const TrainingImplementationPage = lazy(() =>
   import('@/pages/TrainingImplementationPage').then((m) => ({ default: m.TrainingImplementationPage }))
 );
 
+const BlogPage = lazy(() => import('@/pages/BlogPage').then((m) => ({ default: m.BlogPage })));
+const CaseStudiesPage = lazy(() => import('@/pages/CaseStudiesPage').then((m) => ({ default: m.CaseStudiesPage })));
+const FreeDownloadsPage = lazy(() =>
+  import('@/pages/FreeDownloadsPage').then((m) => ({ default: m.FreeDownloadsPage }))
+);
+const ChecklistsPage = lazy(() => import('@/pages/ChecklistsPage').then((m) => ({ default: m.ChecklistsPage })));
+const TemplatesPage = lazy(() => import('@/pages/TemplatesPage').then((m) => ({ default: m.TemplatesPage })));
+
 /**
  * Central route table. Pages stay thin (see pages/ convention in
  * ARCHITECTURE.md) — all business logic lives in features/.
@@ -68,6 +76,11 @@ export function AppRoutes() {
         <Route path={ROUTES.sopDevelopment} element={<SopDevelopmentPage />} />
         <Route path={ROUTES.businessAnalytics} element={<BusinessAnalyticsPage />} />
         <Route path={ROUTES.trainingImplementation} element={<TrainingImplementationPage />} />
+        <Route path={ROUTES.blog} element={<BlogPage />} />
+        <Route path={ROUTES.caseStudies} element={<CaseStudiesPage />} />
+        <Route path={ROUTES.freeDownloads} element={<FreeDownloadsPage />} />
+        <Route path={ROUTES.checklists} element={<ChecklistsPage />} />
+        <Route path={ROUTES.templates} element={<TemplatesPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Suspense>

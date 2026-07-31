@@ -13,6 +13,8 @@ interface MarketingPageLayoutProps {
   eyebrow: string;
   heading: string;
   children: ReactNode;
+  /** Set true for placeholder/thin-content pages that shouldn't be indexed yet. Defaults to false (indexable). */
+  noindex?: boolean;
 }
 
 /**
@@ -27,8 +29,9 @@ export function MarketingPageLayout({
   eyebrow,
   heading,
   children,
+  noindex = false,
 }: MarketingPageLayoutProps) {
-  useSeo({ title, description, path });
+  useSeo({ title, description, path, noindex });
   useJsonLd({
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
