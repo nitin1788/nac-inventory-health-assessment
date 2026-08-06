@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { healthRouter } from './health.route';
 import { assessmentRouter, reportRouter } from '../modules/assessment/assessment.route';
+import { paymentRouter } from '../modules/payment/payment.route';
 
 /**
  * Central mounting point for every route module. As assessment,
@@ -12,5 +13,6 @@ export const apiRouter = Router();
 apiRouter.use('/health', healthRouter);
 apiRouter.use('/assessments', assessmentRouter);
 apiRouter.use('/reports', reportRouter);
+apiRouter.use('/payments', paymentRouter);
 
 // Milestone 4+: apiRouter.use('/questions', questionRouter);

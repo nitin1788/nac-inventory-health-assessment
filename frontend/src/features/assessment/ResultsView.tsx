@@ -1,19 +1,19 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { AlertTriangle, CheckCircle2, Loader2, Mail, RefreshCw } from 'lucide-react';
-import { Link, Navigate, useLocation } from 'react-router-dom';
-import { COMPANY_NAME, CONSULTATION, ROUTES } from '@/config/constants';
+import { AlertTriangle, CheckCircle2, Loader2, RefreshCw } from 'lucide-react';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { COMPANY_NAME, REPORT_TIERS, ROUTES } from '@/config/constants';
+import type { ReportTierOption } from '@/config/constants';
 import { ApiError } from '@/services/api/apiClient';
 import { submitAssessment } from '@/services/api/assessmentApi';
 import { Button } from '@/shared/components/Button';
 import { clsx } from '@/shared/utils/clsx';
 import { useSeo } from '@/shared/hooks/useSeo';
-import { buildConsultationWhatsAppUrl } from '@/shared/utils/whatsapp';
+import type { PaymentLocationState } from '@/features/payment/PaymentPlaceholderView';
 import { AssessmentHeader } from './components/AssessmentHeader';
+import { PurchaseOptionCard } from './components/PurchaseOptionCard';
 import type { CompanyProfile } from './questions/companyProfile';
 import { generateRecommendations } from './recommendations/recommendationEngine';
-import type { ModuleRecommendation, PriorityLevel } from './recommendations/recommendationTypes';
-import { getHealthRating } from './scoring/scoreHelpers';
-import type { HealthRating, ModuleScore, ScoringResult } from './scoring/scoreTypes';
+import type { HealthRating, ScoringResult } from './scoring/scoreTypes';
 import { buildAssessmentPayload } from './submission/buildAssessmentPayload';
 import type { AnswerMap } from './useAssessmentEngine';
 
@@ -26,6 +26,11 @@ export interface ResultsLocationState {
 
 type SubmissionStatus = 'saving' | 'success' | 'error';
 
+interface CachedSubmission {
+  id: string;
+  assessmentNumber: string;
+}
+
 function submissionStorageKey(submissionId: string): string {
   return `nac-assessment-submission:${submissionId}`;
 }
@@ -37,109 +42,10 @@ const RATING_BADGE_CLASSES: Record<HealthRating, string> = {
   Critical: 'bg-red-50 text-red-700 border-red-200',
 };
 
-const RATING_BAR_CLASSES: Record<HealthRating, string> = {
-  Excellent: 'bg-emerald-500',
-  Good: 'bg-teal-500',
-  'Needs Improvement': 'bg-amber-500',
-  Critical: 'bg-red-500',
-};
-
-const PRIORITY_BADGE_CLASSES: Record<PriorityLevel, string> = {
-  High: 'bg-red-50 text-red-700 border-red-200',
-  Medium: 'bg-amber-50 text-amber-700 border-amber-200',
-  Low: 'bg-teal-50 text-teal-700 border-teal-200',
-  Maintain: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-};
-
-function ModuleScoreCard({ moduleScore }: { moduleScore: ModuleScore }) {
-  const rating = getHealthRating(moduleScore.percentage);
-
-  return (
-    <div className="rounded-xl border border-slate-200 bg-white p-4">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <span className="font-medium text-slate-900">{moduleScore.moduleTitle}</span>
-        <span
-          className={clsx(
-            'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium',
-            RATING_BADGE_CLASSES[rating]
-          )}
-        >
-          {rating}
-        </span>
-      </div>
-      <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-slate-100">
-        <div
-          className={clsx('h-full rounded-full', RATING_BAR_CLASSES[rating])}
-          style={{ width: `${moduleScore.percentage}%` }}
-        />
-      </div>
-      <div className="mt-1.5 flex items-center justify-between text-xs text-slate-500">
-        <span>
-          {moduleScore.score} / {moduleScore.maxScore} pts
-        </span>
-        <span>{moduleScore.percentage}%</span>
-      </div>
-    </div>
-  );
-}
-
-function ModuleRecommendationCard({ moduleRecommendation }: { moduleRecommendation: ModuleRecommendation }) {
-  return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <span className="font-semibold text-slate-900">{moduleRecommendation.moduleTitle}</span>
-        <div className="flex flex-wrap items-center gap-2">
-          <span
-            className={clsx(
-              'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium',
-              RATING_BADGE_CLASSES[moduleRecommendation.rating]
-            )}
-          >
-            {moduleRecommendation.rating}
-          </span>
-          <span
-            className={clsx(
-              'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium',
-              PRIORITY_BADGE_CLASSES[moduleRecommendation.priority]
-            )}
-          >
-            {moduleRecommendation.priority} priority
-          </span>
-        </div>
-      </div>
-
-      <p className="mt-3 text-sm text-slate-600">{moduleRecommendation.summary}</p>
-
-      <div className="mt-4">
-        <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-          Recommended Actions
-        </span>
-        <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700">
-          {moduleRecommendation.recommendations.map((recommendation) => (
-            <li key={recommendation}>{recommendation}</li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="mt-4">
-        <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-          Expected Business Benefits
-        </span>
-        <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700">
-          {moduleRecommendation.expectedBenefits.map((benefit) => (
-            <li key={benefit}>{benefit}</li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  );
-}
-
 interface SubmissionStatusBannerProps {
   status: SubmissionStatus;
   assessmentNumber: string | null;
   errorMessage: string | null;
-  customerEmail: string;
   overallScore: number;
   overallMaxScore: number;
   overallPercentage: number;
@@ -151,7 +57,6 @@ function SubmissionStatusBanner({
   status,
   assessmentNumber,
   errorMessage,
-  customerEmail,
   overallScore,
   overallMaxScore,
   overallPercentage,
@@ -177,28 +82,11 @@ function SubmissionStatusBanner({
             </span>
             <div className="min-w-0">
               <h2 className="text-base font-semibold text-emerald-900 sm:text-lg">
-                🎉 Your Inventory Health Report is Ready!
+                🎉 Your Inventory Health Assessment is Complete!
               </h2>
               <p className="mt-2 text-sm text-emerald-800">
-                Your assessment has been completed successfully.
+                Your results below are ready. Choose a report below to get your full, detailed findings.
               </p>
-              {customerEmail ? (
-                <p className="mt-2 text-sm text-emerald-800">
-                  A copy of your report has been emailed to{' '}
-                  <span className="font-semibold">{customerEmail}</span>.
-                </p>
-              ) : null}
-              <p className="mt-2 text-sm text-emerald-700">
-                Please check your Inbox. If you don&apos;t receive it within a minute, please check your
-                Spam/Junk folder.
-              </p>
-
-              {customerEmail ? (
-                <div className="mt-4 inline-flex flex-wrap items-center gap-2 rounded-full border border-emerald-300 bg-white px-3 py-1.5 text-xs font-medium text-emerald-800 shadow-sm">
-                  <Mail className="h-3.5 w-3.5 shrink-0" />
-                  Report emailed successfully to: <span className="font-semibold">{customerEmail}</span>
-                </div>
-              ) : null}
             </div>
           </div>
 
@@ -249,20 +137,26 @@ function SubmissionStatusBanner({
  * standalone results-fetch step, since scoring is a pure client-side
  * calculation in this milestone. Landing here directly (no state)
  * means the assessment was never completed, so redirect to start.
+ *
+ * Only a free summary (score, rating, a short focus-area teaser) is
+ * shown here — the full module-by-module breakdown and recommendations
+ * are part of the paid report tiers (see PurchaseOptionCard) and are
+ * generated only after a successful purchase. No PDF is generated or
+ * emailed from this page.
  */
 export function ResultsView() {
   useSeo({
     title: `Your Assessment Results | ${COMPANY_NAME}`,
-    description: `Your personalized ${COMPANY_NAME} Inventory Health Assessment results — module-by-module scores, health rating, and tailored recommendations.`,
+    description: `Your personalized ${COMPANY_NAME} Inventory Health Assessment results — overall score, health rating, and report options.`,
     path: ROUTES.results,
     noindex: true,
   });
 
   const location = useLocation();
+  const navigate = useNavigate();
   const state = location.state as ResultsLocationState | null;
-  const [isDownloading, setIsDownloading] = useState(false);
-  const [downloadError, setDownloadError] = useState(false);
   const [submissionStatus, setSubmissionStatus] = useState<SubmissionStatus>('saving');
+  const [assessmentId, setAssessmentId] = useState<string | null>(null);
   const [assessmentNumber, setAssessmentNumber] = useState<string | null>(null);
   const [submissionErrorMessage, setSubmissionErrorMessage] = useState<string | null>(null);
 
@@ -273,9 +167,11 @@ export function ResultsView() {
     // e.g. the results page was refreshed. Show the prior result instead
     // of submitting again (see AssessmentQuestionsView, which mints one
     // submissionId per Finish click).
-    const cachedAssessmentNumber = sessionStorage.getItem(submissionStorageKey(state.submissionId));
-    if (cachedAssessmentNumber) {
-      setAssessmentNumber(cachedAssessmentNumber);
+    const cachedRaw = sessionStorage.getItem(submissionStorageKey(state.submissionId));
+    if (cachedRaw) {
+      const cached = JSON.parse(cachedRaw) as CachedSubmission;
+      setAssessmentId(cached.id);
+      setAssessmentNumber(cached.assessmentNumber);
       setSubmissionStatus('success');
       return;
     }
@@ -285,7 +181,9 @@ export function ResultsView() {
     try {
       const payload = buildAssessmentPayload(state.companyInfo, state.scoringResult, state.answers);
       const result = await submitAssessment(payload);
-      sessionStorage.setItem(submissionStorageKey(state.submissionId), result.assessmentNumber);
+      const cached: CachedSubmission = { id: result.id, assessmentNumber: result.assessmentNumber };
+      sessionStorage.setItem(submissionStorageKey(state.submissionId), JSON.stringify(cached));
+      setAssessmentId(result.id);
       setAssessmentNumber(result.assessmentNumber);
       setSubmissionStatus('success');
     } catch (error) {
@@ -298,8 +196,8 @@ export function ResultsView() {
 
   // Guards only the automatic on-mount submission — React 18 StrictMode
   // (dev only) invokes effects twice on the same mount, which without this
-  // guard fired two POSTs (and two report emails) for one Finish click. The
-  // Retry button below calls runSubmission() directly and is unaffected.
+  // guard fired two POSTs for one Finish click. The Retry button below
+  // calls runSubmission() directly and is unaffected.
   const hasAutoSubmittedRef = useRef(false);
 
   useEffect(() => {
@@ -315,23 +213,22 @@ export function ResultsView() {
   const { companyInfo, scoringResult } = state;
   const recommendationResult = generateRecommendations(scoringResult);
 
-  const handleDownload = async () => {
-    setIsDownloading(true);
-    setDownloadError(false);
-    try {
-      const { downloadPdfReport } = await import('./pdf/pdfGenerator');
-      await downloadPdfReport({
-        companyInfo,
-        scoringResult,
-        recommendationResult,
-        generatedAt: new Date(),
-        assessmentNumber: assessmentNumber ?? undefined,
-      });
-    } catch {
-      setDownloadError(true);
-    } finally {
-      setIsDownloading(false);
-    }
+  // A short, free teaser — module titles only, no scores or
+  // recommendation detail, since "Module Scores" and "Recommendations"
+  // are what the paid tiers deliver (see REPORT_TIERS).
+  const focusAreas = [...scoringResult.moduleScores]
+    .sort((a, b) => a.percentage - b.percentage)
+    .slice(0, 3);
+
+  const handleSelectTier = (tier: ReportTierOption) => {
+    if (!assessmentId) return;
+    navigate(ROUTES.payment, {
+      state: {
+        assessmentId,
+        assessmentNumber,
+        tier: tier.id,
+      } satisfies PaymentLocationState,
+    });
   };
 
   return (
@@ -352,7 +249,6 @@ export function ResultsView() {
           status={submissionStatus}
           assessmentNumber={assessmentNumber}
           errorMessage={submissionErrorMessage}
-          customerEmail={companyInfo.email}
           overallScore={scoringResult.overallScore}
           overallMaxScore={scoringResult.overallMaxScore}
           overallPercentage={scoringResult.overallPercentage}
@@ -384,128 +280,43 @@ export function ResultsView() {
           </p>
         </div>
 
-        <section className="mt-10">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-            Module-Wise Breakdown
-          </h2>
-          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {scoringResult.moduleScores.map((moduleScore) => (
-              <ModuleScoreCard key={moduleScore.moduleId} moduleScore={moduleScore} />
-            ))}
-          </div>
-        </section>
-
-        <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
-          <section>
+        {focusAreas.length > 0 ? (
+          <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
             <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-              Strongest Modules
+              Key Focus Areas
             </h2>
-            <div className="mt-4 space-y-2">
-              {scoringResult.strengthModules.length > 0 ? (
-                scoringResult.strengthModules.map((moduleScore) => (
-                  <div
-                    key={moduleScore.moduleId}
-                    className="flex items-center justify-between rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm"
-                  >
-                    <span className="font-medium text-emerald-900">{moduleScore.moduleTitle}</span>
-                    <span className="text-emerald-700">{moduleScore.percentage}%</span>
-                  </div>
-                ))
-              ) : (
-                <p className="text-sm text-slate-500">
-                  No modules reached the &ldquo;Good&rdquo; threshold yet.
-                </p>
-              )}
-            </div>
+            <ul className="mt-4 space-y-2 text-sm text-slate-700">
+              {focusAreas.map((moduleScore) => (
+                <li key={moduleScore.moduleId} className="flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4 shrink-0 text-amber-500" />
+                  {moduleScore.moduleTitle}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-3 text-xs text-slate-500">
+              Get your full module-wise scores and detailed recommendations in a report below.
+            </p>
           </section>
-
-          <section>
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-              Weakest Modules
-            </h2>
-            <div className="mt-4 space-y-2">
-              {scoringResult.weakModules.length > 0 ? (
-                scoringResult.weakModules.map((moduleScore) => (
-                  <div
-                    key={moduleScore.moduleId}
-                    className="flex items-center justify-between rounded-lg border border-red-200 bg-red-50 px-4 py-2.5 text-sm"
-                  >
-                    <span className="font-medium text-red-900">{moduleScore.moduleTitle}</span>
-                    <span className="text-red-700">{moduleScore.percentage}%</span>
-                  </div>
-                ))
-              ) : (
-                <p className="text-sm text-slate-500">
-                  No modules fell below the &ldquo;Needs Improvement&rdquo; threshold — great job.
-                </p>
-              )}
-            </div>
-          </section>
-        </div>
+        ) : null}
 
         <section className="mt-10">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-            Recommendations
-          </h2>
+          <h2 className="text-lg font-semibold text-slate-900">Get Your Full Report</h2>
           <p className="mt-1 text-sm text-slate-500">
-            Ordered by priority — highest-priority modules appear first.
+            Choose the level of detail you need — delivered by email and available for download.
           </p>
-          <div className="mt-4 space-y-4">
-            {recommendationResult.moduleRecommendations.map((moduleRecommendation) => (
-              <ModuleRecommendationCard
-                key={moduleRecommendation.moduleId}
-                moduleRecommendation={moduleRecommendation}
+          <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
+            {REPORT_TIERS.map((tier, index) => (
+              <PurchaseOptionCard
+                key={tier.id}
+                tier={tier}
+                highlighted={index === REPORT_TIERS.length - 1}
+                onSelect={handleSelectTier}
               />
             ))}
           </div>
-        </section>
-
-        <section className="mt-10 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">What&apos;s Next?</h2>
-          <ul className="mt-4 space-y-2 text-sm text-slate-700">
-            <li className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" />
-              Download your detailed PDF report.
-            </li>
-            <li className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" />
-              Check your email for a copy of the report.
-            </li>
-            <li className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" />
-              Book an {CONSULTATION.serviceName} with Nitin Anand Consulting.
-            </li>
-          </ul>
-
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-            <Button
-              type="button"
-              variant="primary"
-              onClick={handleDownload}
-              disabled={isDownloading}
-              className="w-full sm:w-auto"
-            >
-              {isDownloading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-              {isDownloading ? 'Generating PDF…' : '⬇ Download Full PDF Report'}
-            </Button>
-            <a
-              href={buildConsultationWhatsAppUrl(assessmentNumber ?? undefined)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-brand bg-white px-5 py-2.5 text-sm font-medium text-brand transition-colors hover:border-accent hover:text-accent-dark sm:w-auto"
-            >
-              📅 {CONSULTATION.ctaLabel}
-            </a>
-            <Link to={ROUTES.landing} className="w-full sm:w-auto">
-              <Button variant="secondary" className="w-full sm:w-auto">
-                🏠 Return to Home
-              </Button>
-            </Link>
-          </div>
-
-          {downloadError ? (
-            <p className="mt-3 text-sm text-red-600">
-              Something went wrong generating your PDF. Please try again.
+          {!assessmentId ? (
+            <p className="mt-3 text-xs text-slate-500">
+              Report options unlock once your assessment finishes saving.
             </p>
           ) : null}
         </section>

@@ -30,6 +30,10 @@ export class AppError extends Error {
     return new AppError(404, 'NOT_FOUND', message);
   }
 
+  static forbidden(message = 'Forbidden'): AppError {
+    return new AppError(403, 'FORBIDDEN', message);
+  }
+
   static tooManyRequests(message = 'Too many requests'): AppError {
     return new AppError(429, 'RATE_LIMITED', message);
   }

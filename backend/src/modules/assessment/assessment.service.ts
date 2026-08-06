@@ -1,8 +1,8 @@
 import { isSupabaseConfigured } from '../../database/supabaseClient';
 import { AppError } from '../../utils/AppError';
 import { logger } from '../../utils/logger';
-import { sendAssessmentReportEmail, sendLeadAlertEmail } from '../email/email.service';
-import { generateAssessmentReportPdf, type GeneratedReportPdf } from '../pdf/pdf.service';
+import { sendLeadAlertEmail } from '../email/email.service';
+import { generateAssessmentReportPdf } from '../pdf/pdf.service';
 import { createAssessment, findAssessmentById } from './assessment.repository';
 import type { AssessmentDetail, CreateAssessmentInput, CreateAssessmentResult } from './assessment.types';
 
@@ -15,27 +15,18 @@ function ensureSupabaseConfigured(): void {
 }
 
 /**
- * Generates the PDF, then emails the customer's report and the
- * internal lead alert for an already-persisted assessment. The two
- * sends are independent — the customer report goes out first, and a
- * failure in either one is logged without blocking or skipping the
- * other.
+ * Notifies NAC internally that a new assessment was completed. This is
+ * an internal lead notification, not the customer-facing report, so it
+ * still fires immediately on every submission regardless of payment
+ * status — a completed assessment is a warm lead worth knowing about
+ * even before (or if) it converts to a paid report purchase. The
+ * customer's own report is gated behind payment — see
+ * backend/src/modules/report/report.service.ts's deliverPaidReport().
  */
-async function deliverAssessmentReportEmail(id: string): Promise<void> {
+async function sendInternalLeadAlert(id: string): Promise<void> {
   const assessment = await getAssessmentById(id);
   const report = await generateAssessmentReportPdf(assessment);
-
-  try {
-    await sendAssessmentReportEmail(assessment, report);
-  } catch (error) {
-    logger.error({ err: error, assessmentId: id }, 'Failed to email assessment report to customer.');
-  }
-
-  try {
-    await sendLeadAlertEmail(assessment, report);
-  } catch (error) {
-    logger.error({ err: error, assessmentId: id }, 'Failed to send internal lead alert email.');
-  }
+  await sendLeadAlertEmail(assessment, report);
 }
 
 export async function submitAssessment(input: CreateAssessmentInput): Promise<CreateAssessmentResult> {
@@ -48,12 +39,16 @@ export async function submitAssessment(input: CreateAssessmentInput): Promise<Cr
   );
 
   // Fire-and-forget: the assessment is already durably saved, so a
-  // failure generating the PDF or sending the email must never fail
-  // or delay this response (see docs/PRD.md §7 — submission persists
-  // to DB before PDF/email generation; no data loss if downstream
-  // steps fail).
-  void deliverAssessmentReportEmail(result.id).catch((error) => {
-    logger.error({ err: error, assessmentId: result.id }, 'Failed to email assessment report.');
+  // failure sending the internal lead alert must never fail or delay
+  // this response (see docs/PRD.md §7 — submission persists to DB
+  // before any downstream step; no data loss if a downstream step
+  // fails). The customer-facing report (PDF + email) is intentionally
+  // NOT generated here — it's gated behind payment, which doesn't
+  // exist yet (see backend/src/modules/payment/, currently a
+  // placeholder). A future payment-confirmation callback calls
+  // report.service.ts's deliverPaidReport() instead.
+  void sendInternalLeadAlert(result.id).catch((error) => {
+    logger.error({ err: error, assessmentId: result.id }, 'Failed to send internal lead alert email.');
   });
 
   return result;
@@ -68,9 +63,4 @@ export async function getAssessmentById(id: string): Promise<AssessmentDetail> {
   }
 
   return assessment;
-}
-
-export async function getAssessmentReportPdf(id: string): Promise<GeneratedReportPdf> {
-  const assessment = await getAssessmentById(id);
-  return generateAssessmentReportPdf(assessment);
 }

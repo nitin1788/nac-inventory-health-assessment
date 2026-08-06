@@ -10,6 +10,7 @@ const AssessmentQuestionsPage = lazy(() =>
   import('@/pages/AssessmentQuestionsPage').then((m) => ({ default: m.AssessmentQuestionsPage }))
 );
 const ResultsPage = lazy(() => import('@/pages/ResultsPage').then((m) => ({ default: m.ResultsPage })));
+const PaymentPage = lazy(() => import('@/pages/PaymentPage').then((m) => ({ default: m.PaymentPage })));
 const AboutPage = lazy(() => import('@/pages/AboutPage').then((m) => ({ default: m.AboutPage })));
 const FaqPage = lazy(() => import('@/pages/FaqPage').then((m) => ({ default: m.FaqPage })));
 const ContactUsPage = lazy(() => import('@/pages/ContactUsPage').then((m) => ({ default: m.ContactUsPage })));
@@ -65,6 +66,7 @@ export function AppRoutes() {
         <Route path={ROUTES.assessmentStart} element={<AssessmentStartPage />} />
         <Route path={ROUTES.assessmentQuestions} element={<AssessmentQuestionsPage />} />
         <Route path={ROUTES.results} element={<ResultsPage />} />
+        <Route path={ROUTES.payment} element={<PaymentPage />} />
         <Route path={ROUTES.about} element={<AboutPage />} />
         <Route path={ROUTES.faq} element={<FaqPage />} />
         <Route path={ROUTES.contactUs} element={<ContactUsPage />} />
