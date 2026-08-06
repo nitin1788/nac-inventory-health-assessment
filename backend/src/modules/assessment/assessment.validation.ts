@@ -54,5 +54,5 @@ export const assessmentIdParamsSchema = z.object({
  * any request that omits the query param.
  */
 export const reportTierQuerySchema = z.object({
-  tier: z.enum(['summary', 'full']).default('full'),
+  tier: z.enum(['summary', 'full'], { required_error: 'tier is required (summary or full).' }),
 });

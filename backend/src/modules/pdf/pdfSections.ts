@@ -1,7 +1,6 @@
 import { createElement as h, type ReactElement } from 'react';
 import { Page, Text, View } from '@react-pdf/renderer';
 import { COMPANY_NAME, CONSULTATION, CONTACT } from '../../config/constants';
-import { TIER_PRICING } from '../payment/payment.types';
 import type { AssessmentDetail } from '../assessment/assessment.types';
 import type { ModuleRecommendation } from '../recommendations/recommendationTypes';
 import { rootCauseCategoryFor, type ReportContent, type RootCauseCategory } from './pdfReportContent';
@@ -17,7 +16,6 @@ import {
   buildHealthGauge,
   buildKpiCard,
   buildModuleBarChart,
-  buildModuleIconGrid,
   buildModuleScoresTable,
   buildPriorityMatrixGrid,
   buildProgressBarRow,
@@ -25,6 +23,7 @@ import {
   buildTimeline,
   DISCLAIMER_TEXT,
   formatInr,
+  PRIORITY_COLORS,
   RATING_COLORS,
   styles,
 } from './pdfTemplates.shared';
@@ -143,41 +142,6 @@ function buildImprovementPriorityText(content: ReportContent): string {
     : 'All assessed modules are currently performing well — the priority is sustaining current practices.';
 }
 
-export const upgradeCtaSection: SectionBuilder = (_assessment, _content) => {
-  const fullPrice = formatInr(TIER_PRICING.full / 100);
-
-  return h(
-    Page,
-    { size: 'A4', style: styles.page },
-    h(Text, { style: styles.pageHeading }, 'Get the Complete Picture'),
-    h(
-      Text,
-      { style: styles.paragraph },
-      'This Report Summary gives you the headline picture of your inventory health. The Professional ' +
-        'Inventory Report goes much further — a full 15-page, consulting-grade analysis, including:'
-    ),
-    buildBulletList([
-      'Root-cause analysis — why each weak area scored the way it did, grouped by underlying cause',
-      'A visual priority matrix and risk heat map across every module',
-      'Business impact translation — what improvement is worth in operational terms',
-      'Executive-level strategic recommendations and a phased improvement roadmap',
-    ]),
-    h(
-      Text,
-      { style: styles.paragraph },
-      `Professional Inventory Report — ${fullPrice}. Available as an upgrade from your results page.`
-    ),
-    h(
-      Text,
-      { style: styles.paragraph },
-      `Questions about this report? Contact ${COMPANY_NAME} at ${CONTACT.email} or ${CONTACT.phone}.`
-    ),
-    buildBrandFooter(),
-    h(Text, { style: styles.disclaimer }, DISCLAIMER_TEXT),
-    buildFooter()
-  );
-};
-
 // ── Full-tier-only sections ─────────────────────────────────────────
 
 export const fullCoverPageSection: SectionBuilder = (assessment, _content) =>
@@ -189,7 +153,7 @@ export const executiveDashboardSection: SectionBuilder = (assessment, content) =
   return h(
     Page,
     { size: 'A4', style: styles.page },
-    h(Text, { style: styles.pageHeading }, 'Executive Dashboard'),
+    h(Text, { style: styles.pageHeading }, 'Executive Summary'),
     h(Text, { style: styles.sectionTitle }, 'Company Details'),
     buildCompanyDetailsGrid(assessment),
     buildScoreCard(assessment, content.overallMaxScore),
@@ -226,42 +190,11 @@ export const executiveDashboardSection: SectionBuilder = (assessment, content) =
   );
 };
 
-export const kpiCardsSection: SectionBuilder = (assessment, content) =>
-  h(
-    Page,
-    { size: 'A4', style: styles.page },
-    h(Text, { style: styles.pageHeading }, 'Key Performance Indicators'),
-    h(Text, { style: styles.paragraph }, 'The core numbers behind this assessment, at a glance.'),
-    h(
-      View,
-      { style: styles.kpiGrid },
-      buildKpiCard('Overall Health Score', `${assessment.overallPercentage}%`, assessment.healthRating),
-      buildKpiCard('Modules Assessed', String(assessment.moduleScores.length)),
-      buildKpiCard('Need Attention', String(content.attentionCount), 'High + Medium priority modules'),
-      buildKpiCard(
-        'Strongest Area',
-        content.strongestModule?.moduleName ?? '—',
-        content.strongestModule ? `${content.strongestModule.percentage}%` : undefined
-      ),
-      buildKpiCard(
-        'Priority Area',
-        content.weakestModule?.moduleName ?? '—',
-        content.weakestModule ? `${content.weakestModule.percentage}%` : undefined
-      ),
-      buildKpiCard(
-        'Performing Well',
-        String(content.ratingCounts.Excellent + content.ratingCounts.Good),
-        'Modules rated Good or Excellent'
-      )
-    ),
-    buildFooter()
-  );
-
 export const healthGaugeSection: SectionBuilder = (assessment, content) =>
   h(
     Page,
     { size: 'A4', style: styles.page },
-    h(Text, { style: styles.pageHeading }, 'Overall Health Gauge'),
+    h(Text, { style: styles.pageHeading }, 'Business Health Score'),
     buildHealthGauge(assessment.overallPercentage, assessment.healthRating),
     h(Text, { style: styles.paragraph }, content.overallSummary),
     buildFooter()
@@ -271,14 +204,14 @@ export const moduleChartsSection: SectionBuilder = (assessment, _content) =>
   h(
     Page,
     { size: 'A4', style: styles.page, wrap: true },
-    h(Text, { style: styles.pageHeading }, 'Module Performance Chart'),
+    h(Text, { style: styles.pageHeading }, 'Charts'),
     h(Text, { style: styles.paragraph }, 'Every module’s score, side by side.'),
     buildModuleBarChart(assessment.moduleScores),
     buildFooter()
   );
 
 export const professionalTablesSection: SectionBuilder = buildModuleScoresPage(
-  'Professional Tables',
+  'Module-wise Analysis',
   'A complete, professional-grade breakdown of every assessed module, ranked and rated.'
 );
 
@@ -296,7 +229,7 @@ export const heatMapSection: SectionBuilder = (assessment, _content) =>
   h(
     Page,
     { size: 'A4', style: styles.page, wrap: true },
-    h(Text, { style: styles.pageHeading }, 'Risk Heat Map'),
+    h(Text, { style: styles.pageHeading }, 'Heat Maps'),
     h(Text, { style: styles.paragraph }, 'Module performance shaded by severity — the hottest areas need attention first.'),
     buildHeatMapGrid(assessment.moduleScores),
     buildFooter()
@@ -326,11 +259,44 @@ export const fishboneRootCauseSection: SectionBuilder = (_assessment, content) =
   );
 };
 
+/**
+ * Where the business is currently most exposed — Critical-rated modules
+ * framed as risk, not just a low score. Falls back to High-priority
+ * modules if nothing is rated Critical, so the page is never empty for
+ * an otherwise-healthy assessment.
+ */
+export const riskAnalysisSection: SectionBuilder = (_assessment, content) => {
+  const criticalModules = content.moduleRecommendations.filter((m) => m.rating === 'Critical');
+  const atRisk = criticalModules.length > 0 ? criticalModules : content.byPriority.High;
+
+  return h(
+    Page,
+    { size: 'A4', style: styles.page, wrap: true },
+    h(Text, { style: styles.pageHeading }, 'Risk Analysis'),
+    h(Text, { style: styles.paragraph }, 'Where the business is currently most exposed to operational risk.'),
+    atRisk.length === 0
+      ? h(Text, { style: styles.paragraph }, 'No modules are currently rated Critical — operational risk exposure is low.')
+      : h(
+          View,
+          null,
+          ...atRisk.map((m) =>
+            h(
+              View,
+              { key: m.moduleId, style: { marginBottom: 12 }, wrap: false },
+              h(Text, { style: styles.moduleTitle }, m.moduleName),
+              h(Text, { style: styles.paragraph }, m.summary)
+            )
+          )
+        ),
+    buildFooter()
+  );
+};
+
 export const timelineSection: SectionBuilder = (_assessment, content) =>
   h(
     Page,
     { size: 'A4', style: styles.page },
-    h(Text, { style: styles.pageHeading }, 'Improvement Roadmap'),
+    h(Text, { style: styles.pageHeading }, 'Timeline'),
     h(
       Text,
       { style: styles.paragraph },
@@ -345,21 +311,57 @@ export const progressBarsSection: SectionBuilder = (assessment, _content) =>
   h(
     Page,
     { size: 'A4', style: styles.page, wrap: true },
-    h(Text, { style: styles.pageHeading }, 'Progress Toward Benchmark'),
+    h(Text, { style: styles.pageHeading }, 'Graphs'),
     h(Text, { style: styles.paragraph }, 'Current performance against an 80% healthy-operations benchmark.'),
     buildProgressBarRow(assessment.moduleScores),
     buildFooter()
   );
 
-export const svgInfographicsSection: SectionBuilder = (assessment, _content) =>
-  h(
+/** Phased view of when to act on each module — day-range panels, module names only, never a step-by-step plan. */
+export const roadmapSection: SectionBuilder = (_assessment, content) => {
+  const phases: { label: string; modules: ModuleRecommendation[]; colors: { bg: string; text: string } }[] = [
+    { label: '0–30 Days', modules: content.byPriority.High, colors: PRIORITY_COLORS.High },
+    { label: '31–60 Days', modules: content.byPriority.Medium, colors: PRIORITY_COLORS.Medium },
+    { label: '61–90 Days', modules: [...content.byPriority.Low, ...content.byPriority.Maintain], colors: PRIORITY_COLORS.Low },
+  ];
+
+  return h(
     Page,
     { size: 'A4', style: styles.page, wrap: true },
-    h(Text, { style: styles.pageHeading }, 'Module Health at a Glance'),
-    h(Text, { style: styles.paragraph }, 'Every module’s rating, in one view.'),
-    buildModuleIconGrid(assessment.moduleScores),
+    h(Text, { style: styles.pageHeading }, '30-60-90 Day Roadmap'),
+    h(
+      Text,
+      { style: styles.paragraph },
+      'A phased view of when to focus on each area. A detailed, sequenced execution plan is built together during ' +
+        'a consultation.'
+    ),
+    h(
+      View,
+      { style: styles.priorityGrid },
+      ...phases.map((phase) =>
+        h(
+          View,
+          { key: phase.label, style: [styles.priorityPanel, { borderColor: phase.colors.text }] },
+          h(Text, { style: [styles.priorityPanelHeader, { color: phase.colors.text }] }, phase.label),
+          phase.modules.length === 0
+            ? h(Text, { style: styles.emptyPanelText }, 'No modules in this phase.')
+            : h(
+                View,
+                { style: styles.chipRow },
+                ...phase.modules.map((m) =>
+                  h(
+                    Text,
+                    { key: m.moduleId, style: [styles.chip, { backgroundColor: phase.colors.bg, color: phase.colors.text }] },
+                    m.moduleName
+                  )
+                )
+              )
+        )
+      )
+    ),
     buildFooter()
   );
+};
 
 export const businessImpactCardsSection: SectionBuilder = (_assessment, content) => {
   const modules = pickPriorityModules(content, 6);
@@ -386,7 +388,7 @@ export const executiveRecommendationsSection: SectionBuilder = (_assessment, con
   return h(
     Page,
     { size: 'A4', style: styles.page, wrap: true },
-    h(Text, { style: styles.pageHeading }, 'Executive Recommendations'),
+    h(Text, { style: styles.pageHeading }, 'Professional Recommendations'),
     h(
       Text,
       { style: styles.paragraph },
