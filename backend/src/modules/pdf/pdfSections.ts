@@ -1,23 +1,30 @@
 import { createElement as h, type ReactElement } from 'react';
 import { Page, Text, View } from '@react-pdf/renderer';
-import { COMPANY_NAME, CONTACT } from '../../config/constants';
-import type { AssessmentDetail, HealthRating } from '../assessment/assessment.types';
-import type { ModuleRecommendation, PriorityLevel } from '../recommendations/recommendationTypes';
-import { QUESTION_TEXT_INDEX } from './questionTextIndex';
-import type { ReportContent } from './pdfReportContent';
+import { COMPANY_NAME, CONSULTATION, CONTACT } from '../../config/constants';
+import { TIER_PRICING } from '../payment/payment.types';
+import type { AssessmentDetail } from '../assessment/assessment.types';
+import type { ModuleRecommendation } from '../recommendations/recommendationTypes';
+import { rootCauseCategoryFor, type ReportContent, type RootCauseCategory } from './pdfReportContent';
 import {
   buildBrandFooter,
   buildBulletList,
   buildCompanyDetailsGrid,
   buildCoverPage,
   buildFindingRow,
+  buildFishboneDiagram,
   buildFooter,
+  buildHeatMapGrid,
+  buildHealthGauge,
+  buildKpiCard,
+  buildModuleBarChart,
+  buildModuleIconGrid,
   buildModuleScoresTable,
+  buildPriorityMatrixGrid,
+  buildProgressBarRow,
   buildScoreCard,
+  buildTimeline,
   DISCLAIMER_TEXT,
-  PRIORITY_COLORS,
-  PRIORITY_GROUP_LABELS,
-  PRIORITY_ORDER,
+  formatInr,
   RATING_COLORS,
   styles,
 } from './pdfTemplates.shared';
@@ -29,94 +36,62 @@ import {
  * treat all of them uniformly regardless of which tier(s) use them.
  * Which sections actually run for a given tier is decided ONLY in
  * pdfSections.config.ts — nothing here knows or cares about tiers.
+ *
+ * Content boundary: this report is designed to diagnose problems and
+ * build trust in NAC's expertise — never to hand over a complete,
+ * self-serve implementation plan. No section here renders a full SOP,
+ * a step-by-step execution plan, or every raw question answer; every
+ * recommendation is a headline, and the report consistently points
+ * toward a consultation for the detailed how-to.
  */
 export type SectionBuilder = (assessment: AssessmentDetail, content: ReportContent) => ReactElement;
 
-function buildModuleRecommendationBlock(recommendation: ModuleRecommendation) {
-  const ratingColors = RATING_COLORS[recommendation.rating];
-  const priorityColors = PRIORITY_COLORS[recommendation.priority];
-
-  return h(
-    View,
-    { key: recommendation.moduleId, style: styles.moduleBlock, wrap: false },
-    h(
-      View,
-      { style: styles.moduleHeaderRow },
-      h(Text, { style: styles.moduleTitle }, recommendation.moduleName),
-      h(
-        View,
-        { style: styles.badgeRow },
-        h(
-          Text,
-          { style: [styles.badge, { backgroundColor: ratingColors.bg, color: ratingColors.text }] },
-          recommendation.rating
-        ),
-        h(
-          Text,
-          { style: [styles.badge, { backgroundColor: priorityColors.bg, color: priorityColors.text }] },
-          `${recommendation.priority} priority`
-        )
-      )
-    ),
-    h(Text, { style: styles.subsectionTitle }, 'Recommended Actions'),
-    buildBulletList(recommendation.recommendations)
-  );
+/** Priority-ordered modules used by both Business Impact Cards and Executive Recommendations. */
+function pickPriorityModules(content: ReportContent, limit: number): ModuleRecommendation[] {
+  const urgent = [...content.byPriority.High, ...content.byPriority.Medium];
+  return (urgent.length >= 3 ? urgent : content.weakestFive).slice(0, limit);
 }
 
-function buildTimeBoxedPlanSection(
-  pageTitle: string,
-  framing: string,
-  priority: PriorityLevel
-): SectionBuilder {
-  return (_assessment, content) => {
-    const modules = content.byPriority[priority];
-    return h(
+function buildModuleScoresPage(pageHeading: string, intro?: string): SectionBuilder {
+  return (assessment, _content) =>
+    h(
       Page,
       { size: 'A4', style: styles.page, wrap: true },
-      h(Text, { style: styles.pageHeading }, pageTitle),
-      h(Text, { style: styles.paragraph }, framing),
-      modules.length === 0
-        ? h(Text, { style: styles.paragraph }, 'No modules currently fall into this priority band.')
-        : h(
-            View,
-            null,
-            ...modules.map((moduleRecommendation) =>
-              h(
-                View,
-                { key: moduleRecommendation.moduleId, style: { marginBottom: 8 }, wrap: false },
-                h(Text, { style: styles.moduleTitle }, moduleRecommendation.moduleName),
-                buildBulletList(moduleRecommendation.recommendations)
-              )
-            )
-          ),
+      h(Text, { style: styles.pageHeading }, pageHeading),
+      intro ? h(Text, { style: styles.paragraph }, intro) : null,
+      buildModuleScoresTable(assessment.moduleScores),
       buildFooter()
     );
-  };
 }
 
-const CONCLUSION_TEXT: Record<HealthRating, string> = {
-  Excellent:
-    'Your inventory operation is performing at a genuinely strong level. The priority now is protecting that ' +
-    'position — documenting what already works well and staying disciplined as the business grows, rather than ' +
-    'reacting to problems as they appear.',
-  Good:
-    'Your inventory operation has a solid foundation with a clear, achievable path to a stronger position. ' +
-    'Working through the priorities outlined in this report in order — rather than all at once — is the most ' +
-    'reliable way to close the remaining gaps.',
-  'Needs Improvement':
-    'Your inventory operation has real, addressable gaps that are likely already showing up as cost, service, or ' +
-    'accuracy issues. None of the findings in this report are unusual for a growing business, and the action ' +
-    'plan above sets out a realistic sequence for closing them.',
-  Critical:
-    'Your inventory operation currently carries significant operational risk. The good news is that the highest-' +
-    'impact fixes are usually the most basic ones — the 30-day action plan above is designed to address the most ' +
-    'urgent gaps first, before moving on to longer-term improvements.',
-};
-
-// ── Sections shared by both tiers ──────────────────────────────────
+// ── Shared / Summary-tier sections ──────────────────────────────────
 
 export const coverPageSection: SectionBuilder = (assessment, _content) =>
   buildCoverPage(assessment, 'Report Summary');
+
+export const executiveSummarySection: SectionBuilder = (assessment, content) => {
+  const { company } = assessment;
+  const snapshot =
+    `Prepared for ${company.contactPerson} (${company.designation}) — ${company.industry}, ` +
+    `${company.employeeCount} employees, ${company.inventoryLocations} location(s), ` +
+    `approximately ${company.activeSkus} active SKUs.`;
+
+  return h(
+    Page,
+    { size: 'A4', style: styles.page },
+    h(Text, { style: styles.pageHeading }, 'Executive Summary'),
+    h(
+      Text,
+      { style: styles.paragraph },
+      `${company.companyName} completed the NAC Inventory Health Assessment across ` +
+        `${assessment.moduleScores.length} operational modules. This Report Summary presents the headline ` +
+        `results; a complete, module-by-module analysis is available in the Professional Inventory Report.`
+    ),
+    h(Text, { style: styles.paragraph }, snapshot),
+    h(Text, { style: styles.paragraph }, content.overallSummary),
+    buildFooter()
+  );
+};
 
 export const overallScoreSection: SectionBuilder = (assessment, content) =>
   h(
@@ -130,14 +105,7 @@ export const overallScoreSection: SectionBuilder = (assessment, content) =>
     buildFooter()
   );
 
-export const moduleScoresSection: SectionBuilder = (assessment, _content) =>
-  h(
-    Page,
-    { size: 'A4', style: styles.page, wrap: true },
-    h(Text, { style: styles.pageHeading }, 'Module-wise Scores'),
-    buildModuleScoresTable(assessment.moduleScores),
-    buildFooter()
-  );
+export const moduleScoresSection: SectionBuilder = buildModuleScoresPage('Module-wise Scores');
 
 export const top5FindingsSection: SectionBuilder = (assessment, _content) => {
   const weakest = [...assessment.moduleScores].sort((a, b) => a.percentage - b.percentage).slice(0, 5);
@@ -163,9 +131,8 @@ export const top5RecommendationsSection: SectionBuilder = (_assessment, content)
   );
 
 /**
- * Shared by overallScoreSection (both tiers) — a single templated
- * paragraph naming the weakest module, derived entirely from
- * already-computed content, no new per-module authoring.
+ * Shared by overallScoreSection — a single templated paragraph naming
+ * the weakest module, derived entirely from already-computed content.
  */
 function buildImprovementPriorityText(content: ReportContent): string {
   const top = content.weakestFive[0];
@@ -176,17 +143,29 @@ function buildImprovementPriorityText(content: ReportContent): string {
     : 'All assessed modules are currently performing well — the priority is sustaining current practices.';
 }
 
-export const nextStepsSection: SectionBuilder = (_assessment, _content) =>
-  h(
+export const upgradeCtaSection: SectionBuilder = (_assessment, _content) => {
+  const fullPrice = formatInr(TIER_PRICING.full / 100);
+
+  return h(
     Page,
     { size: 'A4', style: styles.page },
-    h(Text, { style: styles.pageHeading }, 'Next Steps'),
+    h(Text, { style: styles.pageHeading }, 'Get the Complete Picture'),
     h(
       Text,
       { style: styles.paragraph },
-      'This Report Summary gives you the headline picture of your inventory health. For a complete, ' +
-        'module-by-module analysis — including root cause analysis, question-level insights, and a 30/60/90-day ' +
-        'action plan — the Full Professional Inventory Report is available as a separate purchase.'
+      'This Report Summary gives you the headline picture of your inventory health. The Professional ' +
+        'Inventory Report goes much further — a full 15-page, consulting-grade analysis, including:'
+    ),
+    buildBulletList([
+      'Root-cause analysis — why each weak area scored the way it did, grouped by underlying cause',
+      'A visual priority matrix and risk heat map across every module',
+      'Business impact translation — what improvement is worth in operational terms',
+      'Executive-level strategic recommendations and a phased improvement roadmap',
+    ]),
+    h(
+      Text,
+      { style: styles.paragraph },
+      `Professional Inventory Report — ${fullPrice}. Available as an upgrade from your results page.`
     ),
     h(
       Text,
@@ -194,121 +173,114 @@ export const nextStepsSection: SectionBuilder = (_assessment, _content) =>
       `Questions about this report? Contact ${COMPANY_NAME} at ${CONTACT.email} or ${CONTACT.phone}.`
     ),
     buildBrandFooter(),
+    h(Text, { style: styles.disclaimer }, DISCLAIMER_TEXT),
     buildFooter()
   );
+};
 
 // ── Full-tier-only sections ─────────────────────────────────────────
 
 export const fullCoverPageSection: SectionBuilder = (assessment, _content) =>
   buildCoverPage(assessment, 'Professional Inventory Report');
 
-export const executiveSummarySection: SectionBuilder = (assessment, content) => {
-  const needingAttention = content.moduleRecommendations.filter(
-    (r) => r.priority === 'High' || r.priority === 'Medium'
-  ).length;
-
-  const text =
-    `This report presents a complete analysis of ${assessment.company.companyName}'s inventory management ` +
-    `practices, based on a ${assessment.moduleScores.length}-module operational assessment. The organization ` +
-    `scored ${assessment.overallScore} out of ${content.overallMaxScore} (${assessment.overallPercentage}%), an ` +
-    `overall rating of ${assessment.healthRating}. ${content.overallSummary} ${needingAttention} of ` +
-    `${assessment.moduleScores.length} modules require attention in the near term, detailed module-by-module in ` +
-    `the sections that follow.`;
+export const executiveDashboardSection: SectionBuilder = (assessment, content) => {
+  const { ratingCounts } = content;
 
   return h(
     Page,
     { size: 'A4', style: styles.page },
-    h(Text, { style: styles.pageHeading }, 'Executive Summary'),
+    h(Text, { style: styles.pageHeading }, 'Executive Dashboard'),
     h(Text, { style: styles.sectionTitle }, 'Company Details'),
     buildCompanyDetailsGrid(assessment),
-    h(Text, { style: styles.sectionTitle }, 'Summary'),
-    h(Text, { style: styles.paragraph }, text),
+    buildScoreCard(assessment, content.overallMaxScore),
+    h(
+      View,
+      { style: styles.statRow },
+      h(
+        View,
+        { style: styles.statBlock },
+        h(Text, { style: styles.statValue }, String(assessment.moduleScores.length)),
+        h(Text, { style: styles.statLabel }, 'Modules Assessed')
+      ),
+      h(
+        View,
+        { style: styles.statBlock },
+        h(Text, { style: styles.statValue }, String(content.attentionCount)),
+        h(Text, { style: styles.statLabel }, 'Need Attention')
+      ),
+      h(
+        View,
+        { style: styles.statBlock },
+        h(Text, { style: styles.statValue }, String(ratingCounts.Excellent + ratingCounts.Good)),
+        h(Text, { style: styles.statLabel }, 'Performing Well')
+      ),
+      h(
+        View,
+        { style: styles.statBlock },
+        h(Text, { style: styles.statValue }, String(ratingCounts.Critical)),
+        h(Text, { style: styles.statLabel }, 'Critical Areas')
+      )
+    ),
+    h(Text, { style: styles.paragraph }, content.overallSummary),
     buildFooter()
   );
 };
 
-export const rootCauseAnalysisSection: SectionBuilder = (_assessment, content) =>
+export const kpiCardsSection: SectionBuilder = (assessment, content) =>
   h(
     Page,
-    { size: 'A4', style: styles.page, wrap: true },
-    h(Text, { style: styles.pageHeading }, 'Root Cause Analysis'),
-    h(Text, { style: styles.paragraph }, 'Why each module scored the way it did.'),
-    ...content.moduleRecommendations.map((r) =>
-      h(
-        View,
-        { key: r.moduleId, style: { marginBottom: 10 }, wrap: false },
-        h(Text, { style: styles.moduleTitle }, r.moduleName),
-        h(Text, { style: styles.paragraph }, r.summary)
+    { size: 'A4', style: styles.page },
+    h(Text, { style: styles.pageHeading }, 'Key Performance Indicators'),
+    h(Text, { style: styles.paragraph }, 'The core numbers behind this assessment, at a glance.'),
+    h(
+      View,
+      { style: styles.kpiGrid },
+      buildKpiCard('Overall Health Score', `${assessment.overallPercentage}%`, assessment.healthRating),
+      buildKpiCard('Modules Assessed', String(assessment.moduleScores.length)),
+      buildKpiCard('Need Attention', String(content.attentionCount), 'High + Medium priority modules'),
+      buildKpiCard(
+        'Strongest Area',
+        content.strongestModule?.moduleName ?? '—',
+        content.strongestModule ? `${content.strongestModule.percentage}%` : undefined
+      ),
+      buildKpiCard(
+        'Priority Area',
+        content.weakestModule?.moduleName ?? '—',
+        content.weakestModule ? `${content.weakestModule.percentage}%` : undefined
+      ),
+      buildKpiCard(
+        'Performing Well',
+        String(content.ratingCounts.Excellent + content.ratingCounts.Good),
+        'Modules rated Good or Excellent'
       )
     ),
     buildFooter()
   );
 
-export const moduleDetailedAnalysisSection: SectionBuilder = (_assessment, content) =>
+export const healthGaugeSection: SectionBuilder = (assessment, content) =>
+  h(
+    Page,
+    { size: 'A4', style: styles.page },
+    h(Text, { style: styles.pageHeading }, 'Overall Health Gauge'),
+    buildHealthGauge(assessment.overallPercentage, assessment.healthRating),
+    h(Text, { style: styles.paragraph }, content.overallSummary),
+    buildFooter()
+  );
+
+export const moduleChartsSection: SectionBuilder = (assessment, _content) =>
   h(
     Page,
     { size: 'A4', style: styles.page, wrap: true },
-    h(Text, { style: styles.pageHeading }, 'Module-wise Detailed Analysis'),
-    ...content.moduleRecommendations.map(buildModuleRecommendationBlock),
+    h(Text, { style: styles.pageHeading }, 'Module Performance Chart'),
+    h(Text, { style: styles.paragraph }, 'Every module’s score, side by side.'),
+    buildModuleBarChart(assessment.moduleScores),
     buildFooter()
   );
 
-export const questionInsightsSection: SectionBuilder = (assessment, _content) => {
-  const byModule = new Map<string, { moduleName: string; rows: { text: string; answer: string }[] }>();
-
-  for (const answer of assessment.answers) {
-    const entry = QUESTION_TEXT_INDEX[answer.questionId];
-    if (!entry) continue;
-
-    const moduleScore = assessment.moduleScores.find((m) => m.moduleId === entry.moduleId);
-    const moduleName = moduleScore?.moduleName ?? entry.moduleId;
-
-    if (!byModule.has(entry.moduleId)) {
-      byModule.set(entry.moduleId, { moduleName, rows: [] });
-    }
-    byModule.get(entry.moduleId)!.rows.push({ text: entry.text, answer: answer.selectedOption });
-  }
-
-  return h(
-    Page,
-    { size: 'A4', style: styles.page, wrap: true },
-    h(Text, { style: styles.pageHeading }, 'Question-Level Insights'),
-    h(Text, { style: styles.paragraph }, 'Your responses to every assessment question, grouped by module.'),
-    ...[...byModule.values()].map(({ moduleName, rows }) =>
-      h(
-        View,
-        { key: moduleName, style: { marginBottom: 12 }, wrap: false },
-        h(Text, { style: styles.subsectionTitle }, moduleName),
-        ...rows.map((row) =>
-          h(
-            View,
-            { key: row.text, style: styles.questionRow },
-            h(Text, { style: styles.questionText }, row.text),
-            h(Text, { style: styles.questionAnswer }, row.answer)
-          )
-        )
-      )
-    ),
-    buildFooter()
-  );
-};
-
-export const businessImpactSection: SectionBuilder = (_assessment, content) =>
-  h(
-    Page,
-    { size: 'A4', style: styles.page, wrap: true },
-    h(Text, { style: styles.pageHeading }, 'Business Impact'),
-    h(Text, { style: styles.paragraph }, 'What improving each area is expected to mean for the business.'),
-    ...content.moduleRecommendations.map((r) =>
-      h(
-        View,
-        { key: r.moduleId, style: { marginBottom: 10 }, wrap: false },
-        h(Text, { style: styles.moduleTitle }, r.moduleName),
-        buildBulletList(r.expectedBenefits)
-      )
-    ),
-    buildFooter()
-  );
+export const professionalTablesSection: SectionBuilder = buildModuleScoresPage(
+  'Professional Tables',
+  'A complete, professional-grade breakdown of every assessed module, ranked and rated.'
+);
 
 export const priorityMatrixSection: SectionBuilder = (_assessment, content) =>
   h(
@@ -316,81 +288,140 @@ export const priorityMatrixSection: SectionBuilder = (_assessment, content) =>
     { size: 'A4', style: styles.page, wrap: true },
     h(Text, { style: styles.pageHeading }, 'Priority Matrix'),
     h(Text, { style: styles.paragraph }, 'Every module at a glance, grouped by business urgency.'),
-    ...PRIORITY_ORDER.map((priority) => {
-      const modules = content.byPriority[priority];
-      if (modules.length === 0) return null;
-      const colors = PRIORITY_COLORS[priority];
-
-      return h(
-        View,
-        { key: priority, style: styles.priorityGroup },
-        h(Text, { style: [styles.subsectionTitle, { color: colors.text }] }, PRIORITY_GROUP_LABELS[priority]),
-        ...modules.map((m) =>
-          h(Text, { key: m.moduleId, style: styles.matrixRow }, `•  ${m.moduleName}  —  ${m.percentage}%`)
-        )
-      );
-    }),
+    buildPriorityMatrixGrid(content.byPriority),
     buildFooter()
   );
 
-export const actionPlan30DaySection = buildTimeBoxedPlanSection(
-  '30-Day Action Plan',
-  'High-priority modules — begin these actions within the next 30 days.',
-  'High'
-);
+export const heatMapSection: SectionBuilder = (assessment, _content) =>
+  h(
+    Page,
+    { size: 'A4', style: styles.page, wrap: true },
+    h(Text, { style: styles.pageHeading }, 'Risk Heat Map'),
+    h(Text, { style: styles.paragraph }, 'Module performance shaded by severity — the hottest areas need attention first.'),
+    buildHeatMapGrid(assessment.moduleScores),
+    buildFooter()
+  );
 
-export const actionPlan60DaySection = buildTimeBoxedPlanSection(
-  '60-Day Action Plan',
-  'Medium-priority modules — plan these actions for the next 60 days.',
-  'Medium'
-);
-
-export const actionPlan90DaySection: SectionBuilder = (_assessment, content) => {
-  const low = content.byPriority.Low;
-  const maintain = content.byPriority.Maintain;
+export const fishboneRootCauseSection: SectionBuilder = (_assessment, content) => {
+  const grouped = new Map<RootCauseCategory, ModuleRecommendation[]>();
+  for (const recommendation of content.moduleRecommendations) {
+    if (recommendation.priority !== 'High' && recommendation.priority !== 'Medium') continue;
+    const category = rootCauseCategoryFor(recommendation.moduleId);
+    if (!grouped.has(category)) grouped.set(category, []);
+    grouped.get(category)!.push(recommendation);
+  }
+  const categorized = [...grouped.entries()].map(([category, modules]) => ({ category, modules }));
 
   return h(
     Page,
     { size: 'A4', style: styles.page, wrap: true },
-    h(Text, { style: styles.pageHeading }, '90-Day Improvement Roadmap'),
+    h(Text, { style: styles.pageHeading }, 'Root Cause Analysis'),
     h(
       Text,
       { style: styles.paragraph },
-      'Lower-priority modules to address over the next 90 days, plus areas to sustain.'
+      'Where your weakest areas trace back to, grouped by underlying cause rather than symptom.'
     ),
-    low.length === 0
-      ? h(Text, { style: styles.paragraph }, 'No modules currently fall into this priority band.')
-      : h(
-          View,
-          null,
-          ...low.map((m) =>
-            h(
-              View,
-              { key: m.moduleId, style: { marginBottom: 8 }, wrap: false },
-              h(Text, { style: styles.moduleTitle }, m.moduleName),
-              buildBulletList(m.recommendations)
-            )
-          )
-        ),
-    maintain.length > 0
-      ? h(
-          View,
-          { style: { marginTop: 10 } },
-          h(Text, { style: styles.subsectionTitle }, 'Maintain — Sustain Current Practices'),
-          ...maintain.map((m) => h(Text, { key: m.moduleId, style: styles.matrixRow }, `•  ${m.moduleName}`))
-        )
-      : null,
+    buildFishboneDiagram(categorized),
     buildFooter()
   );
 };
 
-export const conclusionSection: SectionBuilder = (assessment, _content) =>
+export const timelineSection: SectionBuilder = (_assessment, content) =>
   h(
     Page,
     { size: 'A4', style: styles.page },
-    h(Text, { style: styles.pageHeading }, 'Professional Conclusion'),
-    h(Text, { style: styles.paragraph }, CONCLUSION_TEXT[assessment.healthRating]),
-    h(Text, { style: styles.disclaimer }, DISCLAIMER_TEXT),
+    h(Text, { style: styles.pageHeading }, 'Improvement Roadmap'),
+    h(
+      Text,
+      { style: styles.paragraph },
+      'A high-level view of when to focus on each area. A detailed, sequenced execution plan is built together ' +
+        'during a consultation.'
+    ),
+    buildTimeline(content.byPriority),
+    buildFooter()
+  );
+
+export const progressBarsSection: SectionBuilder = (assessment, _content) =>
+  h(
+    Page,
+    { size: 'A4', style: styles.page, wrap: true },
+    h(Text, { style: styles.pageHeading }, 'Progress Toward Benchmark'),
+    h(Text, { style: styles.paragraph }, 'Current performance against an 80% healthy-operations benchmark.'),
+    buildProgressBarRow(assessment.moduleScores),
+    buildFooter()
+  );
+
+export const svgInfographicsSection: SectionBuilder = (assessment, _content) =>
+  h(
+    Page,
+    { size: 'A4', style: styles.page, wrap: true },
+    h(Text, { style: styles.pageHeading }, 'Module Health at a Glance'),
+    h(Text, { style: styles.paragraph }, 'Every module’s rating, in one view.'),
+    buildModuleIconGrid(assessment.moduleScores),
+    buildFooter()
+  );
+
+export const businessImpactCardsSection: SectionBuilder = (_assessment, content) => {
+  const modules = pickPriorityModules(content, 6);
+
+  return h(
+    Page,
+    { size: 'A4', style: styles.page, wrap: true },
+    h(Text, { style: styles.pageHeading }, 'Business Impact'),
+    h(Text, { style: styles.paragraph }, 'What improving each priority area is expected to mean for the business.'),
+    h(
+      View,
+      { style: styles.kpiGrid },
+      ...modules.map((m) =>
+        buildKpiCard(`${m.priority} priority`, m.moduleName, m.expectedBenefits[0], RATING_COLORS[m.rating].text)
+      )
+    ),
+    buildFooter()
+  );
+};
+
+export const executiveRecommendationsSection: SectionBuilder = (_assessment, content) => {
+  const modules = pickPriorityModules(content, 6);
+
+  return h(
+    Page,
+    { size: 'A4', style: styles.page, wrap: true },
+    h(Text, { style: styles.pageHeading }, 'Executive Recommendations'),
+    h(
+      Text,
+      { style: styles.paragraph },
+      'Strategic priorities for leadership. For a complete, sequenced implementation plan tailored to your ' +
+        'operation, our consulting team can build one with you.'
+    ),
+    buildBulletList(modules.map((m) => `${m.moduleName}: ${m.recommendations[0]}`)),
+    buildFooter()
+  );
+};
+
+export const consultationCtaSection: SectionBuilder = (_assessment, _content) =>
+  h(
+    Page,
+    { size: 'A4', style: styles.page },
+    h(Text, { style: styles.pageHeading }, 'Ready to Act on These Findings?'),
+    h(
+      Text,
+      { style: styles.paragraph },
+      'This report identifies where your inventory operation stands and why. Turning these findings into a ' +
+        'concrete, sequenced action plan is exactly what a consultation with Nitin Anand Consulting delivers.'
+    ),
+    h(Text, { style: styles.sectionTitle }, CONSULTATION.serviceName),
+    h(Text, { style: styles.paragraph }, CONSULTATION.description),
+    buildBulletList([
+      `Duration: ${CONSULTATION.duration}`,
+      `Format: ${CONSULTATION.mode}`,
+      `Fee: ${formatInr(CONSULTATION.fee)}`,
+    ]),
+    h(
+      Text,
+      { style: styles.paragraph },
+      `To book, contact ${COMPANY_NAME} at ${CONTACT.email} or ${CONTACT.phone}.`
+    ),
     buildBrandFooter(),
+    h(Text, { style: styles.disclaimer }, DISCLAIMER_TEXT),
     buildFooter()
   );

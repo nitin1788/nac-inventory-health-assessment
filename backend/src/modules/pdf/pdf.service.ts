@@ -1,23 +1,20 @@
 import { createElement as h } from 'react';
-import { Document, renderToBuffer } from '@react-pdf/renderer';
+import { Document, Font, renderToBuffer } from '@react-pdf/renderer';
 import { COMPANY_NAME } from '../../config/constants';
 import { logger } from '../../utils/logger';
 import type { AssessmentDetail } from '../assessment/assessment.types';
 import type { ReportTier } from '../payment/payment.types';
 import { buildReportContent } from './pdfReportContent';
 import { REPORT_TIER_SECTIONS } from './pdfSections.config';
-import { DUMMY_REPORT_TIER_SECTIONS, DUMMY_REPORT_TITLES } from './pdfSections.dummy.config';
 
 /**
- * TEMPORARY — end-to-end flow testing switch. When true, both tiers
- * render clearly-labeled placeholder content (pdfSections.dummy.ts)
- * instead of the real report (pdfSections.ts) — same section-registry
- * architecture either way, only which registry is active changes.
- * Flip to false (or delete this branch entirely, along with
- * pdfSections.dummy.ts / pdfSections.dummy.config.ts) once real
- * Summary/Full content is ready to ship.
+ * Without this, @react-pdf/renderer's default hyphenation splits any word
+ * that doesn't fit a line with an inserted "-" (e.g. "Inventory Plan-
+ * ning" on a narrow KPI card) — acceptable for dense body paragraphs, but
+ * ugly on short bold labels like module names. Wrapping whole words onto
+ * the next line instead reads as normal, professional card layout.
  */
-const DUMMY_MODE = true;
+Font.registerHyphenationCallback((word) => [word]);
 
 function slugifyCompanyName(companyName: string): string {
   const slug = companyName
@@ -40,10 +37,9 @@ export interface GeneratedReportPdf {
  * and stored; it never recalculates a score.
  *
  * The document is assembled from the tier's declared section list
- * (see pdfSections.config.ts, or pdfSections.dummy.config.ts while
- * DUMMY_MODE is on) — this function itself has no knowledge of what's
- * in either tier, only how to turn "a list of sections" into "a
- * rendered PDF."
+ * (see pdfSections.config.ts) — this function itself has no knowledge
+ * of what's in either tier, only how to turn "a list of sections" into
+ * "a rendered PDF."
  */
 export async function generateAssessmentReportPdf(
   assessment: AssessmentDetail,
@@ -52,12 +48,10 @@ export async function generateAssessmentReportPdf(
   const startedAt = Date.now();
 
   const content = buildReportContent(assessment);
-  const sections = DUMMY_MODE ? DUMMY_REPORT_TIER_SECTIONS[tier] : REPORT_TIER_SECTIONS[tier];
+  const sections = REPORT_TIER_SECTIONS[tier];
   const pages = sections.map((buildSection) => buildSection(assessment, content));
 
-  const documentTitle = DUMMY_MODE
-    ? `${assessment.company.companyName} — ${DUMMY_REPORT_TITLES[tier]}`
-    : `${assessment.company.companyName} — Inventory Health Assessment Report`;
+  const documentTitle = `${assessment.company.companyName} — Inventory Health Assessment Report`;
 
   const document = h(
     Document,
@@ -69,8 +63,7 @@ export async function generateAssessmentReportPdf(
   );
 
   const buffer = await renderToBuffer(document);
-  const dummySuffix = DUMMY_MODE ? '-dummy' : '';
-  const filename = `nac-inventory-health-assessment-${tier}${dummySuffix}-${slugifyCompanyName(assessment.company.companyName)}.pdf`;
+  const filename = `nac-inventory-health-assessment-${tier}-${slugifyCompanyName(assessment.company.companyName)}.pdf`;
 
   logger.info(
     {
@@ -78,7 +71,6 @@ export async function generateAssessmentReportPdf(
       assessmentNumber: assessment.assessmentNumber,
       companyName: assessment.company.companyName,
       tier,
-      dummyMode: DUMMY_MODE,
       pageCount: pages.length,
       msToRender: Date.now() - startedAt,
     },
