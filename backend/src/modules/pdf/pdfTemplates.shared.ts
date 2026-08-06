@@ -411,14 +411,24 @@ export function buildFindingRow(moduleScore: ModuleScoreInput, colors: { bg: str
   );
 }
 
-/** The branded cover page — identical for every tier. */
-export function buildCoverPage(assessment: AssessmentDetail, reportLabel: string) {
+/**
+ * The branded cover page — same logo, divider, layout, and typography
+ * for every tier and every mode (dummy or real). `title` defaults to
+ * the real report's heading so existing callers are unaffected; only
+ * the dummy end-to-end test flow (pdfSections.dummy.ts) passes a
+ * different one.
+ */
+export function buildCoverPage(
+  assessment: AssessmentDetail,
+  reportLabel: string,
+  title = 'Inventory Health Assessment Report'
+) {
   return h(
     Page,
     { size: 'A4', style: styles.coverPage },
     h(Image, { src: NAC_LOGO_FULL_DATA_URI, style: styles.coverLogo }),
     h(View, { style: styles.coverDivider }),
-    h(Text, { style: styles.coverTitle }, 'Inventory Health Assessment Report'),
+    h(Text, { style: styles.coverTitle }, title),
     h(Text, { style: styles.coverReportLabel }, reportLabel),
     h(Text, { style: styles.coverSubtitle }, `Prepared for ${assessment.company.companyName}`),
     h(Text, { style: styles.coverAssessmentNumber }, `Assessment No. ${assessment.assessmentNumber}`),
