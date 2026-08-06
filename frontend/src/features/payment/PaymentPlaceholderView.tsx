@@ -68,7 +68,7 @@ export function PaymentPlaceholderView() {
   }
 
   const tierOption = REPORT_TIERS.find((option) => option.id === state.tier);
-  const downloadUrl = `${env.apiBaseUrl}${endpoints.reportPdf(state.assessmentId)}`;
+  const downloadUrl = `${env.apiBaseUrl}${endpoints.reportPdf(state.assessmentId, state.tier)}`;
 
   return (
     <div className="min-h-screen bg-slate-50">

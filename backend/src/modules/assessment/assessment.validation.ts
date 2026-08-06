@@ -45,3 +45,14 @@ export const createAssessmentSchema = z.object({
 export const assessmentIdParamsSchema = z.object({
   id: z.string().uuid('Invalid assessment id.'),
 });
+
+/**
+ * Selects which of the two report products (Report Summary / Full
+ * Professional Inventory Report) GET /reports/:id/pdf renders — see
+ * pdf/pdfSections.config.ts. Defaults to 'full' so the route's
+ * pre-tiering behavior (always the complete report) is unchanged for
+ * any request that omits the query param.
+ */
+export const reportTierQuerySchema = z.object({
+  tier: z.enum(['summary', 'full']).default('full'),
+});

@@ -15,14 +15,13 @@ import type { ReportTier } from '../payment/payment.types';
  * will invoke — written now so that wiring up a real gateway later
  * means calling this function, not designing it.
  *
- * `tier` is accepted but doesn't yet vary the PDF's contents — the
- * existing template is a single full-detail report. Splitting it into
- * a lighter "summary" tier vs. today's "full" tier is deferred until a
- * real payment can actually confirm which tier was purchased.
+ * `tier` selects which of the two distinct report products
+ * (Report Summary / Professional Inventory Report) gets rendered —
+ * see pdf/pdfSections.config.ts for what each tier actually contains.
  */
 export async function deliverPaidReport(assessmentId: string, tier: ReportTier): Promise<void> {
   const assessment = await getAssessmentById(assessmentId);
-  const report = await generateAssessmentReportPdf(assessment);
+  const report = await generateAssessmentReportPdf(assessment, tier);
 
   logger.info({ assessmentId, tier }, 'Delivering paid report to customer.');
   await sendAssessmentReportEmail(assessment, report);

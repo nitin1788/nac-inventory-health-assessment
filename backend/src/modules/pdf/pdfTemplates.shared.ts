@@ -1,53 +1,54 @@
 import { createElement as h } from 'react';
-import { Document, Image, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
+import { Image, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
 import { COMPANY_NAME, CONTACT, SERVICES_LIST } from '../../config/constants';
 import { NAC_LOGO_FULL_DATA_URI } from '../../assets/nacLogo';
 import type { AssessmentDetail, HealthRating, ModuleScoreInput } from '../assessment/assessment.types';
-import { generateRecommendations } from '../recommendations/recommendationEngine';
-import type { ModuleRecommendation, PriorityLevel } from '../recommendations/recommendationTypes';
+import type { PriorityLevel } from '../recommendations/recommendationTypes';
 
 /**
- * Built with React.createElement rather than JSX — this file is a
- * plain `.ts` module (the backend has no JSX/TSX build step), and
+ * Every visual primitive both report tiers are built from — styles,
+ * color systems, the cover page, footers, and small reusable renderers
+ * (score card, module-scores table, finding row, bullet list). Neither
+ * tier has its own copy of any of this, which is what makes the two
+ * PDFs' shared branding (logo, color palette, typography, header,
+ * footer) structural rather than a style guideline to keep in sync by
+ * hand. Built with React.createElement rather than JSX — this file is
+ * a plain `.ts` module (the backend has no JSX/TSX build step), and
  * @react-pdf/renderer's components render to PDF primitives rather
- * than DOM, so there's no markup to preview anyway. Styling mirrors
- * frontend/src/features/assessment/pdf/pdfTemplates.ts (same brand
- * palette) so the server-generated report looks consistent with the
- * product's visual identity, adapted here to render from data already
- * persisted in Supabase rather than live in-browser state.
+ * than DOM, so there's no markup to preview anyway.
  */
 
-const RATING_COLORS: Record<HealthRating, { bg: string; text: string }> = {
+export const RATING_COLORS: Record<HealthRating, { bg: string; text: string }> = {
   Excellent: { bg: '#ECFDF5', text: '#047857' },
   Good: { bg: '#F0FDFA', text: '#0F766E' },
   'Needs Improvement': { bg: '#FFFBEB', text: '#B45309' },
   Critical: { bg: '#FEF2F2', text: '#B91C1C' },
 };
 
-const PRIORITY_COLORS: Record<PriorityLevel, { bg: string; text: string }> = {
+export const PRIORITY_COLORS: Record<PriorityLevel, { bg: string; text: string }> = {
   High: { bg: '#FEF2F2', text: '#B91C1C' },
   Medium: { bg: '#FFFBEB', text: '#B45309' },
   Low: { bg: '#F0FDFA', text: '#0F766E' },
   Maintain: { bg: '#ECFDF5', text: '#047857' },
 };
 
-const PRIORITY_ORDER: PriorityLevel[] = ['High', 'Medium', 'Low', 'Maintain'];
+export const PRIORITY_ORDER: PriorityLevel[] = ['High', 'Medium', 'Low', 'Maintain'];
 
-const PRIORITY_GROUP_LABELS: Record<PriorityLevel, string> = {
+export const PRIORITY_GROUP_LABELS: Record<PriorityLevel, string> = {
   High: 'High Priority — Act Immediately',
   Medium: 'Medium Priority — Plan Next',
   Low: 'Low Priority — Monitor',
   Maintain: 'Maintain — Sustain Current Practices',
 };
 
-const DISCLAIMER_TEXT =
+export const DISCLAIMER_TEXT =
   'Disclaimer: This report is generated based on self-reported responses to the NAC Inventory Health ' +
   'Assessment and is intended for general informational purposes only. It does not constitute professional ' +
   'consulting advice and should not be relied upon as a substitute for a detailed operational audit. For a ' +
   'comprehensive, tailored assessment, please contact Nitin Anand Consulting directly. This document is ' +
   'confidential and intended solely for the named recipient.';
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   page: {
     paddingTop: 40,
     paddingBottom: 56,
@@ -109,6 +110,15 @@ const styles = StyleSheet.create({
     fontSize: 9,
     color: '#94A3B8',
     lineHeight: 1.6,
+  },
+  coverReportLabel: {
+    marginTop: 16,
+    fontSize: 11,
+    fontFamily: 'Helvetica-Bold',
+    textAlign: 'center',
+    color: '#C89B3C',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
   },
   pageHeading: {
     fontSize: 18,
@@ -314,13 +324,36 @@ const styles = StyleSheet.create({
     color: '#64748B',
     lineHeight: 1.5,
   },
+  matrixRow: {
+    fontSize: 9,
+    color: '#334155',
+    marginBottom: 3,
+  },
+  questionRow: {
+    marginBottom: 6,
+    paddingBottom: 6,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F5F9',
+  },
+  questionText: {
+    fontSize: 9,
+    color: '#1E293B',
+    lineHeight: 1.4,
+  },
+  questionAnswer: {
+    marginTop: 2,
+    fontSize: 9,
+    fontFamily: 'Helvetica-Bold',
+    color: '#0F2A52',
+  },
 });
 
-function formatDate(iso: string): string {
+export function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
 }
 
-function buildFooter() {
+/** Page-number footer, fixed on every page. */
+export function buildFooter() {
   return h(
     View,
     { style: styles.footer, fixed: true },
@@ -334,8 +367,8 @@ function buildFooter() {
   );
 }
 
-/** Full NAC branding block — services list, contact, confidentiality — placed at the end of the report. */
-function buildBrandFooter() {
+/** Full NAC branding block — services list, contact, confidentiality — placed at the end of a report. */
+export function buildBrandFooter() {
   return h(
     View,
     { style: styles.brandFooter },
@@ -345,7 +378,7 @@ function buildBrandFooter() {
   );
 }
 
-function buildInfoItem(label: string, value: string) {
+export function buildInfoItem(label: string, value: string) {
   return h(
     View,
     { key: label, style: styles.infoItem },
@@ -354,7 +387,7 @@ function buildInfoItem(label: string, value: string) {
   );
 }
 
-function buildBulletList(items: string[]) {
+export function buildBulletList(items: string[]) {
   return h(
     View,
     { style: styles.bulletList },
@@ -369,7 +402,7 @@ function buildBulletList(items: string[]) {
   );
 }
 
-function buildFindingRow(moduleScore: ModuleScoreInput, colors: { bg: string; text: string }) {
+export function buildFindingRow(moduleScore: ModuleScoreInput, colors: { bg: string; text: string }) {
   return h(
     View,
     { key: moduleScore.moduleId, style: [styles.listRow, { backgroundColor: colors.bg }] },
@@ -378,13 +411,15 @@ function buildFindingRow(moduleScore: ModuleScoreInput, colors: { bg: string; te
   );
 }
 
-function buildCoverPage(assessment: AssessmentDetail) {
+/** The branded cover page — identical for every tier. */
+export function buildCoverPage(assessment: AssessmentDetail, reportLabel: string) {
   return h(
     Page,
     { size: 'A4', style: styles.coverPage },
     h(Image, { src: NAC_LOGO_FULL_DATA_URI, style: styles.coverLogo }),
     h(View, { style: styles.coverDivider }),
     h(Text, { style: styles.coverTitle }, 'Inventory Health Assessment Report'),
+    h(Text, { style: styles.coverReportLabel }, reportLabel),
     h(Text, { style: styles.coverSubtitle }, `Prepared for ${assessment.company.companyName}`),
     h(Text, { style: styles.coverAssessmentNumber }, `Assessment No. ${assessment.assessmentNumber}`),
     h(
@@ -401,211 +436,61 @@ function buildCoverPage(assessment: AssessmentDetail) {
   );
 }
 
-function buildSummaryPage(assessment: AssessmentDetail, overallSummary: string, overallMaxScore: number) {
+/** The Overall Score / Health Rating card — shared by both tiers. */
+export function buildScoreCard(assessment: AssessmentDetail, overallMaxScore: number) {
   const ratingColors = RATING_COLORS[assessment.healthRating];
-  const { company } = assessment;
-
   return h(
-    Page,
-    { size: 'A4', style: styles.page },
-    h(Text, { style: styles.pageHeading }, 'Assessment Summary'),
-
-    h(Text, { style: styles.sectionTitle }, 'Company Details'),
-    h(
-      View,
-      { style: styles.infoGrid },
-      buildInfoItem('Company Name', company.companyName),
-      buildInfoItem('Contact Person', `${company.contactPerson} (${company.designation})`),
-      buildInfoItem('Industry', company.industry),
-      buildInfoItem('Business Type', company.businessType),
-      buildInfoItem('Number of Employees', company.employeeCount),
-      buildInfoItem('Inventory Locations', company.inventoryLocations),
-      buildInfoItem('Approximate Active SKUs', company.activeSkus),
-      buildInfoItem('Contact Email', company.email)
-    ),
-
-    h(Text, { style: styles.sectionTitle }, 'Overall Score & Health Rating'),
-    h(
-      View,
-      { style: styles.scoreCard },
-      h(Text, { style: styles.scoreValue }, `${assessment.overallScore} / ${overallMaxScore}`),
-      h(Text, { style: styles.scoreCaption }, `${assessment.overallPercentage}% overall`),
-      h(
-        Text,
-        { style: [styles.ratingBadge, { backgroundColor: ratingColors.bg, color: ratingColors.text }] },
-        assessment.healthRating
-      )
-    ),
-    h(Text, { style: styles.paragraph }, overallSummary),
-
-    buildFooter()
-  );
-}
-
-function buildModuleScoresPage(assessment: AssessmentDetail) {
-  const { moduleScores } = assessment;
-
-  // "Top Findings" — modules that most need attention. Anything below
-  // the "Good" band, weakest first; if every module is Good/Excellent,
-  // still surface the single lowest-scoring module so the section
-  // always has content.
-  const belowGood = [...moduleScores]
-    .filter((m) => m.rating === 'Critical' || m.rating === 'Needs Improvement')
-    .sort((a, b) => a.percentage - b.percentage);
-  const topFindings =
-    belowGood.length > 0
-      ? belowGood
-      : [...moduleScores].sort((a, b) => a.percentage - b.percentage).slice(0, 1);
-
-  return h(
-    Page,
-    { size: 'A4', style: styles.page, wrap: true },
-    h(Text, { style: styles.pageHeading }, 'Module-Wise Scores'),
-
-    h(
-      View,
-      { style: styles.table },
-      h(
-        View,
-        { style: styles.tableHeaderRow },
-        h(Text, { style: [styles.tableHeaderCell, styles.colModule] }, 'Module'),
-        h(Text, { style: [styles.tableHeaderCell, styles.colScore] }, 'Score'),
-        h(Text, { style: [styles.tableHeaderCell, styles.colMax] }, 'Max'),
-        h(Text, { style: [styles.tableHeaderCell, styles.colPct] }, 'Percentage')
-      ),
-      ...moduleScores.map((moduleScore) =>
-        h(
-          View,
-          { key: moduleScore.moduleId, style: styles.tableRow },
-          h(Text, { style: [styles.tableCell, styles.colModule] }, moduleScore.moduleName),
-          h(Text, { style: [styles.tableCell, styles.colScore] }, String(moduleScore.score)),
-          h(Text, { style: [styles.tableCell, styles.colMax] }, String(moduleScore.maxScore)),
-          h(Text, { style: [styles.tableCell, styles.colPct] }, `${moduleScore.percentage}%`)
-        )
-      )
-    ),
-
-    h(Text, { style: styles.sectionTitle }, 'Top Findings'),
+    View,
+    { style: styles.scoreCard },
+    h(Text, { style: styles.scoreValue }, `${assessment.overallScore} / ${overallMaxScore}`),
+    h(Text, { style: styles.scoreCaption }, `${assessment.overallPercentage}% overall`),
     h(
       Text,
-      { style: styles.paragraph },
-      'The modules below need the most attention, ranked by how far they fall from a healthy score.'
-    ),
-    ...topFindings.map((m) => buildFindingRow(m, RATING_COLORS[m.rating])),
-
-    buildFooter()
+      { style: [styles.ratingBadge, { backgroundColor: ratingColors.bg, color: ratingColors.text }] },
+      assessment.healthRating
+    )
   );
 }
 
-function buildModuleRecommendationBlock(recommendation: ModuleRecommendation) {
-  const ratingColors = RATING_COLORS[recommendation.rating];
-  const priorityColors = PRIORITY_COLORS[recommendation.priority];
-
+/** The full module-wise score table — every module, shared by both tiers. */
+export function buildModuleScoresTable(moduleScores: ModuleScoreInput[]) {
   return h(
     View,
-    { key: recommendation.moduleId, style: styles.moduleBlock, wrap: false },
+    { style: styles.table },
     h(
       View,
-      { style: styles.moduleHeaderRow },
-      h(Text, { style: styles.moduleTitle }, recommendation.moduleName),
-      h(
-        View,
-        { style: styles.badgeRow },
-        h(
-          Text,
-          { style: [styles.badge, { backgroundColor: ratingColors.bg, color: ratingColors.text }] },
-          recommendation.rating
-        ),
-        h(
-          Text,
-          { style: [styles.badge, { backgroundColor: priorityColors.bg, color: priorityColors.text }] },
-          `${recommendation.priority} priority`
-        )
-      )
+      { style: styles.tableHeaderRow },
+      h(Text, { style: [styles.tableHeaderCell, styles.colModule] }, 'Module'),
+      h(Text, { style: [styles.tableHeaderCell, styles.colScore] }, 'Score'),
+      h(Text, { style: [styles.tableHeaderCell, styles.colMax] }, 'Max'),
+      h(Text, { style: [styles.tableHeaderCell, styles.colPct] }, 'Percentage')
     ),
-    h(Text, { style: styles.paragraph }, recommendation.summary),
-    h(Text, { style: styles.subsectionTitle }, 'Recommended Actions'),
-    buildBulletList(recommendation.recommendations),
-    h(Text, { style: styles.subsectionTitle }, 'Expected Business Benefits'),
-    buildBulletList(recommendation.expectedBenefits)
-  );
-}
-
-function buildPriorityGroup(priority: PriorityLevel, recommendations: ModuleRecommendation[]) {
-  if (recommendations.length === 0) return null;
-  const colors = PRIORITY_COLORS[priority];
-
-  return h(
-    View,
-    { key: priority, style: styles.priorityGroup, wrap: false },
-    h(Text, { style: [styles.subsectionTitle, { color: colors.text }] }, PRIORITY_GROUP_LABELS[priority]),
-    ...recommendations.map((recommendation) =>
+    ...moduleScores.map((moduleScore) =>
       h(
         View,
-        { key: recommendation.moduleId, style: { marginBottom: 8 } },
-        h(Text, { style: styles.moduleTitle }, recommendation.moduleName),
-        buildBulletList(recommendation.recommendations)
+        { key: moduleScore.moduleId, style: styles.tableRow },
+        h(Text, { style: [styles.tableCell, styles.colModule] }, moduleScore.moduleName),
+        h(Text, { style: [styles.tableCell, styles.colScore] }, String(moduleScore.score)),
+        h(Text, { style: [styles.tableCell, styles.colMax] }, String(moduleScore.maxScore)),
+        h(Text, { style: [styles.tableCell, styles.colPct] }, `${moduleScore.percentage}%`)
       )
     )
   );
 }
 
-function buildRecommendationsPage(moduleRecommendations: ModuleRecommendation[]) {
+/** The Company Details grid — used by the Full tier's Executive/Summary content. */
+export function buildCompanyDetailsGrid(assessment: AssessmentDetail) {
+  const { company } = assessment;
   return h(
-    Page,
-    { size: 'A4', style: styles.page, wrap: true },
-    h(Text, { style: styles.pageHeading }, 'Recommendations'),
-    h(Text, { style: styles.paragraph }, 'Ordered by priority — highest-priority modules appear first.'),
-    ...moduleRecommendations.map(buildModuleRecommendationBlock),
-    buildFooter()
-  );
-}
-
-function buildPriorityActionPlanPage(moduleRecommendations: ModuleRecommendation[]) {
-  const grouped = PRIORITY_ORDER.map((priority) => ({
-    priority,
-    recommendations: moduleRecommendations.filter((r) => r.priority === priority),
-  }));
-
-  return h(
-    Page,
-    { size: 'A4', style: styles.page, wrap: true },
-    h(Text, { style: styles.pageHeading }, 'Priority Action Plan'),
-    h(
-      Text,
-      { style: styles.paragraph },
-      'A consolidated action plan across all modules, grouped by business urgency.'
-    ),
-    ...grouped.map(({ priority, recommendations }) => buildPriorityGroup(priority, recommendations)),
-    h(Text, { style: styles.disclaimer }, DISCLAIMER_TEXT),
-    buildBrandFooter(),
-    buildFooter()
-  );
-}
-
-/**
- * Assembles the complete, print-ready A4 Document for one assessment
- * already persisted in Supabase. Recommendations are derived here
- * (rule-based, from the stored module ratings) rather than recomputed
- * scoring — this module never touches the scoring engine.
- */
-export function buildReportDocument(assessment: AssessmentDetail) {
-  const overallMaxScore = assessment.moduleScores.reduce((sum, m) => sum + m.maxScore, 0);
-  const { overallSummary, moduleRecommendations } = generateRecommendations(
-    assessment.moduleScores,
-    assessment.healthRating
-  );
-
-  return h(
-    Document,
-    {
-      title: `${assessment.company.companyName} — Inventory Health Assessment Report`,
-      author: COMPANY_NAME,
-    },
-    buildCoverPage(assessment),
-    buildSummaryPage(assessment, overallSummary, overallMaxScore),
-    buildModuleScoresPage(assessment),
-    buildRecommendationsPage(moduleRecommendations),
-    buildPriorityActionPlanPage(moduleRecommendations)
+    View,
+    { style: styles.infoGrid },
+    buildInfoItem('Company Name', company.companyName),
+    buildInfoItem('Contact Person', `${company.contactPerson} (${company.designation})`),
+    buildInfoItem('Industry', company.industry),
+    buildInfoItem('Business Type', company.businessType),
+    buildInfoItem('Number of Employees', company.employeeCount),
+    buildInfoItem('Inventory Locations', company.inventoryLocations),
+    buildInfoItem('Approximate Active SKUs', company.activeSkus),
+    buildInfoItem('Contact Email', company.email)
   );
 }

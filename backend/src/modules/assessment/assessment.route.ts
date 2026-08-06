@@ -3,7 +3,7 @@ import { asyncHandler } from '../../utils/asyncHandler';
 import { validateRequest } from '../../middleware/validateRequest.middleware';
 import { createRateLimiter } from '../../middleware/rateLimiter.middleware';
 import { ASSESSMENT_SUBMIT_RATE_LIMIT } from '../../config/constants';
-import { assessmentIdParamsSchema, createAssessmentSchema } from './assessment.validation';
+import { assessmentIdParamsSchema, createAssessmentSchema, reportTierQuerySchema } from './assessment.validation';
 import {
   createAssessmentController,
   getAssessmentController,
@@ -50,10 +50,13 @@ reportRouter.get(
 /**
  * Server-side rendered PDF of the same report (Milestone 10) — built
  * with @react-pdf/renderer from the persisted assessment, per the
- * PDF-generation approach in docs/PRD.md Section 8.
+ * PDF-generation approach in docs/PRD.md Section 8. `?tier=` selects
+ * which of the two report products to render (see
+ * assessment.validation.ts's reportTierQuerySchema).
  */
 reportRouter.get(
   '/:id/pdf',
   validateRequest(assessmentIdParamsSchema, 'params'),
+  validateRequest(reportTierQuerySchema, 'query'),
   asyncHandler(getAssessmentReportPdfController)
 );

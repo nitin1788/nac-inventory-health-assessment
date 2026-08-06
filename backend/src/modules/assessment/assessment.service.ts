@@ -25,7 +25,9 @@ function ensureSupabaseConfigured(): void {
  */
 async function sendInternalLeadAlert(id: string): Promise<void> {
   const assessment = await getAssessmentById(id);
-  const report = await generateAssessmentReportPdf(assessment);
+  // Always the full report for NAC's own internal visibility — unrelated
+  // to whichever tier (if any) a customer eventually purchases.
+  const report = await generateAssessmentReportPdf(assessment, 'full');
   await sendLeadAlertEmail(assessment, report);
 }
 
