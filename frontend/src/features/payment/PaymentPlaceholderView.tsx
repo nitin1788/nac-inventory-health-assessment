@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react';
-import { CheckCircle2, Clock3, Download, Loader2 } from 'lucide-react';
+import { Clock3, Loader2 } from 'lucide-react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { COMPANY_NAME, REPORT_TIERS, ROUTES } from '@/config/constants';
 import type { ReportTier } from '@/config/constants';
-import { env } from '@/config/env';
-import { endpoints } from '@/services/api/endpoints';
 import { createPaymentOrder } from '@/services/api/paymentApi';
 import { Button } from '@/shared/components/Button';
 import { useSeo } from '@/shared/hooks/useSeo';
@@ -16,18 +14,20 @@ export interface PaymentLocationState {
   tier: ReportTier;
 }
 
-type OrderStatus = 'loading' | 'unavailable' | 'fulfilled' | 'error';
+type OrderStatus = 'loading' | 'unavailable' | 'error';
 
 /**
- * Placeholder checkout page — no real payment gateway is wired up yet
- * (see backend/src/modules/payment/, currently a placeholder
- * provider in production). Still calls the real POST /payments/orders
- * endpoint so the request/response plumbing is exercised end-to-end;
- * this component only reacts to whichever `status` the API returns
- * ('unavailable' in production, 'fulfilled' when the backend's
- * internal-testing bypass is active) — it has no knowledge of *why*,
- * so it needs no changes once a real gateway replaces the backend's
- * placeholder provider.
+ * Checkout-initiation page — calls the real POST /payments/orders
+ * endpoint and reacts purely to the `status` it gets back:
+ *
+ * - 'unavailable' (production default today — no PaymentProvider is
+ *   live yet): shows "coming soon" messaging, same as before.
+ * - 'created' (PAYMENT_TEST_MODE today; a real Cashfree order later):
+ *   a real browser navigation to `redirectUrl` — test mode points that
+ *   at our own Thank You page, a real gateway will point it at its own
+ *   hosted checkout. Either way this component does the exact same
+ *   `window.location.href` navigation, so nothing here needs to change
+ *   once Cashfree is wired in server-side.
  */
 export function PaymentPlaceholderView() {
   useSeo({
@@ -50,8 +50,14 @@ export function PaymentPlaceholderView() {
     void createPaymentOrder({ assessmentId: state.assessmentId, tier: state.tier })
       .then((result) => {
         if (cancelled) return;
+
+        if (result.status === 'created' && result.redirectUrl) {
+          window.location.href = result.redirectUrl;
+          return;
+        }
+
         setMessage(result.message);
-        setStatus(result.status === 'fulfilled' ? 'fulfilled' : 'unavailable');
+        setStatus('unavailable');
       })
       .catch(() => {
         if (cancelled) return;
@@ -68,7 +74,6 @@ export function PaymentPlaceholderView() {
   }
 
   const tierOption = REPORT_TIERS.find((option) => option.id === state.tier);
-  const downloadUrl = `${env.apiBaseUrl}${endpoints.reportPdf(state.assessmentId, state.tier)}`;
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -84,13 +89,11 @@ export function PaymentPlaceholderView() {
 
           <div className="mt-8 flex flex-col items-center gap-3">
             {status === 'loading' ? <Loader2 className="h-8 w-8 animate-spin text-brand" /> : null}
-            {status === 'fulfilled' ? <CheckCircle2 className="h-8 w-8 text-emerald-500" /> : null}
             {status === 'unavailable' || status === 'error' ? <Clock3 className="h-8 w-8 text-brand" /> : null}
 
             <h1 className="text-xl font-semibold text-slate-900">
               {status === 'error' && "We couldn't reach the payment service."}
               {status === 'unavailable' && 'Payment Gateway Coming Soon.'}
-              {status === 'fulfilled' && 'Your Report Is Ready!'}
               {status === 'loading' && 'One moment…'}
             </h1>
             <p className="max-w-sm text-sm text-slate-600">
@@ -98,17 +101,8 @@ export function PaymentPlaceholderView() {
               {status === 'unavailable' &&
                 (message ??
                   "We're finishing our online payment integration. Your assessment results are saved — check back soon to purchase your report.")}
-              {status === 'fulfilled' && (message ?? 'Your report has been emailed to you and is ready to download.')}
+              {status === 'loading' && 'Setting up your order…'}
             </p>
-
-            {status === 'fulfilled' ? (
-              <a href={downloadUrl} className="mt-2">
-                <Button type="button" variant="primary">
-                  <Download className="h-4 w-4" />
-                  Download Report
-                </Button>
-              </a>
-            ) : null}
           </div>
 
           <Button type="button" variant="secondary" className="mt-8" onClick={() => navigate(-1)}>

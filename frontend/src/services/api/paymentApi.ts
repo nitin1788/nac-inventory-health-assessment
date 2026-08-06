@@ -9,19 +9,36 @@ export interface PaymentOrderRequest {
 
 export interface PaymentOrderResult {
   /**
-   * 'unavailable': production default — no gateway yet, nothing generated.
-   * 'created': a real gateway created a checkout order (future).
-   * 'fulfilled': backend's internal-testing bypass — report already
-   *   generated, emailed, and ready to download. Only ever returned by
-   *   the backend when its PAYMENT_TEST_MODE env var is set; this
-   *   frontend has no knowledge of that setting, it only reacts to
-   *   whichever status the API actually returns.
+   * 'unavailable': production default — no gateway yet, nothing created.
+   * 'created': an order now exists — either a real gateway's checkout
+   *   order, or (backend's PAYMENT_TEST_MODE only) a synthetic order.
+   *   Either way this frontend does the exact same thing: navigate to
+   *   `redirectUrl`. It has no knowledge of which provider produced it.
    */
-  status: 'unavailable' | 'created' | 'fulfilled';
+  status: 'unavailable' | 'created';
   message: string;
   tier: ReportTier;
   amountInPaise: number;
   currency: 'INR';
+  orderId?: string;
+  redirectUrl?: string;
+}
+
+export interface VerifyPaymentRequest {
+  orderId: string;
+}
+
+/** The full picture the Thank You page renders, once the backend confirms the order is paid. */
+export interface VerifiedOrderDetails {
+  orderId: string;
+  assessmentId: string;
+  assessmentNumber: string;
+  customerName: string;
+  tier: ReportTier;
+  amountInPaise: number;
+  currency: 'INR';
+  paidAt: string;
+  reportDelivered: boolean;
 }
 
 /**
@@ -33,4 +50,14 @@ export interface PaymentOrderResult {
  */
 export function createPaymentOrder(request: PaymentOrderRequest): Promise<PaymentOrderResult> {
   return apiClient.post<PaymentOrderResult>(endpoints.paymentOrders, request);
+}
+
+/**
+ * Confirms an order server-side. This call itself carries no "did the
+ * payment succeed" claim from the frontend — only the order id; the
+ * backend independently asks its active PaymentProvider for the
+ * authoritative status (see backend's payment.service.ts).
+ */
+export function verifyPayment(request: VerifyPaymentRequest): Promise<VerifiedOrderDetails> {
+  return apiClient.post<VerifiedOrderDetails>(endpoints.paymentVerify, request);
 }

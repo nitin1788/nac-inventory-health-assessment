@@ -1,9 +1,10 @@
 /**
  * Domain types for the payment module. This module exists to give a
- * future real payment gateway (Razorpay or otherwise) a single,
- * well-defined seam to plug into — see payment.service.ts for the one
- * line that names the active provider. No real gateway, API keys, or
- * checkout flow exist yet (see payment.provider.placeholder.ts).
+ * real payment gateway (Cashfree — account exists, activation pending)
+ * a single, well-defined seam to plug into — see payment.service.ts for
+ * the one line that names the active provider. Until Cashfree activates,
+ * PAYMENT_TEST_MODE is the only thing that can move this off the
+ * production-safe placeholder (see payment.provider.testMode.ts).
  */
 
 export type ReportTier = 'summary' | 'full';
@@ -22,23 +23,51 @@ export interface PaymentOrderRequest {
 export interface PaymentOrderResult {
   /**
    * 'unavailable': the placeholder provider (production default) — no
-   *   real gateway exists yet, nothing is generated or sent.
-   * 'created': a real gateway has created a checkout order (future).
-   * 'fulfilled': the internal-testing bypass provider — report already
-   *   generated, emailed, and available to download. Only ever returned
-   *   when PAYMENT_TEST_MODE=true; never in production.
+   *   real gateway exists yet, nothing is created or charged.
+   * 'created': an order now exists — either a real gateway's checkout
+   *   order, or (PAYMENT_TEST_MODE only) a synthetic order the frontend
+   *   is redirected straight through. Either way the frontend does the
+   *   same thing: navigate to `redirectUrl`.
    */
-  status: 'unavailable' | 'created' | 'fulfilled';
+  status: 'unavailable' | 'created';
   message: string;
   tier: ReportTier;
   amountInPaise: number;
   currency: 'INR';
+  /** Our own payment_orders.id — present when status === 'created'. Passed back on the /verify call. */
+  orderId?: string;
+  /**
+   * Where the frontend should navigate next. A real gateway's hosted
+   * checkout URL, or (test mode) our own Thank You page — the frontend
+   * never needs to know which. Present when status === 'created'.
+   */
+  redirectUrl?: string;
+}
+
+/** What a provider reports back when asked whether an order actually got paid. */
+export interface PaymentVerificationResult {
+  status: 'paid' | 'pending' | 'failed';
+  providerPaymentId?: string;
+}
+
+/** The full picture the Thank You page needs — returned by POST /payments/verify once an order is confirmed paid. */
+export interface VerifiedOrderDetails {
+  orderId: string;
+  assessmentId: string;
+  assessmentNumber: string;
+  customerName: string;
+  tier: ReportTier;
+  amountInPaise: number;
+  currency: 'INR';
+  paidAt: string;
+  reportDelivered: boolean;
 }
 
 /**
  * The seam a real gateway implements. A future
- * `payment.provider.razorpay.ts` would create a real order/checkout
- * session instead of returning a "coming soon" stub —
+ * `payment.provider.cashfree.ts` would create a real order/checkout
+ * session and verify it against Cashfree's Order API instead of
+ * returning a "coming soon" stub or an instant bypass —
  * payment.service.ts's `activeProvider` assignment is the only line
  * that needs to change to switch providers. Nothing outside this
  * module (assessment submission, scoring, PDF generation) depends on
@@ -47,4 +76,6 @@ export interface PaymentOrderResult {
 export interface PaymentProvider {
   name: string;
   createOrder(request: PaymentOrderRequest): Promise<PaymentOrderResult>;
+  /** providerOrderId is whatever the provider itself uses to look an order up (its own reference, not ours). */
+  verifyPayment(providerOrderId: string): Promise<PaymentVerificationResult>;
 }

@@ -1,38 +1,58 @@
 import { logger } from '../../utils/logger';
-import { deliverPaidReport } from '../report/report.service';
+import { createPaymentOrder } from './payment.repository';
 import { TIER_PRICING } from './payment.types';
-import type { PaymentOrderRequest, PaymentOrderResult, PaymentProvider } from './payment.types';
+import type { PaymentOrderRequest, PaymentOrderResult, PaymentProvider, PaymentVerificationResult } from './payment.types';
+
+/**
+ * Frontend's Thank You page path — mirrored from frontend/src/config/
+ * constants.ts's ROUTES.thankYou, per this repo's established
+ * mirror-not-share convention (see docs/ARCHITECTURE.md; TIER_PRICING
+ * above is mirrored the same way). Keep both in sync if the route path
+ * ever changes.
+ */
+const THANK_YOU_PATH = '/assessment/thank-you';
 
 /**
  * TEMPORARY internal-testing provider — only active when
  * PAYMENT_TEST_MODE=true (see backend/src/config/env.ts and
- * payment.service.ts). Bypasses the payment gateway entirely: calling
- * createOrder immediately generates the report, emails the customer,
- * and makes the report downloadable, with no payment ever taking
- * place. Never active in production unless that env var is explicitly
- * set to 'true' there — which it must not be.
- *
- * Calls the exact same report.service.ts function a real gateway's
- * payment-confirmation callback will call later — swapping this out
- * for `razorpayPaymentProvider` doesn't touch report generation logic
- * at all, only which provider decides when to call it.
+ * payment.service.ts). Creates a real payment_orders row exactly like a
+ * production gateway would, then redirects straight to our own Thank
+ * You page instead of a real checkout; verifyPayment always reports the
+ * order paid immediately, standing in for an instant, always-successful
+ * payment. This exercises the exact same order-creation -> redirect ->
+ * verify -> deliver pipeline a real Cashfree integration will use — only
+ * the two methods on this object differ from what
+ * payment.provider.cashfree.ts will eventually do; nothing downstream
+ * (the /verify endpoint, the Thank You page, report delivery) needs to
+ * change when that provider is added.
  */
 export const testModePaymentProvider: PaymentProvider = {
   name: 'test-mode',
   async createOrder(request: PaymentOrderRequest): Promise<PaymentOrderResult> {
     logger.warn(
       { assessmentId: request.assessmentId, tier: request.tier },
-      'PAYMENT_TEST_MODE active — bypassing payment and fulfilling report immediately.'
+      'PAYMENT_TEST_MODE active — creating a test-mode order, no real payment involved.'
     );
 
-    await deliverPaidReport(request.assessmentId, request.tier);
-
-    return {
-      status: 'fulfilled',
-      message: 'Test mode: your report has been generated and emailed.',
+    const order = await createPaymentOrder({
+      assessmentId: request.assessmentId,
       tier: request.tier,
       amountInPaise: TIER_PRICING[request.tier],
       currency: 'INR',
+      provider: 'test-mode',
+    });
+
+    return {
+      status: 'created',
+      message: 'Test mode: no real payment is taken — redirecting straight to the Thank You page.',
+      tier: request.tier,
+      amountInPaise: TIER_PRICING[request.tier],
+      currency: 'INR',
+      orderId: order.id,
+      redirectUrl: `${THANK_YOU_PATH}?orderId=${order.id}`,
     };
+  },
+  async verifyPayment(): Promise<PaymentVerificationResult> {
+    return { status: 'paid' };
   },
 };

@@ -25,6 +25,7 @@ export const ROUTES = {
   assessmentQuestions: '/assessment/questions',
   results: '/assessment/results',
   payment: '/assessment/payment',
+  thankYou: '/assessment/thank-you',
   about: '/about',
   faq: '/faq',
   contactUs: '/contact-us',

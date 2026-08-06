@@ -9,6 +9,7 @@ export const endpoints = {
   health: '/health',
   assessments: '/assessments',
   paymentOrders: '/payments/orders',
+  paymentVerify: '/payments/verify',
   reportPdf: (assessmentId: string, tier: ReportTier) => `/reports/${assessmentId}/pdf?tier=${tier}`,
   // Milestone 4+: questions: '/questions'
 } as const;

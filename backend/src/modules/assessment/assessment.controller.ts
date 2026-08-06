@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import { successResponse } from '../../utils/apiResponse';
 import { AppError } from '../../utils/AppError';
-import { isTestModeActive } from '../payment/payment.service';
+import { isReportUnlocked } from '../payment/payment.service';
 import type { ReportTier } from '../payment/payment.types';
 import { generateAssessmentReportPdf } from '../pdf/pdf.service';
 import { getAssessmentById, submitAssessment } from './assessment.service';
@@ -24,14 +24,15 @@ export async function getAssessmentController(req: Request, res: Response): Prom
 }
 
 /**
- * Report downloads are gated behind payment. No real payment gateway
- * is wired up yet (see backend/src/modules/payment/), so this denies
- * by default — the only exception is PAYMENT_TEST_MODE=true (internal
- * testing only; see payment.service.ts's isTestModeActive and
- * env.ts), which must never be enabled in production. Once a real
- * PaymentProvider can confirm a paid order, this check becomes that
- * lookup instead, and `tier` would come from the verified order rather
- * than the query string.
+ * Report downloads are gated behind a real, per-assessment,
+ * per-tier fact: a paid `payment_orders` row (see
+ * backend/src/modules/payment/payment.service.ts's isReportUnlocked).
+ * No real payment gateway is wired up yet — in production, the
+ * placeholder PaymentProvider never creates an order that can reach
+ * 'paid', so this denies by default; PAYMENT_TEST_MODE=true (internal
+ * testing only; see env.ts) exercises the exact same gate via
+ * test-mode orders that get marked paid through the normal
+ * create -> redirect -> verify flow, not a separate bypass.
  *
  * `?tier=summary|full` selects which of the two distinct report
  * products to render (see pdf/pdfSections.config.ts); defaults to
@@ -44,11 +45,12 @@ export async function getAssessmentReportPdfController(req: Request, res: Respon
     throw AppError.badRequest('Missing assessment id.');
   }
 
-  if (!isTestModeActive()) {
-    throw AppError.forbidden('Report download is not available yet — payment gateway integration coming soon.');
+  const { tier } = req.query as unknown as { tier: ReportTier };
+
+  if (!(await isReportUnlocked(id, tier))) {
+    throw AppError.forbidden('This report has not been unlocked yet — a completed purchase is required.');
   }
 
-  const { tier } = req.query as unknown as { tier: ReportTier };
   const assessment = await getAssessmentById(id);
   const report = await generateAssessmentReportPdf(assessment, tier);
   res.status(200);
