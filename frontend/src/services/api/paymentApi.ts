@@ -8,7 +8,16 @@ export interface PaymentOrderRequest {
 }
 
 export interface PaymentOrderResult {
-  status: 'unavailable' | 'created';
+  /**
+   * 'unavailable': production default — no gateway yet, nothing generated.
+   * 'created': a real gateway created a checkout order (future).
+   * 'fulfilled': backend's internal-testing bypass — report already
+   *   generated, emailed, and ready to download. Only ever returned by
+   *   the backend when its PAYMENT_TEST_MODE env var is set; this
+   *   frontend has no knowledge of that setting, it only reacts to
+   *   whichever status the API actually returns.
+   */
+  status: 'unavailable' | 'created' | 'fulfilled';
   message: string;
   tier: ReportTier;
   amountInPaise: number;
@@ -16,7 +25,7 @@ export interface PaymentOrderResult {
 }
 
 /**
- * Initiates a purchase for one report tier. Today this always comes
+ * Initiates a purchase for one report tier. In production this comes
  * back with status: 'unavailable' (the backend's PaymentProvider is
  * still a placeholder — see backend/src/modules/payment/) — the call
  * still round-trips through the real /payments/orders endpoint so this

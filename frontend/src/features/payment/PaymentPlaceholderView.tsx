@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Clock3, Loader2 } from 'lucide-react';
+import { CheckCircle2, Clock3, Download, Loader2 } from 'lucide-react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { COMPANY_NAME, REPORT_TIERS, ROUTES } from '@/config/constants';
 import type { ReportTier } from '@/config/constants';
+import { env } from '@/config/env';
+import { endpoints } from '@/services/api/endpoints';
 import { createPaymentOrder } from '@/services/api/paymentApi';
 import { Button } from '@/shared/components/Button';
 import { useSeo } from '@/shared/hooks/useSeo';
@@ -14,16 +16,18 @@ export interface PaymentLocationState {
   tier: ReportTier;
 }
 
-type OrderStatus = 'loading' | 'unavailable' | 'error';
+type OrderStatus = 'loading' | 'unavailable' | 'fulfilled' | 'error';
 
 /**
  * Placeholder checkout page — no real payment gateway is wired up yet
  * (see backend/src/modules/payment/, currently a placeholder
- * provider). Still calls the real POST /payments/orders endpoint so
- * the request/response plumbing is exercised end-to-end; only the
- * message shown here changes once a real gateway replaces the
- * backend's placeholder provider — this component doesn't need a
- * rewrite, just a richer response to render.
+ * provider in production). Still calls the real POST /payments/orders
+ * endpoint so the request/response plumbing is exercised end-to-end;
+ * this component only reacts to whichever `status` the API returns
+ * ('unavailable' in production, 'fulfilled' when the backend's
+ * internal-testing bypass is active) — it has no knowledge of *why*,
+ * so it needs no changes once a real gateway replaces the backend's
+ * placeholder provider.
  */
 export function PaymentPlaceholderView() {
   useSeo({
@@ -47,7 +51,7 @@ export function PaymentPlaceholderView() {
       .then((result) => {
         if (cancelled) return;
         setMessage(result.message);
-        setStatus('unavailable');
+        setStatus(result.status === 'fulfilled' ? 'fulfilled' : 'unavailable');
       })
       .catch(() => {
         if (cancelled) return;
@@ -64,6 +68,7 @@ export function PaymentPlaceholderView() {
   }
 
   const tierOption = REPORT_TIERS.find((option) => option.id === state.tier);
+  const downloadUrl = `${env.apiBaseUrl}${endpoints.reportPdf(state.assessmentId)}`;
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -78,20 +83,32 @@ export function PaymentPlaceholderView() {
           ) : null}
 
           <div className="mt-8 flex flex-col items-center gap-3">
-            {status === 'loading' ? (
-              <Loader2 className="h-8 w-8 animate-spin text-brand" />
-            ) : (
-              <Clock3 className="h-8 w-8 text-brand" />
-            )}
+            {status === 'loading' ? <Loader2 className="h-8 w-8 animate-spin text-brand" /> : null}
+            {status === 'fulfilled' ? <CheckCircle2 className="h-8 w-8 text-emerald-500" /> : null}
+            {status === 'unavailable' || status === 'error' ? <Clock3 className="h-8 w-8 text-brand" /> : null}
+
             <h1 className="text-xl font-semibold text-slate-900">
-              {status === 'error' ? "We couldn't reach the payment service." : 'Payment Gateway Coming Soon.'}
+              {status === 'error' && "We couldn't reach the payment service."}
+              {status === 'unavailable' && 'Payment Gateway Coming Soon.'}
+              {status === 'fulfilled' && 'Your Report Is Ready!'}
+              {status === 'loading' && 'One moment…'}
             </h1>
             <p className="max-w-sm text-sm text-slate-600">
-              {status === 'error'
-                ? 'Please try again in a moment.'
-                : (message ??
+              {status === 'error' && 'Please try again in a moment.'}
+              {status === 'unavailable' &&
+                (message ??
                   "We're finishing our online payment integration. Your assessment results are saved — check back soon to purchase your report.")}
+              {status === 'fulfilled' && (message ?? 'Your report has been emailed to you and is ready to download.')}
             </p>
+
+            {status === 'fulfilled' ? (
+              <a href={downloadUrl} className="mt-2">
+                <Button type="button" variant="primary">
+                  <Download className="h-4 w-4" />
+                  Download Report
+                </Button>
+              </a>
+            ) : null}
           </div>
 
           <Button type="button" variant="secondary" className="mt-8" onClick={() => navigate(-1)}>

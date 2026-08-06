@@ -1,6 +1,8 @@
 import type { Request, Response } from 'express';
 import { successResponse } from '../../utils/apiResponse';
 import { AppError } from '../../utils/AppError';
+import { isTestModeActive } from '../payment/payment.service';
+import { generateAssessmentReportPdf } from '../pdf/pdf.service';
 import { getAssessmentById, submitAssessment } from './assessment.service';
 import type { CreateAssessmentInput } from './assessment.types';
 
@@ -21,21 +23,28 @@ export async function getAssessmentController(req: Request, res: Response): Prom
 }
 
 /**
- * Report downloads are gated behind payment. No payment gateway is
- * wired up yet (see backend/src/modules/payment/, currently a
- * placeholder provider), so there is no way for this assessment to be
- * legitimately "paid" — this always denies for now rather than
- * streaming the PDF to anyone who knows the assessment id. Once a real
+ * Report downloads are gated behind payment. No real payment gateway
+ * is wired up yet (see backend/src/modules/payment/), so this denies
+ * by default — the only exception is PAYMENT_TEST_MODE=true (internal
+ * testing only; see payment.service.ts's isTestModeActive and
+ * env.ts), which must never be enabled in production. Once a real
  * PaymentProvider can confirm a paid order, this check becomes that
- * lookup; the PDF generation itself (report.service.ts's
- * deliverPaidReport) is already ready to be called from here or from a
- * payment-confirmation callback.
+ * lookup instead.
  */
-export async function getAssessmentReportPdfController(req: Request, _res: Response): Promise<void> {
+export async function getAssessmentReportPdfController(req: Request, res: Response): Promise<void> {
   const { id } = req.params;
   if (!id) {
     throw AppError.badRequest('Missing assessment id.');
   }
 
-  throw AppError.forbidden('Report download is not available yet — payment gateway integration coming soon.');
+  if (!isTestModeActive()) {
+    throw AppError.forbidden('Report download is not available yet — payment gateway integration coming soon.');
+  }
+
+  const assessment = await getAssessmentById(id);
+  const report = await generateAssessmentReportPdf(assessment);
+  res.status(200);
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Disposition', `attachment; filename="${report.filename}"`);
+  res.send(report.buffer);
 }

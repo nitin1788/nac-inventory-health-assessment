@@ -31,6 +31,21 @@ const envSchema = z.object({
   CORS_ORIGIN: z.string().default('http://localhost:5173'),
 
   TURNSTILE_SECRET_KEY: z.string().optional().or(z.literal('')),
+
+  // TEMPORARY internal-testing switch (see backend/src/modules/payment/).
+  // When 'true', the payment module bypasses the payment gateway
+  // placeholder entirely — report generation, customer email, and
+  // download all happen immediately with no payment step. Defaults to
+  // 'false' so omitting this var (as production always should) leaves
+  // today's "Payment Gateway Coming Soon" behavior unchanged. This is
+  // the ONLY switch for test mode — there is deliberately no separate
+  // NODE_ENV-based override, so production safety depends entirely on
+  // never setting this var to 'true' in Render's environment.
+  PAYMENT_TEST_MODE: z
+    .enum(['true', 'false'])
+    .optional()
+    .default('false')
+    .transform((value) => value === 'true'),
 });
 
 type Env = z.infer<typeof envSchema>;

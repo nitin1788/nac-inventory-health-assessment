@@ -7,5 +7,6 @@ export const endpoints = {
   health: '/health',
   assessments: '/assessments',
   paymentOrders: '/payments/orders',
+  reportPdf: (assessmentId: string) => `/reports/${assessmentId}/pdf`,
   // Milestone 4+: questions: '/questions'
 } as const;

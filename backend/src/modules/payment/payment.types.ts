@@ -20,8 +20,15 @@ export interface PaymentOrderRequest {
 }
 
 export interface PaymentOrderResult {
-  /** Always 'unavailable' until a real PaymentProvider replaces the placeholder. */
-  status: 'unavailable' | 'created';
+  /**
+   * 'unavailable': the placeholder provider (production default) — no
+   *   real gateway exists yet, nothing is generated or sent.
+   * 'created': a real gateway has created a checkout order (future).
+   * 'fulfilled': the internal-testing bypass provider — report already
+   *   generated, emailed, and available to download. Only ever returned
+   *   when PAYMENT_TEST_MODE=true; never in production.
+   */
+  status: 'unavailable' | 'created' | 'fulfilled';
   message: string;
   tier: ReportTier;
   amountInPaise: number;
