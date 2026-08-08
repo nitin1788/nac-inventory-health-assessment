@@ -65,6 +65,12 @@ const envSchema = z.object({
   // final redirect to the Thank You page once a PayU callback is handled,
   // e.g. https://nitinanandconsulting.in
   FRONTEND_BASE_URL: z.string().optional().or(z.literal('')),
+
+  // Set automatically by Render on every deploy (the commit SHA that was
+  // built) — never set manually, and absent entirely in local dev. Exposed
+  // via /api/v1/health so a deploy can be confirmed live from the outside
+  // without dashboard access.
+  RENDER_GIT_COMMIT: z.string().optional().or(z.literal('')),
 });
 
 type Env = z.infer<typeof envSchema>;

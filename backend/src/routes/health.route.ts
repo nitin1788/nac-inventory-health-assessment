@@ -1,4 +1,5 @@
 import { Router, type Request, type Response } from 'express';
+import { env } from '../config/env';
 import { successResponse } from '../utils/apiResponse';
 import { isSupabaseConfigured } from '../database/supabaseClient';
 import type { HealthCheckResult } from '../types/common.types';
@@ -13,6 +14,7 @@ healthRouter.get('/', (_req: Request, res: Response) => {
     dependencies: {
       supabase: isSupabaseConfigured() ? 'configured' : 'not_configured',
     },
+    gitCommit: env.RENDER_GIT_COMMIT || null,
   };
 
   res.status(200).json(successResponse(result));

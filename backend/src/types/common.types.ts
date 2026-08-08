@@ -11,4 +11,6 @@ export interface HealthCheckResult {
   dependencies: {
     supabase: 'configured' | 'not_configured';
   };
+  /** The deployed commit SHA (Render's RENDER_GIT_COMMIT), null when unavailable (e.g. local dev). */
+  gitCommit: string | null;
 }
