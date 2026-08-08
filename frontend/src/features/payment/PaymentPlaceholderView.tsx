@@ -27,6 +27,16 @@ type OrderStatus = 'loading' | 'unavailable' | 'error' | 'timeout';
 const ORDER_REQUEST_TIMEOUT_MS = 15000;
 
 /**
+ * Purely a UI affordance — after this many ms of still waiting (but well
+ * before ORDER_REQUEST_TIMEOUT_MS is hit), swap in a message that
+ * acknowledges the wait instead of leaving the same static copy on
+ * screen the whole time. Does not change when the request actually
+ * times out or retries; it only changes what the customer sees while a
+ * legitimately slower-than-usual request is still in flight.
+ */
+const SLOW_REQUEST_HINT_MS = 5000;
+
+/**
  * Checkout-initiation page — calls the real POST /payments/orders
  * endpoint and reacts purely to the `status` it gets back:
  *
@@ -54,6 +64,7 @@ export function PaymentPlaceholderView() {
   const [status, setStatus] = useState<OrderStatus>('loading');
   const [message, setMessage] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
+  const [isSlow, setIsSlow] = useState(false);
   // Guards against the same effect run firing a second, overlapping
   // POST /payments/orders (e.g. a fast unmount/remount) — the retry
   // button below is the only other way this request re-fires, and it
@@ -68,6 +79,11 @@ export function PaymentPlaceholderView() {
     let cancelled = false;
     setStatus('loading');
     setMessage(null);
+    setIsSlow(false);
+
+    const slowHintTimer = setTimeout(() => {
+      if (!cancelled) setIsSlow(true);
+    }, SLOW_REQUEST_HINT_MS);
 
     createPaymentOrder(
       { assessmentId: state.assessmentId, tier: state.tier },
@@ -90,10 +106,12 @@ export function PaymentPlaceholderView() {
       })
       .finally(() => {
         inFlightRef.current = false;
+        clearTimeout(slowHintTimer);
       });
 
     return () => {
       cancelled = true;
+      clearTimeout(slowHintTimer);
     };
   }, [state, attempt]);
 
@@ -122,13 +140,16 @@ export function PaymentPlaceholderView() {
             {canRetry ? <XCircle className="h-8 w-8 text-red-500" /> : null}
 
             <h1 className="text-xl font-semibold text-slate-900">
-              {status === 'loading' && 'Preparing secure payment…'}
+              {status === 'loading' && (isSlow ? 'Still preparing your secure payment…' : 'Preparing secure payment…')}
               {status === 'unavailable' && 'Payment Gateway Coming Soon.'}
               {status === 'timeout' && 'This is taking longer than expected.'}
               {status === 'error' && "We couldn't reach the payment service."}
             </h1>
             <p className="max-w-sm text-sm text-slate-600">
-              {status === 'loading' && 'Setting up your secure order — this only takes a moment.'}
+              {status === 'loading' &&
+                (isSlow
+                  ? "This is taking a little longer than usual — we're still connecting to the payment service."
+                  : 'Setting up your secure order — this only takes a moment.')}
               {status === 'unavailable' &&
                 (message ??
                   "We're finishing our online payment integration. Your assessment results are saved — check back soon to purchase your report.")}
