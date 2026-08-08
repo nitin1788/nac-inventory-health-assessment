@@ -63,7 +63,7 @@ export interface CreatePaymentOrderInput {
   tier: ReportTier;
   amountInPaise: number;
   currency: string;
-  /** Which PaymentProvider created this row — 'test-mode' today, 'cashfree' once that provider exists. */
+  /** Which PaymentProvider created this row — 'test-mode' or 'payu'. */
   provider: string;
   /** The provider's own order reference, if it has one yet. */
   providerOrderId?: string | null;
@@ -99,6 +99,27 @@ export async function findPaymentOrderById(id: string): Promise<PaymentOrderRow 
     .from('payment_orders')
     .select('*')
     .eq('id', id)
+    .maybeSingle<PaymentOrderDbRow>();
+
+  if (error) {
+    throw AppError.internal(`Failed to load payment order: ${error.message}`);
+  }
+
+  return data ? mapRow(data) : null;
+}
+
+/**
+ * Maps a gateway's own reference (PayU's txnid) back to our row —
+ * consulted by the surl/furl callback handlers, which only ever learn
+ * PayU's txnid from the callback payload, never our internal id.
+ */
+export async function findPaymentOrderByProviderOrderId(providerOrderId: string): Promise<PaymentOrderRow | null> {
+  const supabase = getSupabaseClient();
+
+  const { data, error } = await supabase
+    .from('payment_orders')
+    .select('*')
+    .eq('provider_order_id', providerOrderId)
     .maybeSingle<PaymentOrderDbRow>();
 
   if (error) {

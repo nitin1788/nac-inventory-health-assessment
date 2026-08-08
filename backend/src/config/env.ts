@@ -46,6 +46,25 @@ const envSchema = z.object({
     .optional()
     .default('false')
     .transform((value) => value === 'true'),
+
+  // PayU (see backend/src/modules/payment/payment.provider.payu.ts). Optional
+  // at the schema level — same pattern as Supabase/Resend above — so boot
+  // never crashes if PayU isn't configured yet; payment.service.ts falls
+  // back to the placeholder provider until both PAYU_KEY and PAYU_SALT are
+  // set. Never commit real values here; set them in Render's dashboard.
+  PAYU_KEY: z.string().optional().or(z.literal('')),
+  PAYU_SALT: z.string().optional().or(z.literal('')),
+  // 'test' is the safe default -- production PayU only activates when this
+  // is explicitly set to 'production' in the environment.
+  PAYU_ENV: z.enum(['test', 'production']).optional().default('test'),
+  // This backend's own public base URL (no trailing slash), used to build
+  // the absolute surl/furl PayU redirects back to, e.g.
+  // https://nac-inventory-assessment-api.onrender.com/api/v1
+  BACKEND_BASE_URL: z.string().optional().or(z.literal('')),
+  // The frontend's public base URL (no trailing slash), used to build the
+  // final redirect to the Thank You page once a PayU callback is handled,
+  // e.g. https://nitinanandconsulting.in
+  FRONTEND_BASE_URL: z.string().optional().or(z.literal('')),
 });
 
 type Env = z.infer<typeof envSchema>;

@@ -1,7 +1,13 @@
 import { logger } from '../../utils/logger';
 import { createPaymentOrder } from './payment.repository';
 import { TIER_PRICING } from './payment.types';
-import type { PaymentOrderRequest, PaymentOrderResult, PaymentProvider, PaymentVerificationResult } from './payment.types';
+import type {
+  PaymentCallbackResult,
+  PaymentOrderRequest,
+  PaymentOrderResult,
+  PaymentProvider,
+  PaymentVerificationResult,
+} from './payment.types';
 
 /**
  * Frontend's Thank You page path — mirrored from frontend/src/config/
@@ -15,16 +21,17 @@ const THANK_YOU_PATH = '/assessment/thank-you';
 /**
  * TEMPORARY internal-testing provider — only active when
  * PAYMENT_TEST_MODE=true (see backend/src/config/env.ts and
- * payment.service.ts). Creates a real payment_orders row exactly like a
- * production gateway would, then redirects straight to our own Thank
- * You page instead of a real checkout; verifyPayment always reports the
- * order paid immediately, standing in for an instant, always-successful
- * payment. This exercises the exact same order-creation -> redirect ->
- * verify -> deliver pipeline a real Cashfree integration will use — only
- * the two methods on this object differ from what
- * payment.provider.cashfree.ts will eventually do; nothing downstream
- * (the /verify endpoint, the Thank You page, report delivery) needs to
- * change when that provider is added.
+ * payment.service.ts), and always takes priority over PayU even if
+ * PAYU_KEY/PAYU_SALT are also set. Creates a real payment_orders row
+ * exactly like a production gateway would, then redirects straight to
+ * our own Thank You page instead of a real checkout; verifyPayment
+ * always reports the order paid immediately, standing in for an
+ * instant, always-successful payment. This exercises the exact same
+ * order-creation -> redirect -> verify -> deliver pipeline the real
+ * PayU integration uses (see payment.provider.payu.ts) — only the
+ * methods on this object differ; nothing downstream (the /verify
+ * endpoint, the Thank You page, report delivery) changes based on
+ * which provider is active.
  */
 export const testModePaymentProvider: PaymentProvider = {
   name: 'test-mode',
@@ -54,5 +61,10 @@ export const testModePaymentProvider: PaymentProvider = {
   },
   async verifyPayment(): Promise<PaymentVerificationResult> {
     return { status: 'paid' };
+  },
+  async handleCallback(): Promise<PaymentCallbackResult> {
+    // Never reachable: test-mode orders never leave this site, so no
+    // external gateway ever calls back for one.
+    throw new Error('testModePaymentProvider has no callback to handle — it never leaves this site.');
   },
 };

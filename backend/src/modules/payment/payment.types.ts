@@ -1,10 +1,10 @@
 /**
  * Domain types for the payment module. This module exists to give a
- * real payment gateway (Cashfree — account exists, activation pending)
- * a single, well-defined seam to plug into — see payment.service.ts for
- * the one line that names the active provider. Until Cashfree activates,
- * PAYMENT_TEST_MODE is the only thing that can move this off the
- * production-safe placeholder (see payment.provider.testMode.ts).
+ * real payment gateway (PayU) a single, well-defined seam to plug into
+ * — see payment.service.ts for the provider-selection logic. Until
+ * PAYU_KEY/PAYU_SALT are configured, PAYMENT_TEST_MODE is the only
+ * thing that can move this off the production-safe placeholder (see
+ * payment.provider.testMode.ts).
  */
 
 export type ReportTier = 'summary' | 'full';
@@ -63,19 +63,32 @@ export interface VerifiedOrderDetails {
   reportDelivered: boolean;
 }
 
+/** What a provider's callback/webhook handler reports back after authenticating an inbound payload. */
+export interface PaymentCallbackResult {
+  /** The provider's own order reference extracted from the payload — used to look up our payment_orders row. */
+  providerOrderId: string;
+  /**
+   * Whether THIS SPECIFIC payload's signature/hash is authentic. This is
+   * a tamper check on the request, not a payment-status decision — the
+   * caller must still call verifyPayment() for the authoritative status
+   * before ever marking an order paid. Never branch report/email
+   * delivery on this flag alone.
+   */
+  signatureValid: boolean;
+}
+
 /**
- * The seam a real gateway implements. A future
- * `payment.provider.cashfree.ts` would create a real order/checkout
- * session and verify it against Cashfree's Order API instead of
- * returning a "coming soon" stub or an instant bypass —
- * payment.service.ts's `activeProvider` assignment is the only line
- * that needs to change to switch providers. Nothing outside this
- * module (assessment submission, scoring, PDF generation) depends on
- * which provider is active.
+ * The seam a real gateway implements — currently PayU (see
+ * payment.provider.payu.ts). payment.service.ts's `activeProvider`
+ * assignment is the only line that needs to change to switch
+ * providers. Nothing outside this module (assessment submission,
+ * scoring, PDF generation) depends on which provider is active.
  */
 export interface PaymentProvider {
   name: string;
   createOrder(request: PaymentOrderRequest): Promise<PaymentOrderResult>;
   /** providerOrderId is whatever the provider itself uses to look an order up (its own reference, not ours). */
   verifyPayment(providerOrderId: string): Promise<PaymentVerificationResult>;
+  /** Authenticates a gateway's callback/webhook payload (e.g. PayU's signed surl/furl POST). */
+  handleCallback(payload: Record<string, string | undefined>): Promise<PaymentCallbackResult>;
 }

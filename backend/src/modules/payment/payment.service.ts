@@ -2,10 +2,12 @@ import { env } from '../../config/env';
 import { AppError } from '../../utils/AppError';
 import { getAssessmentById } from '../assessment/assessment.service';
 import { deliverPaidReport } from '../report/report.service';
+import { isPayUConfigured, payuPaymentProvider } from './payment.provider.payu';
 import { placeholderPaymentProvider } from './payment.provider.placeholder';
 import { testModePaymentProvider } from './payment.provider.testMode';
 import { findPaidOrder, findPaymentOrderById, markPaymentPaidIfPending, markReportDelivered } from './payment.repository';
 import type {
+  PaymentCallbackResult,
   PaymentOrderRequest,
   PaymentOrderResult,
   PaymentProvider,
@@ -14,16 +16,30 @@ import type {
 } from './payment.types';
 
 /**
- * The provider selection a real Cashfree integration will eventually
- * replace with an unconditional `cashfreePaymentProvider` — the only
- * line that needs to change. Until Cashfree activates, PAYMENT_TEST_MODE
- * is the only thing that can move this off the production-safe
- * placeholder; see payment.provider.testMode.ts and env.ts.
+ * Provider selection, in priority order:
+ *   1. PAYMENT_TEST_MODE=true -> the internal bypass, always wins even if
+ *      PayU is also configured (see env.ts and payment.provider.testMode.ts
+ *      — this must never be true in production).
+ *   2. PAYU_KEY + PAYU_SALT both set -> the real PayU integration.
+ *   3. Otherwise -> the production-safe placeholder ("Coming Soon"),
+ *      exactly today's behavior when nothing is configured yet.
+ * This is the only place that needs to change to add a future provider.
  */
-const activeProvider: PaymentProvider = env.PAYMENT_TEST_MODE ? testModePaymentProvider : placeholderPaymentProvider;
+const activeProvider: PaymentProvider = env.PAYMENT_TEST_MODE
+  ? testModePaymentProvider
+  : isPayUConfigured()
+    ? payuPaymentProvider
+    : placeholderPaymentProvider;
 
 export async function createOrder(request: PaymentOrderRequest): Promise<PaymentOrderResult> {
   return activeProvider.createOrder(request);
+}
+
+/** Delegates a gateway's callback/webhook payload to whichever provider is currently active. */
+export async function handlePaymentCallback(
+  payload: Record<string, string | undefined>
+): Promise<PaymentCallbackResult> {
+  return activeProvider.handleCallback(payload);
 }
 
 /**
@@ -51,11 +67,25 @@ export async function isReportUnlocked(assessmentId: string, tier: ReportTier): 
  * runs on the specific call that wins the atomic `created -> paid`
  * transition (see markPaymentPaidIfPending) — a duplicate verify call
  * against an already-paid order is a no-op, not a re-delivery.
+ *
+ * `expectedAmountInPaise` lets a gateway callback cross-check the amount
+ * IT reported against what WE created the order for (PayU's own docs
+ * recommend this: "compare the parameters sent by PayU in the response
+ * with the ones you sent in the request") — a mismatch is rejected
+ * before ever asking the provider to verify, regardless of what the
+ * provider's own API would say.
  */
-export async function verifyAndFulfillOrder(orderId: string): Promise<VerifiedOrderDetails> {
+export async function verifyAndFulfillOrder(
+  orderId: string,
+  options?: { expectedAmountInPaise?: number }
+): Promise<VerifiedOrderDetails> {
   const order = await findPaymentOrderById(orderId);
   if (!order) {
     throw AppError.notFound('Payment order not found.');
+  }
+
+  if (options?.expectedAmountInPaise !== undefined && options.expectedAmountInPaise !== order.amountInPaise) {
+    throw AppError.badRequest('Payment amount does not match the order on record.');
   }
 
   if (order.status !== 'paid') {
