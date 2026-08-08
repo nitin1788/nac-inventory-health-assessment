@@ -48,8 +48,11 @@ export interface VerifiedOrderDetails {
  * still round-trips through the real /payments/orders endpoint so this
  * plumbing needs no changes once a real gateway is wired up server-side.
  */
-export function createPaymentOrder(request: PaymentOrderRequest): Promise<PaymentOrderResult> {
-  return apiClient.post<PaymentOrderResult>(endpoints.paymentOrders, request);
+export function createPaymentOrder(
+  request: PaymentOrderRequest,
+  opts?: { timeoutMs?: number }
+): Promise<PaymentOrderResult> {
+  return apiClient.post<PaymentOrderResult>(endpoints.paymentOrders, request, opts);
 }
 
 /**

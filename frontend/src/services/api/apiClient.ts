@@ -37,14 +37,36 @@ interface ApiErrorBody {
 
 type ApiBody<T> = ApiSuccessBody<T> | ApiErrorBody;
 
-async function request<T>(path: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(`${env.apiBaseUrl}${path}`, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options?.headers,
-    },
-  });
+/** Thrown when a request is aborted for taking longer than `timeoutMs` — distinct from ApiError so callers can offer a "Retry" UI instead of a generic error message. */
+export class ApiTimeoutError extends Error {
+  constructor(timeoutMs: number) {
+    super(`Request timed out after ${timeoutMs}ms.`);
+  }
+}
+
+async function request<T>(path: string, options?: RequestInit & { timeoutMs?: number }): Promise<T> {
+  const { timeoutMs, ...init } = options ?? {};
+  const controller = timeoutMs ? new AbortController() : undefined;
+  const timer = timeoutMs ? setTimeout(() => controller!.abort(), timeoutMs) : undefined;
+
+  let response: Response;
+  try {
+    response = await fetch(`${env.apiBaseUrl}${path}`, {
+      ...init,
+      headers: {
+        'Content-Type': 'application/json',
+        ...init.headers,
+      },
+      signal: controller?.signal,
+    });
+  } catch (err) {
+    if (controller?.signal.aborted) {
+      throw new ApiTimeoutError(timeoutMs!);
+    }
+    throw err;
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
 
   let body: ApiBody<T>;
   try {
@@ -61,7 +83,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 }
 
 export const apiClient = {
-  get: <T>(path: string) => request<T>(path, { method: 'GET' }),
-  post: <T>(path: string, payload?: unknown) =>
-    request<T>(path, { method: 'POST', body: payload ? JSON.stringify(payload) : undefined }),
+  get: <T>(path: string, opts?: { timeoutMs?: number }) => request<T>(path, { method: 'GET', ...opts }),
+  post: <T>(path: string, payload?: unknown, opts?: { timeoutMs?: number }) =>
+    request<T>(path, { method: 'POST', body: payload ? JSON.stringify(payload) : undefined, ...opts }),
 };

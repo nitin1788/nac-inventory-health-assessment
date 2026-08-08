@@ -20,22 +20,53 @@ import { handlePaymentCallback, verifyAndFulfillOrder } from './payment.service'
  * HTML form (hash computed fresh, never stored) that sends the browser
  * on to PayU's hosted checkout. Public route: reachable only by knowing
  * an order id that PayU itself will also need in order to redirect back.
+ *
+ * Reached via a full browser navigation (`window.location.href` on the
+ * frontend), never XHR — so unlike the JSON API routes, any failure here
+ * must never surface as a raw JSON error page. Every failure path (bad/
+ * unknown/non-PayU/expired order, or an unexpected error building the
+ * form) redirects the customer to the existing payment-retry page
+ * instead, exactly like payuSuccessCallbackController's own failure
+ * paths below — no report is ever unlocked or delivered from this
+ * route; it only ever sends the browser onward, to PayU or back to retry.
  */
 export async function payuRedirectPageController(req: Request, res: Response): Promise<void> {
+  const startedAt = Date.now();
   const { orderId } = req.params;
+  // Computed once, upfront: if FRONTEND_BASE_URL genuinely isn't configured,
+  // this throws immediately as a normal 503 (nothing else can be done, and
+  // asyncHandler/errorHandlerMiddleware handle that JSON response the usual
+  // way) rather than risking a second, unhandled throw from inside the
+  // catch block below if it were called again after already failing once.
+  const retryUrl = frontendPaymentRetryUrl();
+
   if (!orderId) {
-    throw AppError.badRequest('Missing order id.');
+    logger.warn('PayU redirect requested with no order id.');
+    res.redirect(302, retryUrl);
+    return;
   }
 
-  const order = await findPaymentOrderById(orderId);
-  if (!order || order.provider !== 'payu') {
-    throw AppError.notFound('Payment order not found.');
+  try {
+    const order = await findPaymentOrderById(orderId);
+    if (!order || order.provider !== 'payu') {
+      logger.warn({ orderId }, 'PayU redirect requested for an unknown or non-PayU order.');
+      res.redirect(302, retryUrl);
+      return;
+    }
+
+    const assessment = await getAssessmentById(order.assessmentId);
+    const html = buildPayURedirectFormHtml(order, assessment);
+
+    logger.info(
+      { orderId, tier: order.tier, totalMs: Date.now() - startedAt },
+      'PayU redirect/form-submission page ready.'
+    );
+
+    res.status(200).type('html').send(html);
+  } catch (err) {
+    logger.error({ err, orderId }, 'Failed to build the PayU redirect page — sending customer to retry.');
+    res.redirect(302, retryUrl);
   }
-
-  const assessment = await getAssessmentById(order.assessmentId);
-  const html = buildPayURedirectFormHtml(order, assessment);
-
-  res.status(200).type('html').send(html);
 }
 
 function frontendThankYouUrl(orderId: string): string {

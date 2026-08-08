@@ -1,3 +1,4 @@
+import { API_PREFIX } from '../../config/constants';
 import { env } from '../../config/env';
 import { AppError } from '../../utils/AppError';
 import { logger } from '../../utils/logger';
@@ -56,6 +57,24 @@ function ensureBaseUrlsConfigured(): { backendBaseUrl: string; frontendBaseUrl: 
   return { backendBaseUrl: env.BACKEND_BASE_URL, frontendBaseUrl: env.FRONTEND_BASE_URL };
 }
 
+/**
+ * Builds an absolute URL to one of THIS backend's own /api/v1 routes
+ * (the PayU redirect page, surl, furl) from BACKEND_BASE_URL — normalized
+ * so it works whether that env var was configured with or without the
+ * /api/v1 suffix. Historically this was built as plain string
+ * concatenation (`${backendBaseUrl}${path}`), which silently produced a
+ * URL missing /api/v1 — and therefore a 404 on every route under it —
+ * whenever BACKEND_BASE_URL was set to the bare domain. Every other
+ * backend route already lives under API_PREFIX (see app.ts), so this
+ * makes that the one place responsible for getting it right, rather
+ * than trusting a human-configured env var's exact string shape.
+ */
+export function buildBackendApiUrl(backendBaseUrl: string, path: string): string {
+  const base = backendBaseUrl.replace(/\/+$/, '');
+  const withPrefix = base.endsWith(API_PREFIX) ? base : `${base}${API_PREFIX}`;
+  return `${withPrefix}${path}`;
+}
+
 const HTML_ESCAPES: Record<string, string> = {
   '&': '&amp;',
   '<': '&lt;',
@@ -104,8 +123,8 @@ export function buildPayURedirectFormHtml(order: PaymentOrderRow, assessment: As
   const hiddenFields: Record<string, string> = {
     ...fields,
     hash,
-    surl: `${backendBaseUrl}/payments/payu/success`,
-    furl: `${backendBaseUrl}/payments/payu/failure`,
+    surl: buildBackendApiUrl(backendBaseUrl, '/payments/payu/success'),
+    furl: buildBackendApiUrl(backendBaseUrl, '/payments/payu/failure'),
   };
 
   const inputsHtml = Object.entries(hiddenFields)
@@ -138,6 +157,7 @@ export const payuPaymentProvider: PaymentProvider = {
     const amountInPaise = TIER_PRICING[request.tier];
     const txnid = generatePayUTxnId();
 
+    const dbStartedAt = Date.now();
     const order = await createPaymentOrder({
       assessmentId: request.assessmentId,
       tier: request.tier,
@@ -146,9 +166,16 @@ export const payuPaymentProvider: PaymentProvider = {
       provider: 'payu',
       providerOrderId: txnid,
     });
+    const dbInsertMs = Date.now() - dbStartedAt;
 
     logger.info(
-      { assessmentId: request.assessmentId, tier: request.tier, orderId: order.id, payuEnv: env.PAYU_ENV },
+      {
+        assessmentId: request.assessmentId,
+        tier: request.tier,
+        orderId: order.id,
+        payuEnv: env.PAYU_ENV,
+        dbInsertMs,
+      },
       'PayU order created.'
     );
 
@@ -159,7 +186,7 @@ export const payuPaymentProvider: PaymentProvider = {
       amountInPaise,
       currency: 'INR',
       orderId: order.id,
-      redirectUrl: `${backendBaseUrl}/payments/payu/redirect/${order.id}`,
+      redirectUrl: buildBackendApiUrl(backendBaseUrl, `/payments/payu/redirect/${order.id}`),
     };
   },
 
