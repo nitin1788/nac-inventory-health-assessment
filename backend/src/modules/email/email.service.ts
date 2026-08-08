@@ -4,7 +4,9 @@ import { logger } from '../../utils/logger';
 import { COMPANY_NAME, CONSULTATION, FOOTER_EMAIL, SERVICES_LIST, SITE_URL } from '../../config/constants';
 import { buildConsultationWhatsAppUrl } from '../../utils/whatsapp';
 import type { AssessmentDetail } from '../assessment/assessment.types';
+import { TIER_PRICING, type ReportTier } from '../payment/payment.types';
 import type { GeneratedReportPdf } from '../pdf/pdf.service';
+import { formatInr } from '../pdf/pdfTemplates.shared';
 
 /**
  * Resend client for outbound email, mirroring the lazy-init +
@@ -275,5 +277,95 @@ export async function sendLeadAlertEmail(
       msToAccept: Date.now() - startedAt,
     },
     'Internal lead alert email accepted by Resend.'
+  );
+}
+
+const TIER_LABEL: Record<ReportTier, string> = {
+  summary: 'NAC Internal Lead / Consulting Brief',
+  full: 'NAC Professional Consulting Dossier',
+};
+
+function buildInternalConsultingReportSubject(assessment: AssessmentDetail, tier: ReportTier): string {
+  return `📋 ${TIER_LABEL[tier]} — ${assessment.company.companyName} (${formatInr(TIER_PRICING[tier])} paid)`;
+}
+
+function buildInternalConsultingReportText(assessment: AssessmentDetail, tier: ReportTier): string {
+  return [
+    `${assessment.company.companyName} just paid for the ${formatInr(TIER_PRICING[tier])} report — attached is ` +
+      `NAC's internal consulting brief for this engagement, not the customer's own PDF.`,
+    '',
+    `Assessment Number: ${assessment.assessmentNumber}`,
+    `Company: ${assessment.company.companyName}`,
+    `Contact: ${assessment.company.contactPerson} (${assessment.company.designation})`,
+    `Mobile: ${assessment.company.mobile}`,
+    `Email: ${assessment.company.email}`,
+    `Overall Score: ${assessment.overallScore} (${assessment.overallPercentage}%)`,
+    `Health Rating: ${assessment.healthRating}`,
+    `Purchased Tier: ${formatInr(TIER_PRICING[tier])} (${tier === 'summary' ? 'Summary' : 'Full'})`,
+    '',
+    'The attached PDF contains the problem register, business impact, likely root causes, recommended solutions, ' +
+      'consultant discussion questions, and potential NAC service opportunities for this customer — use it to ' +
+      'prepare for the consultation call.',
+    '',
+    'This document is for internal NAC use only. Do not forward it to the customer.',
+  ].join('\n');
+}
+
+/**
+ * Emails the NAC-internal consulting report (see internalReport.service.ts)
+ * to NAC_LEAD_ALERT_EMAIL once a customer's payment is confirmed. A
+ * distinct send from both sendAssessmentReportEmail (customer) and
+ * sendLeadAlertEmail (the pre-payment "new lead" notification, which
+ * still attaches the customer's own Full PDF and is untouched by this
+ * function) — this one always carries the separate internal-only
+ * document, tiered to match what the customer actually purchased.
+ */
+export async function sendInternalConsultingReportEmail(
+  assessment: AssessmentDetail,
+  tier: ReportTier,
+  report: GeneratedReportPdf
+): Promise<void> {
+  if (!isLeadAlertConfigured()) {
+    logger.warn(
+      { assessmentId: assessment.id, tier },
+      'Skipping internal consulting report email — NAC_LEAD_ALERT_EMAIL or Resend not configured.'
+    );
+    return;
+  }
+
+  const startedAt = Date.now();
+  logger.info(
+    {
+      assessmentId: assessment.id,
+      assessmentNumber: assessment.assessmentNumber,
+      tier,
+      to: env.NAC_LEAD_ALERT_EMAIL,
+    },
+    'Internal consulting report email send starting.'
+  );
+
+  const resend = getResendClient();
+  const { data, error } = await resend.emails.send({
+    from: env.RESEND_FROM_EMAIL as string,
+    to: env.NAC_LEAD_ALERT_EMAIL as string,
+    subject: buildInternalConsultingReportSubject(assessment, tier),
+    text: buildInternalConsultingReportText(assessment, tier),
+    attachments: [{ filename: report.filename, content: report.buffer }],
+  });
+
+  if (error) {
+    throw new Error(`Failed to send internal consulting report email: ${error.message}`);
+  }
+
+  logger.info(
+    {
+      assessmentId: assessment.id,
+      assessmentNumber: assessment.assessmentNumber,
+      tier,
+      to: env.NAC_LEAD_ALERT_EMAIL,
+      resendMessageId: data?.id,
+      msToAccept: Date.now() - startedAt,
+    },
+    'Internal consulting report email accepted by Resend.'
   );
 }
