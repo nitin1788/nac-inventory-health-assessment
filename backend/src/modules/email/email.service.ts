@@ -285,13 +285,18 @@ const TIER_LABEL: Record<ReportTier, string> = {
   full: 'NAC Professional Consulting Dossier',
 };
 
+/** TIER_PRICING is in paise (see payment.types.ts); formatInr() expects a rupee amount, not paise. */
+function formatTierPrice(tier: ReportTier): string {
+  return formatInr(TIER_PRICING[tier] / 100);
+}
+
 function buildInternalConsultingReportSubject(assessment: AssessmentDetail, tier: ReportTier): string {
-  return `📋 ${TIER_LABEL[tier]} — ${assessment.company.companyName} (${formatInr(TIER_PRICING[tier])} paid)`;
+  return `📋 ${TIER_LABEL[tier]} — ${assessment.company.companyName} (${formatTierPrice(tier)} paid)`;
 }
 
 function buildInternalConsultingReportText(assessment: AssessmentDetail, tier: ReportTier): string {
   return [
-    `${assessment.company.companyName} just paid for the ${formatInr(TIER_PRICING[tier])} report — attached is ` +
+    `${assessment.company.companyName} just paid for the ${formatTierPrice(tier)} report — attached is ` +
       `NAC's internal consulting brief for this engagement, not the customer's own PDF.`,
     '',
     `Assessment Number: ${assessment.assessmentNumber}`,
@@ -301,7 +306,7 @@ function buildInternalConsultingReportText(assessment: AssessmentDetail, tier: R
     `Email: ${assessment.company.email}`,
     `Overall Score: ${assessment.overallScore} (${assessment.overallPercentage}%)`,
     `Health Rating: ${assessment.healthRating}`,
-    `Purchased Tier: ${formatInr(TIER_PRICING[tier])} (${tier === 'summary' ? 'Summary' : 'Full'})`,
+    `Purchased Tier: ${formatTierPrice(tier)} (${tier === 'summary' ? 'Summary' : 'Full'})`,
     '',
     'The attached PDF contains the problem register, business impact, likely root causes, recommended solutions, ' +
       'consultant discussion questions, and potential NAC service opportunities for this customer — use it to ' +
