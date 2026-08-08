@@ -627,6 +627,83 @@ export const styles = StyleSheet.create({
     color: '#334155',
     marginTop: 1,
   },
+  analysisTable: {
+    marginTop: 6,
+    marginBottom: 10,
+  },
+  analysisTableHeaderRow: {
+    flexDirection: 'row',
+    backgroundColor: '#F1F5F9',
+    paddingVertical: 6,
+    paddingHorizontal: 6,
+    borderRadius: 3,
+    marginBottom: 2,
+  },
+  analysisTableHeaderCell: {
+    fontSize: 7.5,
+    fontFamily: 'Helvetica-Bold',
+    color: '#475569',
+    textTransform: 'uppercase',
+    letterSpacing: 0.3,
+    paddingRight: 6,
+  },
+  analysisTableRow: {
+    flexDirection: 'row',
+    paddingVertical: 7,
+    paddingHorizontal: 6,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E2E8F0',
+  },
+  analysisTableRowAlt: {
+    backgroundColor: '#FAFBFC',
+  },
+  analysisTableCell: {
+    fontSize: 8.5,
+    color: '#334155',
+    lineHeight: 1.4,
+    paddingRight: 6,
+  },
+  analysisTableCellStrong: {
+    fontSize: 8.5,
+    fontFamily: 'Helvetica-Bold',
+    color: '#0F172A',
+    lineHeight: 1.4,
+    paddingRight: 6,
+  },
+  analysisTableBadge: {
+    fontSize: 7,
+    fontFamily: 'Helvetica-Bold',
+    paddingVertical: 2,
+    paddingHorizontal: 6,
+    borderRadius: 8,
+    alignSelf: 'flex-start',
+  },
+  calloutBox: {
+    marginTop: 8,
+    marginBottom: 10,
+    padding: 10,
+    borderRadius: 4,
+    borderLeftWidth: 3,
+  },
+  calloutBoxTitle: {
+    fontSize: 9,
+    fontFamily: 'Helvetica-Bold',
+    marginBottom: 3,
+  },
+  calloutBoxText: {
+    fontSize: 8.5,
+    lineHeight: 1.45,
+  },
+  tightParagraph: {
+    fontSize: 9,
+    lineHeight: 1.35,
+    color: '#334155',
+    marginBottom: 4,
+  },
+  labelSpan: {
+    fontFamily: 'Helvetica-Bold',
+    color: '#0F172A',
+  },
 });
 
 export function formatDate(iso: string): string {
@@ -789,6 +866,91 @@ export function buildModuleScoresTable(moduleScores: ModuleScoreInput[]) {
         )
       );
     })
+  );
+}
+
+/** One column of a `buildAnalysisTable` — `width` is a CSS-style percentage string, matched across header and body rows. */
+export interface AnalysisTableColumn {
+  key: string;
+  header: string;
+  width: string;
+  /** Render this column's value in bold (typically the first, identifying column). */
+  strong?: boolean;
+  /** Render this column's value as a colour-coded pill instead of plain text (e.g. Rating, Priority, Risk Level). */
+  badge?: (value: string) => { bg: string; text: string };
+}
+
+/**
+ * Generic wrapping-text analysis table — the primary content primitive for
+ * the content-quality rewrite. Unlike `buildModuleScoresTable` (fixed
+ * 5-column, single-line), cells here wrap onto multiple lines so a column
+ * can hold a full sentence of interpretation/business-impact text without
+ * clipping. Column widths are percentages of the same row width in both
+ * the header and body, which is what keeps header labels from colliding
+ * with each other (see colPct/colRating's paddingRight fix on the older
+ * fixed table) — every column here already carries its own paddingRight.
+ */
+export function buildAnalysisTable(columns: AnalysisTableColumn[], rows: Record<string, string>[]) {
+  return h(
+    View,
+    { style: styles.analysisTable },
+    h(
+      View,
+      { style: styles.analysisTableHeaderRow },
+      ...columns.map((col) =>
+        h(Text, { key: col.key, style: [styles.analysisTableHeaderCell, { width: col.width }] }, col.header)
+      )
+    ),
+    ...rows.map((row, i) =>
+      h(
+        View,
+        {
+          key: String(i),
+          style: i % 2 === 1 ? [styles.analysisTableRow, styles.analysisTableRowAlt] : styles.analysisTableRow,
+        },
+        ...columns.map((col) => {
+          const value = row[col.key] ?? 'Not captured in this assessment.';
+          if (col.badge) {
+            const colors = col.badge(value);
+            return h(
+              View,
+              { key: col.key, style: { width: col.width } },
+              h(
+                Text,
+                { style: [styles.analysisTableBadge, { backgroundColor: colors.bg, color: colors.text }] },
+                value
+              )
+            );
+          }
+          return h(
+            Text,
+            {
+              key: col.key,
+              style: [col.strong ? styles.analysisTableCellStrong : styles.analysisTableCell, { width: col.width }],
+            },
+            value
+          );
+        })
+      )
+    )
+  );
+}
+
+const CALLOUT_TONES = {
+  info: { bg: '#EFF6FF', border: '#1D4ED8', title: '#1D4ED8', text: '#334155' },
+  warning: { bg: '#FFFBEB', border: '#B45309', title: '#B45309', text: '#334155' },
+  critical: { bg: '#FEF2F2', border: '#B91C1C', title: '#B91C1C', text: '#334155' },
+  success: { bg: '#ECFDF5', border: '#047857', title: '#047857', text: '#334155' },
+} as const;
+
+/** A left-border-accented callout — used to surface a single important interpretation/warning inline with paragraph content, without a full table. */
+export function buildCalloutBox(title: string, text: string, tone: keyof typeof CALLOUT_TONES = 'info') {
+  const colors = CALLOUT_TONES[tone];
+  return h(
+    View,
+    { style: [styles.calloutBox, { backgroundColor: colors.bg, borderLeftColor: colors.border }] },
+    h(Text, { style: [styles.calloutBoxTitle, { color: colors.title }] }, title),
+    h(Text, { style: [styles.calloutBoxText, { color: colors.text }] }, text)
   );
 }
 

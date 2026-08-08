@@ -24,6 +24,7 @@ function buildModuleRecommendation(moduleScore: ModuleScoreInput): ModuleRecomme
     rating: moduleScore.rating,
     priority: PRIORITY_BY_RATING[moduleScore.rating],
     summary: tierContent.summary,
+    businessImpact: tierContent.businessImpact,
     recommendations: tierContent.recommendations,
     expectedBenefits: tierContent.expectedBenefits,
   };

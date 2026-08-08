@@ -10,6 +10,8 @@ export type PriorityLevel = 'High' | 'Medium' | 'Low' | 'Maintain';
 /** Rule-based recommendation content for one module at one HealthRating tier. */
 export interface RecommendationTierContent {
   summary: string;
+  /** One sentence naming the concrete business consequence of this module sitting at this rating — used directly in report tables/paragraphs, never fabricated at render time. */
+  businessImpact: string;
   recommendations: string[];
   expectedBenefits: string[];
 }
@@ -25,6 +27,7 @@ export interface ModuleRecommendation {
   rating: HealthRating;
   priority: PriorityLevel;
   summary: string;
+  businessImpact: string;
   recommendations: string[];
   expectedBenefits: string[];
 }

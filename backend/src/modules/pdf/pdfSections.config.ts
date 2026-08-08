@@ -1,27 +1,28 @@
 import type { ReportTier } from '../payment/payment.types';
 import type { SectionBuilder } from './pdfSections';
 import {
-  businessImpactCardsSection,
-  consultationCtaSection,
+  businessProfileSection,
+  conclusionCtaSection,
   coverPageSection,
-  executiveDashboardSection,
-  executiveRecommendationsSection,
+  detailedRecommendationsSection,
+  executiveNarrativeSection,
   executiveSummarySection,
-  fishboneRootCauseSection,
+  fullConclusionCtaSection,
   fullCoverPageSection,
-  healthGaugeSection,
-  heatMapSection,
-  moduleChartsSection,
-  moduleScoresSection,
-  overallScoreSection,
-  priorityMatrixSection,
-  professionalTablesSection,
-  progressBarsSection,
-  riskAnalysisSection,
-  roadmapSection,
-  timelineSection,
+  fullModuleWiseAnalysisSection,
+  fullRiskAnalysisSection,
+  inventoryControlAnalysisSection,
+  managementActionPrioritiesSection,
+  moduleWiseAnalysisSection,
+  overallHealthAnalysisSection,
+  priorityMatrixTableSection,
+  riskAnalysisSummarySection,
+  rootCauseAnalysisSection,
+  stockAccuracySection,
   top5FindingsSection,
   top5RecommendationsSection,
+  warehouseProcessSection,
+  workingCapitalRiskSection,
 } from './pdfSections';
 
 /**
@@ -43,29 +44,29 @@ import {
 const SUMMARY_SECTIONS: SectionBuilder[] = [
   coverPageSection, // 1. Cover Page
   executiveSummarySection, // 2. Executive Summary
-  overallScoreSection, // 3. Overall Score
-  moduleScoresSection, // 4. Module Scores
-  top5FindingsSection, // 5. Top 5 Findings
+  moduleWiseAnalysisSection, // 3. Module-wise Analysis
+  top5FindingsSection, // 4. Top 5 Findings
+  riskAnalysisSummarySection, // 5. Risk Analysis
   top5RecommendationsSection, // 6. Top 5 Recommendations
-  consultationCtaSection, // 7. Consultation CTA
+  conclusionCtaSection, // 7. Conclusion + Consultation CTA
 ];
 
 const FULL_SECTIONS: SectionBuilder[] = [
   fullCoverPageSection, // 1. Cover Page
-  executiveDashboardSection, // 2. Executive Summary
-  healthGaugeSection, // 3. Business Health Score
-  professionalTablesSection, // 4. Module-wise Analysis
-  fishboneRootCauseSection, // 5. Root Cause Analysis
-  riskAnalysisSection, // 6. Risk Analysis
-  priorityMatrixSection, // 7. Priority Matrix
-  moduleChartsSection, // 8. Charts
-  progressBarsSection, // 9. Graphs
-  heatMapSection, // 10. Heat Maps
-  businessImpactCardsSection, // 11. Business Impact
-  timelineSection, // 12. Timeline
-  roadmapSection, // 13. 30-60-90 Day Roadmap
-  executiveRecommendationsSection, // 14. Professional Recommendations
-  consultationCtaSection, // 15. Consultation CTA
+  executiveNarrativeSection, // 2. Executive Summary
+  businessProfileSection, // 3. Business & Inventory Profile
+  overallHealthAnalysisSection, // 4. Overall Inventory Health Analysis
+  fullModuleWiseAnalysisSection, // 5. Module-wise Analysis
+  inventoryControlAnalysisSection, // 6. Inventory Control Analysis
+  stockAccuracySection, // 7. Stock Accuracy & Reconciliation Analysis
+  warehouseProcessSection, // 8. Warehouse / Storage Process Analysis
+  workingCapitalRiskSection, // 9. Working Capital & Excess Inventory Risk
+  fullRiskAnalysisSection, // 10. Risk Analysis
+  rootCauseAnalysisSection, // 11. Root Cause Analysis
+  priorityMatrixTableSection, // 12. Priority Matrix
+  detailedRecommendationsSection, // 13. Detailed Recommendations
+  managementActionPrioritiesSection, // 14. Management Action Priorities
+  fullConclusionCtaSection, // 15. Conclusion + Consultation CTA
 ];
 
 export const REPORT_TIER_SECTIONS: Record<ReportTier, SectionBuilder[]> = {
