@@ -1,9 +1,10 @@
 import type { Request, Response } from 'express';
+import helmet from 'helmet';
 import { env } from '../../config/env';
 import { AppError } from '../../utils/AppError';
 import { logger } from '../../utils/logger';
 import { getAssessmentById } from '../assessment/assessment.service';
-import { buildPayURedirectFormHtml } from './payment.provider.payu';
+import { buildPayURedirectCspDirectives, buildPayURedirectFormHtml, generateCspNonce } from './payment.provider.payu';
 import { findPaymentOrderById, findPaymentOrderByProviderOrderId } from './payment.repository';
 import { handlePaymentCallback, verifyAndFulfillOrder } from './payment.service';
 
@@ -55,7 +56,18 @@ export async function payuRedirectPageController(req: Request, res: Response): P
     }
 
     const assessment = await getAssessmentById(order.assessmentId);
-    const html = buildPayURedirectFormHtml(order, assessment);
+
+    // Scoped to THIS response only — the global helmet() in app.ts is
+    // never touched. This overwrites the CSP header helmet() already set
+    // for this response with one that's identical except for two narrow,
+    // necessary additions (see buildPayURedirectCspDirectives): permission
+    // for this page's form to submit to PayU, and permission to run this
+    // page's own auto-submit script via a nonce generated fresh right now.
+    const nonce = generateCspNonce();
+    const scopedCsp = helmet.contentSecurityPolicy({ directives: buildPayURedirectCspDirectives(nonce) });
+    scopedCsp(req, res, () => {});
+
+    const html = buildPayURedirectFormHtml(order, assessment, nonce);
 
     logger.info(
       { orderId, tier: order.tier, totalMs: Date.now() - startedAt },

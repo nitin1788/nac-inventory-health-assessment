@@ -1,3 +1,5 @@
+import { randomBytes } from 'crypto';
+import helmet from 'helmet';
 import { API_PREFIX } from '../../config/constants';
 import { env } from '../../config/env';
 import { AppError } from '../../utils/AppError';
@@ -27,7 +29,7 @@ import {
  * (fetched at implementation time — see payuHash.ts's header comment
  * for the exact source links); nothing here is guessed.
  */
-const PAYU_CHECKOUT_BASE_URL: Record<'test' | 'production', string> = {
+export const PAYU_CHECKOUT_BASE_URL: Record<'test' | 'production', string> = {
   test: 'https://test.payu.in',
   production: 'https://secure.payu.in',
 };
@@ -94,6 +96,46 @@ const TIER_LABELS: Record<PaymentOrderRow['tier'], string> = {
 };
 
 /**
+ * A fresh, unpredictable per-response CSP nonce — generated server-side,
+ * never hardcoded, never reused across responses. Used to authorize
+ * exactly one inline <script> (the auto-submit call) on exactly one
+ * response, the standard CSP-compliant alternative to a blanket
+ * 'unsafe-inline' allowance.
+ */
+export function generateCspNonce(): string {
+  return randomBytes(16).toString('base64');
+}
+
+/**
+ * The Content-Security-Policy directives for GET /payments/payu/redirect/:orderId's
+ * response ONLY — built from Helmet's own default directive set (see
+ * app.ts's app.use(helmet()), which stays completely untouched) plus
+ * exactly two narrow additions this one page needs and nothing else
+ * gets: permission for its <form> to submit to PayU's hosted checkout
+ * (form-action), and permission to run its own auto-submit script via
+ * this response's nonce (script-src). Every other directive — including
+ * script-src-attr staying 'none', so inline event-handler attributes
+ * remain blocked everywhere, including here — is passed through
+ * unchanged. The caller (payuRedirectPageController) applies this via a
+ * one-off helmet.contentSecurityPolicy() call scoped to that single
+ * response, never by touching the global helmet() middleware.
+ */
+export function buildPayURedirectCspDirectives(nonce: string): Record<string, Iterable<string>> {
+  const defaults = helmet.contentSecurityPolicy.getDefaultDirectives();
+  return {
+    ...defaults,
+    // Both hosts allowed unconditionally (not just whichever PAYU_ENV is
+    // currently active) — the actual form `action` this page ever
+    // generates still only ever points at PAYU_CHECKOUT_BASE_URL[env.PAYU_ENV]
+    // (see buildPayURedirectFormHtml), so this is an allowlist, not a
+    // behavior change; it just means this directive doesn't need to be
+    // revisited if PAYU_ENV is ever flipped.
+    'form-action': ["'self'", PAYU_CHECKOUT_BASE_URL.production, PAYU_CHECKOUT_BASE_URL.test],
+    'script-src': ["'self'", `'nonce-${nonce}'`],
+  };
+}
+
+/**
  * Renders the tiny auto-submitting HTML page GET /payments/payu/redirect/:orderId
  * serves — this is what actually sends the browser to PayU's hosted
  * checkout with a freshly-computed, correctly-hashed field set. Exported
@@ -101,7 +143,7 @@ const TIER_LABELS: Record<PaymentOrderRow['tier'], string> = {
  * redirect page is PayU-specific plumbing, not part of the
  * cross-provider order lifecycle contract.
  */
-export function buildPayURedirectFormHtml(order: PaymentOrderRow, assessment: AssessmentDetail): string {
+export function buildPayURedirectFormHtml(order: PaymentOrderRow, assessment: AssessmentDetail, nonce: string): string {
   const { key, salt } = ensurePayUConfigured();
   const { backendBaseUrl } = ensureBaseUrlsConfigured();
 
@@ -137,12 +179,13 @@ export function buildPayURedirectFormHtml(order: PaymentOrderRow, assessment: As
     <meta charset="utf-8" />
     <title>Redirecting to PayU…</title>
   </head>
-  <body onload="document.forms[0].submit()">
+  <body>
     <p>Redirecting you to PayU to complete your payment…</p>
     <form method="post" action="${escapeHtml(actionUrl)}">
       ${inputsHtml}
       <noscript><button type="submit">Continue to PayU</button></noscript>
     </form>
+    <script nonce="${escapeHtml(nonce)}">document.forms[0].submit();</script>
   </body>
 </html>`;
 }
