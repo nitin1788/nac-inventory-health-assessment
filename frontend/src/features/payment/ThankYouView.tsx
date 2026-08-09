@@ -100,7 +100,8 @@ export function ThankYouView() {
           {state === 'success' && details ? (
             <div className="flex flex-col items-center gap-3">
               <CheckCircle2 className="h-10 w-10 text-emerald-500" />
-              <h1 className="text-xl font-semibold text-slate-900">Payment Successful</h1>
+              <h1 className="text-xl font-semibold text-slate-900">Payment Successful 🎉</h1>
+              <p className="text-sm text-slate-600">Your report is ready.</p>
 
               <dl className="mt-4 w-full space-y-3 rounded-xl bg-slate-50 p-5 text-left text-sm">
                 <div className="flex justify-between gap-4">
@@ -147,10 +148,11 @@ export function ThankYouView() {
                 </a>
               ) : null}
 
+              <p className="mt-4 text-sm font-medium text-slate-700">Want help understanding what to fix first?</p>
               <a href={consultationUrl} target="_blank" rel="noopener noreferrer" className="w-full">
                 <Button type="button" variant="secondary" className="w-full">
                   <PhoneCall className="h-4 w-4" />
-                  Book Consultation
+                  Book ₹499 Consultation
                 </Button>
               </a>
             </div>
