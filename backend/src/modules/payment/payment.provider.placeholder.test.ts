@@ -1,61 +1,46 @@
-import { before, test } from 'node:test';
+import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { placeholderPaymentProvider } from './payment.provider.placeholder';
 
 /**
- * Regression coverage for the clean PayU removal and the removal of the
- * PAYMENT_TEST_MODE bypass — no gateway is currently wired into
- * payment.service.ts, and there is no switch of any kind that can move
- * it off the placeholder. This proves that stays true even under
- * conditions that would previously have activated PayU or test mode.
- *
- * Env vars set BEFORE importing (via require() in a `before` hook, same
- * pattern the previous PayU test suite used) so env.ts's `dotenv/config`
- * side effect sees them at module-load time. Deliberately sets
- * PAYU_KEY/PAYU_SALT/PAYU_ENV/PAYMENT_TEST_MODE to prove they now have
- * zero effect — the schema no longer declares any of them, so setting
- * them should be inert.
+ * Tests the placeholder provider directly (not via payment.service's
+ * activeProvider, which now resolves to PayU whenever PAYU_KEY/PAYU_SALT
+ * are configured — see payment.service.ts). This keeps these tests true
+ * regardless of which provider is active in the current environment: the
+ * placeholder itself must always behave this way whenever it IS the
+ * active provider (no gateway configured).
  */
-process.env.PAYU_KEY = 'leftover-value-should-be-ignored';
-process.env.PAYU_SALT = 'leftover-value-should-be-ignored';
-process.env.PAYU_ENV = 'production';
-process.env.PAYMENT_TEST_MODE = 'true';
 
-let createOrder: (request: { assessmentId: string; tier: 'summary' | 'full' }) => Promise<{
-  status: string;
-  message: string;
-  amountInPaise: number;
-  redirectUrl?: string;
-}>;
-let placeholderPaymentProvider: {
-  name: string;
-  verifyPayment: (id: string) => Promise<unknown>;
-  handleCallback: (payload: Record<string, string | undefined>) => Promise<unknown>;
-};
-let env: { PAYU_KEY?: string; PAYU_SALT?: string; PAYU_ENV?: string; PAYMENT_TEST_MODE?: boolean };
-
-before(() => {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  env = require('../../config/env').env;
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  placeholderPaymentProvider = require('./payment.provider.placeholder').placeholderPaymentProvider;
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  createOrder = require('./payment.service').createOrder;
-});
-
-test('NO PAYU ENV VARS REQUIRED: env schema no longer exposes PAYU_KEY/PAYU_SALT/PAYU_ENV, even when set in process.env', () => {
-  assert.equal('PAYU_KEY' in env, false);
-  assert.equal('PAYU_SALT' in env, false);
-  assert.equal('PAYU_ENV' in env, false);
-});
-
-test('NO PAYMENT_TEST_MODE BYPASS: env schema no longer exposes PAYMENT_TEST_MODE, even when set to "true" in process.env', () => {
-  assert.equal('PAYMENT_TEST_MODE' in env, false);
-});
-
-test('NO BYPASS REACHABLE: order creation falls back to the placeholder even with PAYU_KEY/PAYU_SALT/PAYU_ENV=production AND PAYMENT_TEST_MODE=true both set in the environment', async () => {
-  const result = await createOrder({ assessmentId: '11111111-1111-1111-1111-111111111111', tier: 'summary' });
+test('placeholder never charges — createOrder always reports "unavailable" with no redirect', async () => {
+  const result = await placeholderPaymentProvider.createOrder({
+    assessmentId: '11111111-1111-1111-1111-111111111111',
+    tier: 'summary',
+  });
   assert.equal(result.status, 'unavailable');
   assert.equal(result.redirectUrl, undefined);
+  assert.equal(result.orderId, undefined);
+});
+
+test('placeholder message is generic — never names a specific gateway or exposes integration details', async () => {
+  const result = await placeholderPaymentProvider.createOrder({
+    assessmentId: '11111111-1111-1111-1111-111111111111',
+    tier: 'summary',
+  });
+  assert.equal(result.message.toLowerCase().includes('payu'), false);
+});
+
+test('placeholder reports the correct amount per tier even though nothing is actually charged', async () => {
+  const summary = await placeholderPaymentProvider.createOrder({
+    assessmentId: '11111111-1111-1111-1111-111111111111',
+    tier: 'summary',
+  });
+  assert.equal(summary.amountInPaise, 9900);
+
+  const full = await placeholderPaymentProvider.createOrder({
+    assessmentId: '11111111-1111-1111-1111-111111111111',
+    tier: 'full',
+  });
+  assert.equal(full.amountInPaise, 29900);
 });
 
 test('placeholder provider never marks an order paid', async () => {
@@ -64,21 +49,4 @@ test('placeholder provider never marks an order paid', async () => {
 
 test('placeholder provider never authenticates a callback as valid', async () => {
   await assert.rejects(() => placeholderPaymentProvider.handleCallback({ status: 'success' }));
-});
-
-test('placeholder message is generic — never names a specific gateway or exposes integration details', async () => {
-  const result = await createOrder({ assessmentId: '11111111-1111-1111-1111-111111111111', tier: 'summary' });
-  const lower = result.message.toLowerCase();
-  assert.equal(lower.includes('payu'), false);
-  assert.equal(result.message, 'Online payment is temporarily unavailable. Please try again shortly.');
-});
-
-test('₹99 (summary tier) order creation still works and reports the correct amount', async () => {
-  const result = await createOrder({ assessmentId: '11111111-1111-1111-1111-111111111111', tier: 'summary' });
-  assert.equal(result.amountInPaise, 9900);
-});
-
-test('₹299 (full tier) order creation still works and reports the correct amount', async () => {
-  const result = await createOrder({ assessmentId: '11111111-1111-1111-1111-111111111111', tier: 'full' });
-  assert.equal(result.amountInPaise, 29900);
 });

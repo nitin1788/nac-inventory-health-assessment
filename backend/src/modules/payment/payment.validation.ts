@@ -8,3 +8,8 @@ export const createPaymentOrderSchema = z.object({
 export const verifyPaymentSchema = z.object({
   orderId: z.string().uuid('Invalid order id.'),
 });
+
+/** :orderId on GET /payments/payu/redirect/:orderId. PayU's own success/failure POST bodies are intentionally NOT schema-validated here — hash authentication (see payuHash.ts) is what validates them. */
+export const payuRedirectParamsSchema = z.object({
+  orderId: z.string().uuid('Invalid order id.'),
+});

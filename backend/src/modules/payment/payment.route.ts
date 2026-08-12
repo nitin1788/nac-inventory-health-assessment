@@ -1,8 +1,13 @@
 import { Router } from 'express';
 import { asyncHandler } from '../../utils/asyncHandler';
 import { validateRequest } from '../../middleware/validateRequest.middleware';
-import { createPaymentOrderSchema, verifyPaymentSchema } from './payment.validation';
+import { createPaymentOrderSchema, payuRedirectParamsSchema, verifyPaymentSchema } from './payment.validation';
 import { createPaymentOrderController, verifyPaymentController } from './payment.controller';
+import {
+  payuFailureCallbackController,
+  payuRedirectPageController,
+  payuSuccessCallbackController,
+} from './payment.payu.controller';
 
 /**
  * Mounted at /payments.
@@ -10,11 +15,13 @@ import { createPaymentOrderController, verifyPaymentController } from './payment
  * - POST /orders — initiate a purchase for one report tier.
  * - POST /verify — client-triggered, server-side payment confirmation
  *   (see payment.service.ts's verifyAndFulfillOrder).
- *
- * No real gateway is currently wired in (see payment.service.ts) — a
- * future gateway's own redirect/callback routes get added back here
- * alongside it (typically a public GET redirect route plus
- * provider-specific callback routes), once one is integrated.
+ * - GET /payu/redirect/:orderId, POST /payu/success, POST /payu/failure
+ *   — PayU-specific: the hosted-checkout redirect page and PayU's own
+ *   surl/furl callbacks. All three are public by necessity (PayU calls
+ *   them directly, not the frontend) — request authenticity comes from
+ *   PayU's hash signature (see payuHash.ts), not from auth middleware.
+ *   No validateRequest body schema on the callback routes: PayU controls
+ *   that payload's shape, and hash validation *is* the validation.
  */
 export const paymentRouter = Router();
 
@@ -29,3 +36,13 @@ paymentRouter.post(
   validateRequest(verifyPaymentSchema),
   asyncHandler(verifyPaymentController)
 );
+
+paymentRouter.get(
+  '/payu/redirect/:orderId',
+  validateRequest(payuRedirectParamsSchema, 'params'),
+  asyncHandler(payuRedirectPageController)
+);
+
+paymentRouter.post('/payu/success', asyncHandler(payuSuccessCallbackController));
+
+paymentRouter.post('/payu/failure', asyncHandler(payuFailureCallbackController));

@@ -1,6 +1,7 @@
 import { AppError } from '../../utils/AppError';
 import { getAssessmentById } from '../assessment/assessment.service';
 import { deliverPaidReport } from '../report/report.service';
+import { isPayUConfigured, payuPaymentProvider } from './payment.provider.payu';
 import { placeholderPaymentProvider } from './payment.provider.placeholder';
 import { findPaidOrder, findPaymentOrderById, markPaymentPaidIfPending, markReportDelivered } from './payment.repository';
 import type {
@@ -13,12 +14,13 @@ import type {
 } from './payment.types';
 
 /**
- * No real gateway is currently wired in, and there is no bypass of any
- * kind — the production-safe placeholder is unconditionally active.
- * Plug a future gateway in here, following the same pattern:
- * `isGatewayConfigured() ? gatewayProvider : placeholderPaymentProvider`.
+ * Provider selection: PayU becomes active once both PAYU_KEY and
+ * PAYU_SALT are set (see env.ts); otherwise the production-safe
+ * placeholder stays active, exactly today's behavior when nothing is
+ * configured. This is the only line that needs to change to add a
+ * future provider.
  */
-const activeProvider: PaymentProvider = placeholderPaymentProvider;
+const activeProvider: PaymentProvider = isPayUConfigured() ? payuPaymentProvider : placeholderPaymentProvider;
 
 export async function createOrder(request: PaymentOrderRequest): Promise<PaymentOrderResult> {
   return activeProvider.createOrder(request);
