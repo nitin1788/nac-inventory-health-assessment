@@ -41,12 +41,13 @@ const SLOW_REQUEST_HINT_MS = 5000;
  * endpoint and reacts purely to the `status` it gets back:
  *
  * - 'unavailable' (production default today — no PaymentProvider is
- *   live yet): shows "coming soon" messaging, same as before.
- * - 'created' (PAYMENT_TEST_MODE or a real PayU order): a real browser
- *   navigation to `redirectUrl` — either our own Thank You page (test
- *   mode) or our PayU redirect page, which then sends the browser on to
- *   PayU's hosted checkout. Either way this component does the exact
- *   same `window.location.href` navigation.
+ *   live yet): shows a generic "temporarily unavailable" message —
+ *   never names a specific gateway or exposes integration details.
+ * - 'created' (PAYMENT_TEST_MODE today; a real gateway once one is
+ *   wired in): a real browser navigation to `redirectUrl` — either our
+ *   own Thank You page (test mode) or a gateway's own redirect/checkout
+ *   page. Either way this component does the exact same
+ *   `window.location.href` navigation, regardless of which provider is active.
  * - 'error'/'timeout': the request failed or took too long — surfaced
  *   with a Retry action rather than a spinner with no way out.
  */
@@ -141,7 +142,7 @@ export function PaymentPlaceholderView() {
 
             <h1 className="text-xl font-semibold text-slate-900">
               {status === 'loading' && (isSlow ? 'Still preparing your secure payment…' : 'Preparing secure payment…')}
-              {status === 'unavailable' && 'Payment Gateway Coming Soon.'}
+              {status === 'unavailable' && 'Payment Temporarily Unavailable'}
               {status === 'timeout' && 'This is taking longer than expected.'}
               {status === 'error' && "We couldn't reach the payment service."}
             </h1>
@@ -151,8 +152,7 @@ export function PaymentPlaceholderView() {
                   ? "This is taking a little longer than usual — we're still connecting to the payment service."
                   : 'Setting up your secure order — this only takes a moment.')}
               {status === 'unavailable' &&
-                (message ??
-                  "We're finishing our online payment integration. Your assessment results are saved — check back soon to purchase your report.")}
+                (message ?? 'Online payment is temporarily unavailable. Please try again shortly.')}
               {status === 'timeout' && 'The payment service is taking too long to respond. You can try again.'}
               {status === 'error' &&
                 "Please try again — if this keeps happening, contact us and we'll help you complete your purchase."}

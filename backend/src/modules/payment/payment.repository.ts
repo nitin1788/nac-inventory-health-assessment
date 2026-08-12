@@ -63,7 +63,7 @@ export interface CreatePaymentOrderInput {
   tier: ReportTier;
   amountInPaise: number;
   currency: string;
-  /** Which PaymentProvider created this row — 'test-mode' or 'payu'. */
+  /** Which PaymentProvider created this row — 'test-mode' or a real gateway's own name once one is wired in. */
   provider: string;
   /** The provider's own order reference, if it has one yet. */
   providerOrderId?: string | null;
@@ -109,9 +109,11 @@ export async function findPaymentOrderById(id: string): Promise<PaymentOrderRow 
 }
 
 /**
- * Maps a gateway's own reference (PayU's txnid) back to our row —
- * consulted by the surl/furl callback handlers, which only ever learn
- * PayU's txnid from the callback payload, never our internal id.
+ * Maps a gateway's own reference (its transaction/order id) back to our
+ * row — for a future gateway's callback handlers, which only ever learn
+ * that reference from the callback payload, never our internal id. Not
+ * currently called (no gateway is wired in), kept as part of the
+ * generic repository surface a real provider will need.
  */
 export async function findPaymentOrderByProviderOrderId(providerOrderId: string): Promise<PaymentOrderRow | null> {
   const supabase = getSupabaseClient();

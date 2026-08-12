@@ -47,23 +47,18 @@ const envSchema = z.object({
     .default('false')
     .transform((value) => value === 'true'),
 
-  // PayU (see backend/src/modules/payment/payment.provider.payu.ts). Optional
-  // at the schema level — same pattern as Supabase/Resend above — so boot
-  // never crashes if PayU isn't configured yet; payment.service.ts falls
-  // back to the placeholder provider until both PAYU_KEY and PAYU_SALT are
-  // set. Never commit real values here; set them in Render's dashboard.
-  PAYU_KEY: z.string().optional().or(z.literal('')),
-  PAYU_SALT: z.string().optional().or(z.literal('')),
-  // 'test' is the safe default -- production PayU only activates when this
-  // is explicitly set to 'production' in the environment.
-  PAYU_ENV: z.enum(['test', 'production']).optional().default('test'),
-  // This backend's own public base URL (no trailing slash), used to build
-  // the absolute surl/furl PayU redirects back to, e.g.
-  // https://nac-inventory-assessment-api.onrender.com/api/v1
+  // No real payment gateway is currently configured (see
+  // backend/src/modules/payment/payment.service.ts) — PAYMENT_TEST_MODE is
+  // the only thing that currently moves the app off the safe placeholder
+  // provider. A future gateway's own credential env vars get added back
+  // here, following the same optional-at-schema-level pattern as
+  // Supabase/Resend above, when one is wired in.
+  //
+  // This backend's own public base URL (no trailing slash) and the
+  // frontend's public base URL — generic infra config for building
+  // absolute redirect/callback URLs, reusable by whichever gateway is
+  // wired in next; not specific to any one provider.
   BACKEND_BASE_URL: z.string().optional().or(z.literal('')),
-  // The frontend's public base URL (no trailing slash), used to build the
-  // final redirect to the Thank You page once a PayU callback is handled,
-  // e.g. https://nitinanandconsulting.in
   FRONTEND_BASE_URL: z.string().optional().or(z.literal('')),
 
   // Set automatically by Render on every deploy (the commit SHA that was

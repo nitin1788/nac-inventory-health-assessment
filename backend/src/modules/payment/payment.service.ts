@@ -2,7 +2,6 @@ import { env } from '../../config/env';
 import { AppError } from '../../utils/AppError';
 import { getAssessmentById } from '../assessment/assessment.service';
 import { deliverPaidReport } from '../report/report.service';
-import { isPayUConfigured, payuPaymentProvider } from './payment.provider.payu';
 import { placeholderPaymentProvider } from './payment.provider.placeholder';
 import { testModePaymentProvider } from './payment.provider.testMode';
 import { findPaidOrder, findPaymentOrderById, markPaymentPaidIfPending, markReportDelivered } from './payment.repository';
@@ -17,19 +16,16 @@ import type {
 
 /**
  * Provider selection, in priority order:
- *   1. PAYMENT_TEST_MODE=true -> the internal bypass, always wins even if
- *      PayU is also configured (see env.ts and payment.provider.testMode.ts
- *      — this must never be true in production).
- *   2. PAYU_KEY + PAYU_SALT both set -> the real PayU integration.
- *   3. Otherwise -> the production-safe placeholder ("Coming Soon"),
- *      exactly today's behavior when nothing is configured yet.
- * This is the only place that needs to change to add a future provider.
+ *   1. PAYMENT_TEST_MODE=true -> the internal bypass, always wins over any
+ *      real gateway (see env.ts and payment.provider.testMode.ts — this
+ *      must never be true in production).
+ *   2. Otherwise -> the production-safe placeholder — no real gateway is
+ *      currently wired in. Plug a future gateway in here, following the
+ *      same pattern: `isGatewayConfigured() ? gatewayProvider : placeholderPaymentProvider`.
  */
 const activeProvider: PaymentProvider = env.PAYMENT_TEST_MODE
   ? testModePaymentProvider
-  : isPayUConfigured()
-    ? payuPaymentProvider
-    : placeholderPaymentProvider;
+  : placeholderPaymentProvider;
 
 export async function createOrder(request: PaymentOrderRequest): Promise<PaymentOrderResult> {
   return activeProvider.createOrder(request);
@@ -69,9 +65,9 @@ export async function isReportUnlocked(assessmentId: string, tier: ReportTier): 
  * against an already-paid order is a no-op, not a re-delivery.
  *
  * `expectedAmountInPaise` lets a gateway callback cross-check the amount
- * IT reported against what WE created the order for (PayU's own docs
- * recommend this: "compare the parameters sent by PayU in the response
- * with the ones you sent in the request") — a mismatch is rejected
+ * IT reported against what WE created the order for — standard advice
+ * from most gateways' own docs (compare the parameters a callback
+ * reports against what you originally sent) — a mismatch is rejected
  * before ever asking the provider to verify, regardless of what the
  * provider's own API would say.
  */

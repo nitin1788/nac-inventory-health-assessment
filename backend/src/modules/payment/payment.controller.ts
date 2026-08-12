@@ -11,7 +11,7 @@ import type { PaymentOrderRequest } from './payment.types';
  * verifiable in production: if `totalMs` ever creeps up, the cause is
  * order creation itself (DB/provider), not report generation, since
  * that literally cannot run on this path. IDs and durations only —
- * never PayU salt, keys, or full payloads.
+ * never a gateway's secret keys/salts, or full request payloads.
  */
 export async function createPaymentOrderController(req: Request, res: Response): Promise<void> {
   const startedAt = Date.now();

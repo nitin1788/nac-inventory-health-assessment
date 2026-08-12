@@ -21,17 +21,16 @@ const THANK_YOU_PATH = '/assessment/thank-you';
 /**
  * TEMPORARY internal-testing provider — only active when
  * PAYMENT_TEST_MODE=true (see backend/src/config/env.ts and
- * payment.service.ts), and always takes priority over PayU even if
- * PAYU_KEY/PAYU_SALT are also set. Creates a real payment_orders row
- * exactly like a production gateway would, then redirects straight to
- * our own Thank You page instead of a real checkout; verifyPayment
- * always reports the order paid immediately, standing in for an
- * instant, always-successful payment. This exercises the exact same
- * order-creation -> redirect -> verify -> deliver pipeline the real
- * PayU integration uses (see payment.provider.payu.ts) — only the
- * methods on this object differ; nothing downstream (the /verify
- * endpoint, the Thank You page, report delivery) changes based on
- * which provider is active.
+ * payment.service.ts), and always takes priority over any real gateway.
+ * Creates a real payment_orders row exactly like a production gateway
+ * would, then redirects straight to our own Thank You page instead of a
+ * real checkout; verifyPayment always reports the order paid
+ * immediately, standing in for an instant, always-successful payment.
+ * This exercises the exact same order-creation -> redirect -> verify ->
+ * deliver pipeline a real gateway integration uses — only the methods
+ * on this object differ; nothing downstream (the /verify endpoint, the
+ * Thank You page, report delivery) changes based on which provider is
+ * active.
  */
 export const testModePaymentProvider: PaymentProvider = {
   name: 'test-mode',

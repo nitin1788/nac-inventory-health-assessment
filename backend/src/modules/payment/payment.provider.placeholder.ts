@@ -8,18 +8,20 @@ import type {
 } from './payment.types';
 
 /**
- * Stands in for a real gateway until PayU is configured (PAYU_KEY +
- * PAYU_SALT both set — see payment.service.ts). Never creates a real
+ * Stands in for a real gateway until one is configured and wired into
+ * payment.service.ts's `activeProvider` selection. Never creates a real
  * order or charges anything — always reports the gateway as
  * unavailable, with the tier's price so the frontend can still show
- * accurate pricing on the checkout page.
+ * accurate pricing on the checkout page. The customer-facing message is
+ * deliberately generic — never names a specific gateway or exposes any
+ * integration/configuration detail.
  */
 export const placeholderPaymentProvider: PaymentProvider = {
   name: 'placeholder',
   async createOrder(request: PaymentOrderRequest): Promise<PaymentOrderResult> {
     return {
       status: 'unavailable',
-      message: 'Payment Gateway Coming Soon.',
+      message: 'Online payment is temporarily unavailable. Please try again shortly.',
       tier: request.tier,
       amountInPaise: TIER_PRICING[request.tier],
       currency: 'INR',
