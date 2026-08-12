@@ -40,14 +40,13 @@ const SLOW_REQUEST_HINT_MS = 5000;
  * Checkout-initiation page — calls the real POST /payments/orders
  * endpoint and reacts purely to the `status` it gets back:
  *
- * - 'unavailable' (production default today — no PaymentProvider is
- *   live yet): shows a generic "temporarily unavailable" message —
- *   never names a specific gateway or exposes integration details.
- * - 'created' (PAYMENT_TEST_MODE today; a real gateway once one is
- *   wired in): a real browser navigation to `redirectUrl` — either our
- *   own Thank You page (test mode) or a gateway's own redirect/checkout
- *   page. Either way this component does the exact same
- *   `window.location.href` navigation, regardless of which provider is active.
+ * - 'unavailable' (current state — no PaymentProvider is live yet):
+ *   shows a generic "temporarily unavailable" message — never names a
+ *   specific gateway or exposes integration details.
+ * - 'created' (once a real gateway is wired in): a real browser
+ *   navigation to `redirectUrl` — a gateway's own redirect/checkout
+ *   page. This component does the exact same `window.location.href`
+ *   navigation regardless of which provider is active.
  * - 'error'/'timeout': the request failed or took too long — surfaced
  *   with a Retry action rather than a spinner with no way out.
  */

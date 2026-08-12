@@ -1,9 +1,7 @@
-import { env } from '../../config/env';
 import { AppError } from '../../utils/AppError';
 import { getAssessmentById } from '../assessment/assessment.service';
 import { deliverPaidReport } from '../report/report.service';
 import { placeholderPaymentProvider } from './payment.provider.placeholder';
-import { testModePaymentProvider } from './payment.provider.testMode';
 import { findPaidOrder, findPaymentOrderById, markPaymentPaidIfPending, markReportDelivered } from './payment.repository';
 import type {
   PaymentCallbackResult,
@@ -15,17 +13,12 @@ import type {
 } from './payment.types';
 
 /**
- * Provider selection, in priority order:
- *   1. PAYMENT_TEST_MODE=true -> the internal bypass, always wins over any
- *      real gateway (see env.ts and payment.provider.testMode.ts — this
- *      must never be true in production).
- *   2. Otherwise -> the production-safe placeholder — no real gateway is
- *      currently wired in. Plug a future gateway in here, following the
- *      same pattern: `isGatewayConfigured() ? gatewayProvider : placeholderPaymentProvider`.
+ * No real gateway is currently wired in, and there is no bypass of any
+ * kind — the production-safe placeholder is unconditionally active.
+ * Plug a future gateway in here, following the same pattern:
+ * `isGatewayConfigured() ? gatewayProvider : placeholderPaymentProvider`.
  */
-const activeProvider: PaymentProvider = env.PAYMENT_TEST_MODE
-  ? testModePaymentProvider
-  : placeholderPaymentProvider;
+const activeProvider: PaymentProvider = placeholderPaymentProvider;
 
 export async function createOrder(request: PaymentOrderRequest): Promise<PaymentOrderResult> {
   return activeProvider.createOrder(request);
@@ -40,11 +33,10 @@ export async function handlePaymentCallback(
 
 /**
  * The single source of truth for "has this exact assessment+tier been
- * paid for" — consulted by the report-download endpoint. Replaces the
- * previous global PAYMENT_TEST_MODE on/off switch with a real,
- * per-assessment fact: a paid `payment_orders` row must exist. Works
- * identically for a test-mode order (once verified) and a real Cashfree
- * order later — no special-casing either provider.
+ * paid for" — consulted by the report-download endpoint. A real,
+ * per-assessment fact: a paid `payment_orders` row must exist, sourced
+ * only from a real gateway's own verified confirmation — no global
+ * on/off switch of any kind can produce this.
  */
 export async function isReportUnlocked(assessmentId: string, tier: ReportTier): Promise<boolean> {
   const paidOrder = await findPaidOrder(assessmentId, tier);
@@ -58,8 +50,8 @@ export async function isReportUnlocked(assessmentId: string, tier: ReportTier): 
  * payment is confirmed paid" is written exactly once.
  *
  * Never trusts the caller's say-so: it always asks `activeProvider` for
- * the authoritative status (test-mode's instant "paid," or a real
- * gateway's own order-status lookup). Report generation/email only ever
+ * the authoritative status — a real gateway's own order-status lookup,
+ * never anything self-reported. Report generation/email only ever
  * runs on the specific call that wins the atomic `created -> paid`
  * transition (see markPaymentPaidIfPending) — a duplicate verify call
  * against an already-paid order is a no-op, not a re-delivery.

@@ -2,7 +2,7 @@
 --
 -- One row per checkout attempt for one (assessment, tier) pair. This is
 -- what makes "is this report paid for" a real per-assessment fact instead
--- of the previous global PAYMENT_TEST_MODE switch, and gives report
+-- of a global switch, and gives report
 -- delivery an atomic, idempotent guard: report_delivered_at is set exactly
 -- once, only by whichever caller wins the `status = 'created' -> 'paid'`
 -- transition (see payment.repository.ts's markPaymentPaidIfPending).

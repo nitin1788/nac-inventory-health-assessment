@@ -32,27 +32,12 @@ const envSchema = z.object({
 
   TURNSTILE_SECRET_KEY: z.string().optional().or(z.literal('')),
 
-  // TEMPORARY internal-testing switch (see backend/src/modules/payment/).
-  // When 'true', the payment module bypasses the payment gateway
-  // placeholder entirely — report generation, customer email, and
-  // download all happen immediately with no payment step. Defaults to
-  // 'false' so omitting this var (as production always should) leaves
-  // today's "Payment Gateway Coming Soon" behavior unchanged. This is
-  // the ONLY switch for test mode — there is deliberately no separate
-  // NODE_ENV-based override, so production safety depends entirely on
-  // never setting this var to 'true' in Render's environment.
-  PAYMENT_TEST_MODE: z
-    .enum(['true', 'false'])
-    .optional()
-    .default('false')
-    .transform((value) => value === 'true'),
-
   // No real payment gateway is currently configured (see
-  // backend/src/modules/payment/payment.service.ts) — PAYMENT_TEST_MODE is
-  // the only thing that currently moves the app off the safe placeholder
-  // provider. A future gateway's own credential env vars get added back
-  // here, following the same optional-at-schema-level pattern as
-  // Supabase/Resend above, when one is wired in.
+  // backend/src/modules/payment/payment.service.ts) — the safe placeholder
+  // provider is unconditionally active, with no bypass switch of any kind.
+  // A future gateway's own credential env vars get added back here,
+  // following the same optional-at-schema-level pattern as Supabase/Resend
+  // above, when one is wired in.
   //
   // This backend's own public base URL (no trailing slash) and the
   // frontend's public base URL — generic infra config for building

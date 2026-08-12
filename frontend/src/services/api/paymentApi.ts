@@ -10,10 +10,9 @@ export interface PaymentOrderRequest {
 export interface PaymentOrderResult {
   /**
    * 'unavailable': production default — no gateway yet, nothing created.
-   * 'created': an order now exists — either a real gateway's checkout
-   *   order, or (backend's PAYMENT_TEST_MODE only) a synthetic order.
-   *   Either way this frontend does the exact same thing: navigate to
-   *   `redirectUrl`. It has no knowledge of which provider produced it.
+   * 'created': a real gateway's checkout order exists once one is wired
+   *   in — this frontend navigates to `redirectUrl`, with no knowledge
+   *   of which provider produced it.
    */
   status: 'unavailable' | 'created';
   message: string;

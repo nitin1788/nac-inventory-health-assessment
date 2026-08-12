@@ -2,9 +2,8 @@
  * Domain types for the payment module. This module exists to give a
  * real payment gateway a single, well-defined seam to plug into — see
  * payment.service.ts for the provider-selection logic. Until a real
- * gateway is configured and wired in there, PAYMENT_TEST_MODE is the
- * only thing that can move this off the production-safe placeholder
- * (see payment.provider.testMode.ts).
+ * gateway is configured and wired in there, the production-safe
+ * placeholder is unconditionally active, with no bypass of any kind.
  */
 
 export type ReportTier = 'summary' | 'full';
@@ -22,12 +21,11 @@ export interface PaymentOrderRequest {
 
 export interface PaymentOrderResult {
   /**
-   * 'unavailable': the placeholder provider (production default) — no
-   *   real gateway exists yet, nothing is created or charged.
-   * 'created': an order now exists — either a real gateway's checkout
-   *   order, or (PAYMENT_TEST_MODE only) a synthetic order the frontend
-   *   is redirected straight through. Either way the frontend does the
-   *   same thing: navigate to `redirectUrl`.
+   * 'unavailable': the placeholder provider (currently the only
+   *   provider) — no real gateway exists yet, nothing is created or
+   *   charged.
+   * 'created': a real gateway's checkout order exists once one is wired
+   *   in — the frontend navigates to `redirectUrl`.
    */
   status: 'unavailable' | 'created';
   message: string;

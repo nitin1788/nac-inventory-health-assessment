@@ -181,8 +181,8 @@ export async function markReportDelivered(id: string): Promise<void> {
 
 /**
  * The real per-assessment, per-tier "has this been paid for" fact —
- * consulted by the report-download endpoint in place of the previous
- * global PAYMENT_TEST_MODE switch.
+ * consulted by the report-download endpoint. No global switch of any
+ * kind can substitute for a real paid row here.
  */
 export async function findPaidOrder(assessmentId: string, tier: ReportTier): Promise<PaymentOrderRow | null> {
   const supabase = getSupabaseClient();

@@ -27,12 +27,9 @@ export async function getAssessmentController(req: Request, res: Response): Prom
  * Report downloads are gated behind a real, per-assessment,
  * per-tier fact: a paid `payment_orders` row (see
  * backend/src/modules/payment/payment.service.ts's isReportUnlocked).
- * No real payment gateway is wired up yet — in production, the
- * placeholder PaymentProvider never creates an order that can reach
- * 'paid', so this denies by default; PAYMENT_TEST_MODE=true (internal
- * testing only; see env.ts) exercises the exact same gate via
- * test-mode orders that get marked paid through the normal
- * create -> redirect -> verify flow, not a separate bypass.
+ * No real payment gateway is wired up yet — the placeholder
+ * PaymentProvider never creates an order that can reach 'paid', so
+ * this denies by default with no bypass of any kind.
  *
  * `?tier=summary|full` selects which of the two distinct report
  * products to render (see pdf/pdfSections.config.ts); defaults to
