@@ -11,13 +11,13 @@ import { placeholderPaymentProvider } from './payment.provider.placeholder';
  * active provider (no gateway configured).
  */
 
-test('placeholder never charges — createOrder always reports "unavailable" with no redirect', async () => {
+test('placeholder never charges — createOrder always reports "unavailable" with no checkout handoff', async () => {
   const result = await placeholderPaymentProvider.createOrder({
     assessmentId: '11111111-1111-1111-1111-111111111111',
     tier: 'summary',
   });
   assert.equal(result.status, 'unavailable');
-  assert.equal(result.redirectUrl, undefined);
+  assert.equal(result.checkoutForm, undefined);
   assert.equal(result.orderId, undefined);
 });
 

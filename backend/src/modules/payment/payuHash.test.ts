@@ -25,6 +25,7 @@ const FIXTURE = {
   productinfo: 'Report Summary',
   firstname: 'Ravi',
   email: 'ravi@example.com',
+  phone: '9999999999',
   salt: 'testsalt',
 };
 const EXPECTED_REQUEST_HASH =
@@ -43,6 +44,23 @@ test('buildPayURequestHash matches the documented PayU formula exactly', () => {
       productinfo: FIXTURE.productinfo,
       firstname: FIXTURE.firstname,
       email: FIXTURE.email,
+      phone: FIXTURE.phone,
+    },
+    FIXTURE.salt
+  );
+  assert.equal(hash, EXPECTED_REQUEST_HASH);
+});
+
+test('buildPayURequestHash ignores phone entirely — it is a mandatory PayU form field but is never part of the hash formula', () => {
+  const hash = buildPayURequestHash(
+    {
+      key: FIXTURE.key,
+      txnid: FIXTURE.txnid,
+      amount: FIXTURE.amount,
+      productinfo: FIXTURE.productinfo,
+      firstname: FIXTURE.firstname,
+      email: FIXTURE.email,
+      phone: '0000000000', // deliberately different from FIXTURE.phone
     },
     FIXTURE.salt
   );
@@ -150,6 +168,7 @@ test('buildPayUOrderFields never lets a UUID-length id through as txnid', () => 
     productinfo: 'x',
     firstname: 'x',
     email: 'x@example.com',
+    phone: '9999999999',
   });
   assert.ok(fields.txnid.length <= PAYU_FIELD_LIMITS.txnid);
 });
@@ -162,6 +181,7 @@ test('buildPayUOrderFields strips a pipe character from company-derived free tex
     productinfo: 'Report | Summary',
     firstname: 'x',
     email: 'x@example.com',
+    phone: '9999999999',
   });
   assert.ok(!fields.productinfo.includes('|'));
 });

@@ -4,6 +4,7 @@ import { API_PREFIX } from '../../config/constants';
 import { env } from '../../config/env';
 import { AppError } from '../../utils/AppError';
 import { logger } from '../../utils/logger';
+import { getAssessmentById } from '../assessment/assessment.service';
 import type { AssessmentDetail } from '../assessment/assessment.types';
 import { createPaymentOrder, type PaymentOrderRow } from './payment.repository';
 import { TIER_PRICING } from './payment.types';
@@ -136,14 +137,24 @@ export function buildPayURedirectCspDirectives(nonce: string): Record<string, It
 }
 
 /**
- * Renders the tiny auto-submitting HTML page GET /payments/payu/redirect/:orderId
- * serves — this is what actually sends the browser to PayU's hosted
- * checkout with a freshly-computed, correctly-hashed field set. Exported
- * (not the PaymentProvider interface itself) because rendering an HTML
- * redirect page is PayU-specific plumbing, not part of the
- * cross-provider order lifecycle contract.
+ * The complete, canonical set of everything PayU's Hosted Checkout
+ * _payment form needs: the exact same field object the hash is computed
+ * from is the exact same object returned for submission — there is no
+ * second, independently-built copy of these values anywhere, so the hash
+ * and the submitted fields can never drift apart from each other.
  */
-export function buildPayURedirectFormHtml(order: PaymentOrderRow, assessment: AssessmentDetail, nonce: string): string {
+export interface PayUCheckoutHandoff {
+  actionUrl: string;
+  fields: Record<string, string>;
+}
+
+/**
+ * Builds the exact form action + field set for PayU's Hosted Checkout
+ * handoff for one order. Used by createOrder() (the browser builds and
+ * submits the real <form> itself client-side — see PaymentPlaceholderView.tsx)
+ * and by the legacy server-rendered redirect page below.
+ */
+function buildPayUCheckoutHandoff(order: PaymentOrderRow, assessment: AssessmentDetail): PayUCheckoutHandoff {
   const { key, salt } = ensurePayUConfigured();
   const { backendBaseUrl } = ensureBaseUrlsConfigured();
 
@@ -158,16 +169,31 @@ export function buildPayURedirectFormHtml(order: PaymentOrderRow, assessment: As
     productinfo: `NAC Inventory Health Assessment - ${TIER_LABELS[order.tier]}`,
     firstname: assessment.company.contactPerson,
     email: assessment.company.email,
+    phone: assessment.company.mobile,
   });
   const hash = buildPayURequestHash(fields, salt);
-  const actionUrl = `${PAYU_CHECKOUT_BASE_URL[env.PAYU_ENV]}/_payment`;
 
-  const hiddenFields: Record<string, string> = {
-    ...fields,
-    hash,
-    surl: buildBackendApiUrl(backendBaseUrl, '/payments/payu/success'),
-    furl: buildBackendApiUrl(backendBaseUrl, '/payments/payu/failure'),
+  return {
+    actionUrl: `${PAYU_CHECKOUT_BASE_URL[env.PAYU_ENV]}/_payment`,
+    fields: {
+      ...fields,
+      hash,
+      surl: buildBackendApiUrl(backendBaseUrl, '/payments/payu/success'),
+      furl: buildBackendApiUrl(backendBaseUrl, '/payments/payu/failure'),
+    },
   };
+}
+
+/**
+ * Renders the legacy server-side auto-submitting HTML page for
+ * GET /payments/payu/redirect/:orderId. No longer used by the primary
+ * checkout flow (see createOrder() below, which now returns the same
+ * handoff fields directly to the frontend so the browser's own top-level
+ * form POST goes straight to PayU with no intermediate backend page in
+ * between) — kept as a working fallback/diagnostic route, not deleted.
+ */
+export function buildPayURedirectFormHtml(order: PaymentOrderRow, assessment: AssessmentDetail, nonce: string): string {
+  const { actionUrl, fields: hiddenFields } = buildPayUCheckoutHandoff(order, assessment);
 
   const inputsHtml = Object.entries(hiddenFields)
     .map(([name, value]) => `<input type="hidden" name="${escapeHtml(name)}" value="${escapeHtml(value)}" />`)
@@ -178,14 +204,31 @@ export function buildPayURedirectFormHtml(order: PaymentOrderRow, assessment: As
   <head>
     <meta charset="utf-8" />
     <title>Redirecting to PayU…</title>
+    <style>#payu-manual-continue { display: none; }</style>
   </head>
   <body>
-    <p>Redirecting you to PayU to complete your payment…</p>
+    <p id="payu-status-message">Redirecting you to PayU to complete your payment…</p>
     <form method="post" action="${escapeHtml(actionUrl)}">
       ${inputsHtml}
-      <noscript><button type="submit">Continue to PayU</button></noscript>
+      <button type="submit" id="payu-manual-continue">Continue to PayU</button>
     </form>
-    <script nonce="${escapeHtml(nonce)}">document.forms[0].submit();</script>
+    <noscript><style>#payu-manual-continue { display: inline-block; }</style></noscript>
+    <script nonce="${escapeHtml(nonce)}">
+      document.forms[0].submit();
+      // If we're still on this page a few seconds after the auto-submit
+      // above, the browser never actually left it — e.g. PayU's server
+      // returned a response Chrome didn't commit as a new document. Rather
+      // than leaving the customer staring at "Redirecting…" forever with
+      // no way out, surface a manual retry. This never fires on a normal,
+      // successful handoff: submitting the form navigates this document
+      // away, which cancels the pending timer along with everything else
+      // in this page's JS context.
+      setTimeout(function () {
+        document.getElementById('payu-status-message').textContent =
+          "This is taking longer than expected. Please tap the button below to continue to PayU.";
+        document.getElementById('payu-manual-continue').style.display = 'inline-block';
+      }, 6000);
+    </script>
   </body>
 </html>`;
 }
@@ -193,10 +236,17 @@ export function buildPayURedirectFormHtml(order: PaymentOrderRow, assessment: As
 export const payuPaymentProvider: PaymentProvider = {
   name: 'payu',
 
-  /** Amount is always derived from TIER_PRICING[tier] here — never accepted from the client. */
+  /**
+   * Amount is always derived from TIER_PRICING[tier] here — never accepted
+   * from the client. Returns the complete PayU Hosted Checkout handoff
+   * (action URL + every field, hash included) directly in the response —
+   * the frontend builds a real <form method="post"> from these and calls
+   * submit() itself (see PaymentPlaceholderView.tsx), so the browser's own
+   * top-level navigation POSTs straight to PayU. No intermediate backend
+   * page/redirect is part of this handoff.
+   */
   async createOrder(request: PaymentOrderRequest): Promise<PaymentOrderResult> {
     ensurePayUConfigured();
-    const { backendBaseUrl } = ensureBaseUrlsConfigured();
 
     const amountInPaise = TIER_PRICING[request.tier];
     const txnid = generatePayUTxnId();
@@ -210,6 +260,9 @@ export const payuPaymentProvider: PaymentProvider = {
       providerOrderId: txnid,
     });
 
+    const assessment = await getAssessmentById(request.assessmentId);
+    const { actionUrl, fields } = buildPayUCheckoutHandoff(order, assessment);
+
     logger.info(
       { assessmentId: request.assessmentId, tier: request.tier, orderId: order.id, payuEnv: env.PAYU_ENV },
       'PayU order created.'
@@ -222,7 +275,7 @@ export const payuPaymentProvider: PaymentProvider = {
       amountInPaise,
       currency: 'INR',
       orderId: order.id,
-      redirectUrl: buildBackendApiUrl(backendBaseUrl, `/payments/payu/redirect/${order.id}`),
+      checkoutForm: { action: actionUrl, fields },
     };
   },
 

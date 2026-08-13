@@ -27,6 +27,7 @@ export const PAYU_FIELD_LIMITS = {
   productinfo: 100,
   firstname: 60,
   email: 50,
+  phone: 50,
 } as const;
 
 /**
@@ -55,6 +56,14 @@ export interface PayUOrderFields {
   productinfo: string;
   firstname: string;
   email: string;
+  /**
+   * Mandatory on PayU's Hosted Checkout form (docs.payu.in/reference/addl_info-payment-apis'
+   * "Common request parameters" table) but NOT part of the request-hash
+   * formula — buildPayURequestHash below deliberately never reads this
+   * field. Kept on the same canonical object as every other field so the
+   * hash and the submitted form can never drift apart from each other.
+   */
+  phone: string;
 }
 
 export interface BuildPayUOrderFieldsInput {
@@ -64,6 +73,7 @@ export interface BuildPayUOrderFieldsInput {
   productinfo: string;
   firstname: string;
   email: string;
+  phone: string;
 }
 
 /** Sanitizes and formats raw order data into the exact field set PayU's hosted checkout expects. */
@@ -75,6 +85,7 @@ export function buildPayUOrderFields(input: BuildPayUOrderFieldsInput): PayUOrde
     productinfo: sanitizePayUField(input.productinfo, PAYU_FIELD_LIMITS.productinfo),
     firstname: sanitizePayUField(input.firstname, PAYU_FIELD_LIMITS.firstname),
     email: sanitizePayUField(input.email, PAYU_FIELD_LIMITS.email),
+    phone: sanitizePayUField(input.phone, PAYU_FIELD_LIMITS.phone),
   };
 }
 

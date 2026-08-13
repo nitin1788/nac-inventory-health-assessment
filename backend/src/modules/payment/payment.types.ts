@@ -24,8 +24,8 @@ export interface PaymentOrderResult {
    * 'unavailable': the placeholder provider (currently the only
    *   provider) — no real gateway exists yet, nothing is created or
    *   charged.
-   * 'created': a real gateway's checkout order exists once one is wired
-   *   in — the frontend navigates to `redirectUrl`.
+   * 'created': a real gateway's checkout order exists — the frontend
+   *   builds and submits `checkoutForm` itself (see PaymentPlaceholderView.tsx).
    */
   status: 'unavailable' | 'created';
   message: string;
@@ -35,11 +35,17 @@ export interface PaymentOrderResult {
   /** Our own payment_orders.id — present when status === 'created'. Passed back on the /verify call. */
   orderId?: string;
   /**
-   * Where the frontend should navigate next. A real gateway's hosted
-   * checkout URL, or (test mode) our own Thank You page — the frontend
-   * never needs to know which. Present when status === 'created'.
+   * The complete gateway handoff the browser must POST directly to —
+   * present when status === 'created'. The frontend builds a real
+   * <form method="post" action={action}> with one hidden input per entry
+   * in `fields` (hash included) and calls submit() itself, so the
+   * browser's own top-level navigation performs the actual handoff — no
+   * intermediate backend redirect page is part of this contract.
    */
-  redirectUrl?: string;
+  checkoutForm?: {
+    action: string;
+    fields: Record<string, string>;
+  };
 }
 
 /** What a provider reports back when asked whether an order actually got paid. */

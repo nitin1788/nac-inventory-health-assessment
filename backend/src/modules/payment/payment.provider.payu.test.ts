@@ -1,6 +1,29 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { buildBackendApiUrl } from './payment.provider.payu';
+import { buildBackendApiUrl, isPayUConfigured, payuPaymentProvider } from './payment.provider.payu';
+
+/** Same already-persisted assessment id payment.security.test.ts uses — no new assessment needs creating just to run this test. */
+const EXISTING_ASSESSMENT_ID = '1d67eae3-33da-4b90-b0ea-51ad1ff485aa';
+
+test(
+  'createOrder returns a complete checkoutForm (action + every field, hash included) for the browser to POST directly — no redirectUrl',
+  { skip: isPayUConfigured() ? false : 'PAYU_KEY/PAYU_SALT not set in backend/.env' },
+  async () => {
+    const result = await payuPaymentProvider.createOrder({ assessmentId: EXISTING_ASSESSMENT_ID, tier: 'summary' });
+
+    assert.equal(result.status, 'created');
+    assert.equal((result as { redirectUrl?: unknown }).redirectUrl, undefined);
+    assert.ok(result.checkoutForm, 'expected a checkoutForm in the response');
+    assert.match(result.checkoutForm!.action, /^https:\/\/(test|secure)\.payu\.in\/_payment$/);
+
+    for (const field of ['key', 'txnid', 'amount', 'productinfo', 'firstname', 'email', 'phone', 'hash', 'surl', 'furl']) {
+      assert.ok(
+        typeof result.checkoutForm!.fields[field] === 'string' && result.checkoutForm!.fields[field].length > 0,
+        `expected a non-empty "${field}" field in checkoutForm.fields`
+      );
+    }
+  }
+);
 
 /**
  * Regression tests for a bug that previously caused a 404 on

@@ -1,13 +1,38 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Clock3, Loader2, XCircle } from 'lucide-react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { COMPANY_NAME, REPORT_TIERS, ROUTES } from '@/config/constants';
 import type { ReportTier } from '@/config/constants';
 import { ApiTimeoutError } from '@/services/api/apiClient';
 import { createPaymentOrder } from '@/services/api/paymentApi';
+import type { PaymentOrderResult } from '@/services/api/paymentApi';
 import { Button } from '@/shared/components/Button';
 import { useSeo } from '@/shared/hooks/useSeo';
 import { AssessmentHeader } from '@/features/assessment/components/AssessmentHeader';
+
+/**
+ * Builds a real <form method="post"> in the DOM from the gateway's own
+ * handoff fields (hash included, computed server-side) and submits it —
+ * the browser's own top-level navigation POSTs directly to the gateway.
+ * No backend redirect page and no client-side navigation/fetch to the
+ * gateway is part of this handoff; this IS the handoff.
+ */
+function submitCheckoutForm(checkoutForm: NonNullable<PaymentOrderResult['checkoutForm']>): void {
+  const form = document.createElement('form');
+  form.method = 'post';
+  form.action = checkoutForm.action;
+
+  for (const [name, value] of Object.entries(checkoutForm.fields)) {
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = name;
+    input.value = value;
+    form.appendChild(input);
+  }
+
+  document.body.appendChild(form);
+  form.submit();
+}
 
 export interface PaymentLocationState {
   assessmentId: string;
@@ -43,10 +68,9 @@ const SLOW_REQUEST_HINT_MS = 5000;
  * - 'unavailable' (current state — no PaymentProvider is live yet):
  *   shows a generic "temporarily unavailable" message — never names a
  *   specific gateway or exposes integration details.
- * - 'created' (once a real gateway is wired in): a real browser
- *   navigation to `redirectUrl` — a gateway's own redirect/checkout
- *   page. This component does the exact same `window.location.href`
- *   navigation regardless of which provider is active.
+ * - 'created': builds and submits a real <form method="post"> straight to
+ *   the gateway (see submitCheckoutForm above) — the browser's own POST,
+ *   no intermediate backend page, regardless of which provider is active.
  * - 'error'/'timeout': the request failed or took too long — surfaced
  *   with a Retry action rather than a spinner with no way out.
  */
@@ -65,17 +89,26 @@ export function PaymentPlaceholderView() {
   const [message, setMessage] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
   const [isSlow, setIsSlow] = useState(false);
-  // Guards against the same effect run firing a second, overlapping
-  // POST /payments/orders (e.g. a fast unmount/remount) — the retry
-  // button below is the only other way this request re-fires, and it
-  // only does so once the previous attempt has already settled.
-  const inFlightRef = useRef(false);
 
+  /**
+   * Deliberately relies on the `cancelled` flag alone (the standard React
+   * effect-cleanup pattern) rather than an extra ref-based in-flight guard.
+   * A previous version added a `inFlightRef` guard to stop React 18
+   * StrictMode's dev-only double-invoke from firing two POST
+   * /payments/orders calls — but that guard caused a real bug: on the
+   * double-invoke's first pass, the cleanup set `cancelled = true`; the
+   * second pass then no-opped because the ref was still marked in-flight;
+   * when the first pass's request eventually resolved, its own `cancelled`
+   * check discarded the result — leaving `status` frozen on 'loading'
+   * forever (the exact "Preparing secure payment…" hang customers hit).
+   * Letting both StrictMode passes run their own request is normal,
+   * dev-only, intentional React behavior (never happens in production
+   * builds) and correctly self-resolves: the first pass's result is
+   * discarded by its own `cancelled` flag, the second pass's is not.
+   */
   useEffect(() => {
     if (!state) return;
-    if (inFlightRef.current) return;
 
-    inFlightRef.current = true;
     let cancelled = false;
     setStatus('loading');
     setMessage(null);
@@ -92,8 +125,8 @@ export function PaymentPlaceholderView() {
       .then((result) => {
         if (cancelled) return;
 
-        if (result.status === 'created' && result.redirectUrl) {
-          window.location.href = result.redirectUrl;
+        if (result.status === 'created' && result.checkoutForm) {
+          submitCheckoutForm(result.checkoutForm);
           return;
         }
 
@@ -105,7 +138,6 @@ export function PaymentPlaceholderView() {
         setStatus(err instanceof ApiTimeoutError ? 'timeout' : 'error');
       })
       .finally(() => {
-        inFlightRef.current = false;
         clearTimeout(slowHintTimer);
       });
 

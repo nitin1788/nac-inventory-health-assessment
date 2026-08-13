@@ -10,9 +10,10 @@ export interface PaymentOrderRequest {
 export interface PaymentOrderResult {
   /**
    * 'unavailable': production default — no gateway yet, nothing created.
-   * 'created': a real gateway's checkout order exists once one is wired
-   *   in — this frontend navigates to `redirectUrl`, with no knowledge
-   *   of which provider produced it.
+   * 'created': a real gateway's checkout order exists — this frontend
+   *   builds a real <form method="post"> from `checkoutForm` and submits
+   *   it itself (see PaymentPlaceholderView.tsx), with no knowledge of
+   *   which provider produced it.
    */
   status: 'unavailable' | 'created';
   message: string;
@@ -20,7 +21,14 @@ export interface PaymentOrderResult {
   amountInPaise: number;
   currency: 'INR';
   orderId?: string;
-  redirectUrl?: string;
+  /**
+   * The complete gateway handoff to POST directly to — present when
+   * status === 'created'. `fields` becomes one hidden <input> per entry.
+   */
+  checkoutForm?: {
+    action: string;
+    fields: Record<string, string>;
+  };
 }
 
 export interface VerifyPaymentRequest {

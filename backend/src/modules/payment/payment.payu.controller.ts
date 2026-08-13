@@ -16,11 +16,16 @@ import { handlePaymentCallback, verifyAndFulfillOrder } from './payment.service'
  */
 
 /**
- * GET /payments/payu/redirect/:orderId — what createOrder()'s
- * `redirectUrl` actually points at. Server-renders a tiny auto-submit
- * HTML form (hash computed fresh, never stored) that sends the browser
- * on to PayU's hosted checkout. Public route: reachable only by knowing
- * an order id that PayU itself will also need in order to redirect back.
+ * GET /payments/payu/redirect/:orderId — legacy server-rendered
+ * auto-submit HTML page (hash computed fresh, never stored) that sends
+ * the browser on to PayU's hosted checkout. No longer used by the
+ * primary checkout flow: createOrder() now returns the same handoff
+ * fields directly in its JSON response, and the frontend builds/submits
+ * the real PayU <form> itself (see PaymentPlaceholderView.tsx) — the
+ * browser's own top-level POST goes straight to PayU with no
+ * intermediate backend page. Kept as a working fallback/diagnostic
+ * route, not deleted. Public route: reachable only by knowing an order
+ * id that PayU itself will also need in order to redirect back.
  *
  * Reached via a full browser navigation, never XHR — so unlike the JSON
  * API routes, any failure here must never surface as a raw JSON error
