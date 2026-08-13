@@ -42,3 +42,22 @@ services:
         sync: false
       - key: TURNSTILE_SECRET_KEY
         sync: false
+      # PayU (see backend/src/modules/payment/payment.provider.payu.ts).
+      # PAYU_ENV defaults to 'test' if left unset — it must be set to
+      # exactly 'production' here for LIVE checkout to ever be used;
+      # otherwise a LIVE key/salt would silently be sent to PayU's TEST
+      # endpoint instead of secure.payu.in.
+      - key: PAYU_KEY
+        sync: false
+      - key: PAYU_SALT
+        sync: false
+      - key: PAYU_ENV
+        value: production
+      # This service's own public HTTPS URL — used to build PayU's
+      # surl/furl callback URLs. Must not be localhost in production.
+      - key: BACKEND_BASE_URL
+        sync: false
+      # The deployed frontend's public HTTPS URL — used for
+      # payment-retry/thank-you redirects. Must not be localhost in production.
+      - key: FRONTEND_BASE_URL
+        sync: false
