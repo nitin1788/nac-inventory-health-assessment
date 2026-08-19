@@ -23,6 +23,51 @@
   }
 }
 
+@layer components {
+  /*
+   * Minimal hand-written styling for rendered blog Markdown (see
+   * features/blog/BlogPostView.tsx) — deliberately not the Tailwind
+   * Typography plugin (@tailwindcss/typography), to avoid adding a
+   * second new dependency beyond `marked` in the Phase 1 blog build.
+   */
+  .blog-content {
+    @apply text-base leading-relaxed text-slate-700;
+  }
+  .blog-content > * + * {
+    @apply mt-5;
+  }
+  .blog-content h2 {
+    @apply mt-10 text-2xl font-bold tracking-tight text-slate-900;
+  }
+  .blog-content h3 {
+    @apply mt-8 text-xl font-semibold tracking-tight text-slate-900;
+  }
+  .blog-content p {
+    @apply leading-relaxed;
+  }
+  .blog-content a {
+    @apply font-medium text-brand underline decoration-brand/30 underline-offset-2 hover:decoration-brand;
+  }
+  .blog-content ul {
+    @apply list-disc space-y-2 pl-6;
+  }
+  .blog-content ol {
+    @apply list-decimal space-y-2 pl-6;
+  }
+  .blog-content strong {
+    @apply font-semibold text-slate-900;
+  }
+  .blog-content blockquote {
+    @apply border-l-4 border-accent/40 pl-4 text-slate-600 italic;
+  }
+  .blog-content code {
+    @apply rounded bg-slate-100 px-1.5 py-0.5 text-sm text-slate-800;
+  }
+  .blog-content hr {
+    @apply my-10 border-slate-200;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

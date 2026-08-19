@@ -1,0 +1,28 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Pharmacy Inventory Audit Checklist</title>
+  <desc id="desc">Branded cover graphic for the NAC blog article on pharmacy inventory audits</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F2A52" />
+      <stop offset="100%" stop-color="#132F5E" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <rect x="0" y="0" width="1200" height="6" fill="#C89B3C" />
+  <g opacity="0.08">
+    <circle cx="1040" cy="120" r="220" fill="#C89B3C" />
+    <circle cx="120" cy="560" r="160" fill="#FFFFFF" />
+  </g>
+  <g transform="translate(90,230)">
+    <rect x="0" y="0" width="96" height="120" rx="10" fill="#FFFFFF" fill-opacity="0.08" stroke="#C89B3C" stroke-width="3" />
+    <rect x="24" y="-10" width="48" height="20" rx="6" fill="#C89B3C" />
+    <line x1="18" y1="34" x2="78" y2="34" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" />
+    <line x1="18" y1="54" x2="78" y2="54" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-opacity="0.6" />
+    <line x1="18" y1="74" x2="60" y2="74" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-opacity="0.6" />
+    <path d="M20 96 L30 106 L50 84" stroke="#C89B3C" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+  </g>
+  <text x="90" y="120" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" letter-spacing="2" fill="#C89B3C">NITIN ANAND CONSULTING</text>
+  <text x="90" y="190" font-family="Arial, Helvetica, sans-serif" font-size="52" font-weight="700" fill="#FFFFFF">A Practical Pharmacy</text>
+  <text x="90" y="250" font-family="Arial, Helvetica, sans-serif" font-size="52" font-weight="700" fill="#FFFFFF">Inventory Audit Checklist</text>
+  <text x="90" y="540" font-family="Arial, Helvetica, sans-serif" font-size="24" fill="#FFFFFF" fill-opacity="0.7">Inventory &amp; Operations Consulting</text>
+</svg>

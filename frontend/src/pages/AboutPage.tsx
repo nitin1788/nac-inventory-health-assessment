@@ -1,32 +1,64 @@
+import { Link } from 'react-router-dom';
 import { MarketingPageLayout } from '@/shared/layouts/MarketingPageLayout';
-import { SERVICES, WHY_CHOOSE_NAC, TRUST_STATS, INDUSTRIES } from '@/features/landing/landing.data';
+import { WHY_CHOOSE_NAC, TRUST_STATS } from '@/features/landing/landing.data';
+import { INVENTORY_SERVICES } from '@/config/services.inventory.data';
+import { DIGITAL_SERVICES } from '@/config/services.digital.data';
+import { INDUSTRIES_LIST } from '@/config/industries.data';
 import { COMPANY_NAME, ROUTES } from '@/config/constants';
 
 export function AboutPage() {
   return (
     <MarketingPageLayout
-      title={`About Us | ${COMPANY_NAME} — Inventory & Warehouse Consulting`}
-      description={`Learn about ${COMPANY_NAME} — practical, data-driven inventory and warehouse consulting for manufacturers, distributors, and warehouse operators.`}
+      title={`About Us | ${COMPANY_NAME} — Pharmacy & Healthcare Consulting`}
+      description={`Learn about ${COMPANY_NAME} — specialist Inventory & Operations Consulting and Digital Marketing & Growth for pharmacy, healthcare, and allied businesses.`}
       path={ROUTES.about}
       eyebrow="About Us"
       heading={`About ${COMPANY_NAME}`}
     >
       <p>
-        {COMPANY_NAME} helps manufacturers, distributors, and warehouse operators find and fix the
-        gaps between what their inventory process assumes and what actually happens on the floor.
-        We focus on practical, actionable diagnostics and recommendations — not generic advice.
+        {COMPANY_NAME} works exclusively with pharmacy, healthcare, and allied businesses — not as
+        a generalist consultancy that happens to take healthcare clients, but as a specialist
+        built around how these businesses actually operate. We work across two distinct
+        disciplines: making inventory and day-to-day operations more accurate and efficient, and
+        building the digital presence that brings in more patients and customers.
       </p>
 
       <section>
-        <h2 className="text-lg font-semibold text-slate-900">What We Do</h2>
-        <ul className="mt-3 space-y-2">
-          {SERVICES.map((service) => (
-            <li key={service.title}>
-              <span className="font-medium text-slate-900">{service.title}:</span>{' '}
-              {service.description}
-            </li>
-          ))}
-        </ul>
+        <h2 className="text-lg font-semibold text-slate-900">Founder Background</h2>
+        <p className="mt-3">
+          Nitin Anand Consulting is built on a pharmacy background and 16+ years of hands-on
+          inventory and operations experience, paired with formal operations management
+          education. That combination of real pharmacy/healthcare industry understanding and
+          structured operations training shapes how we approach both verticals — operations
+          recommendations grounded in how a pharmacy or healthcare business actually runs, not
+          generic consulting theory.
+        </p>
+      </section>
+
+      <section>
+        <h2 className="text-lg font-semibold text-slate-900">Inventory &amp; Operations Consulting</h2>
+        <p className="mt-3">
+          {INVENTORY_SERVICES.length} services covering inventory audits, reconciliation,
+          ABC/FSN and expiry analysis, stock optimization, SOP development, and KPI dashboards —
+          built around pharmacy and healthcare stock handling specifically.{' '}
+          <Link to={ROUTES.inventoryHub} className="font-medium text-brand hover:underline">
+            Explore Operations Consulting
+          </Link>
+          .
+        </p>
+      </section>
+
+      <section>
+        <h2 className="text-lg font-semibold text-slate-900">Digital Marketing &amp; Growth</h2>
+        <p className="mt-3">
+          {DIGITAL_SERVICES.length} services covering websites, SEO, local visibility, social
+          media, and Google/Meta advertising — built around how patients and customers actually
+          search for and choose a healthcare business.{' '}
+          <Link to={ROUTES.digitalMarketingHub} className="font-medium text-brand hover:underline">
+            Explore Digital Marketing
+          </Link>
+          .
+        </p>
       </section>
 
       <section>
@@ -43,8 +75,11 @@ export function AboutPage() {
       <section>
         <h2 className="text-lg font-semibold text-slate-900">Industries We Work With</h2>
         <p className="mt-3">
-          {INDUSTRIES.map((industry) => industry.name).join(', ')}, and other SMEs managing
-          physical inventory.
+          {INDUSTRIES_LIST.map((industry) => industry.name).join(', ')}.{' '}
+          <Link to={ROUTES.industriesHub} className="font-medium text-brand hover:underline">
+            See all industries we serve
+          </Link>
+          .
         </p>
       </section>
 
@@ -61,9 +96,12 @@ export function AboutPage() {
       </section>
 
       <p>
-        The free Inventory Health Assessment is the starting point for that work — a structured,
-        52-question diagnostic that gives you a scored report and clear next steps in minutes,
-        before any paid engagement.
+        Whether you need tighter inventory control, better store operations, stronger local
+        visibility, or all of the above,{' '}
+        <Link to={ROUTES.contactUs} className="font-medium text-brand hover:underline">
+          get in touch
+        </Link>{' '}
+        and we&apos;ll help you figure out where to start.
       </p>
     </MarketingPageLayout>
   );

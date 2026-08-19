@@ -1,7 +1,7 @@
 /**
  * Non-secret, environment-independent constants used across features.
  */
-export const APP_NAME = 'NAC Inventory Health Assessment';
+export const APP_NAME = 'Nitin Anand Consulting';
 export const COMPANY_NAME = 'Nitin Anand Consulting';
 
 export const CONTACT = {
@@ -21,6 +21,10 @@ export const CONSULTATION = {
 
 export const ROUTES = {
   landing: '/',
+  // Unlinked from navigation as of the Phase 1 pharmacy/healthcare
+  // repositioning — routes/pages/backend are untouched and still work,
+  // they're simply no longer referenced from Navbar/Footer/homepage.
+  // See NAC_PHASE_1_IMPLEMENTATION_PLAN.md.
   assessmentStart: '/assessment/start',
   assessmentQuestions: '/assessment/questions',
   results: '/assessment/results',
@@ -28,16 +32,34 @@ export const ROUTES = {
   thankYou: '/assessment/thank-you',
   about: '/about',
   faq: '/faq',
-  contactUs: '/contact-us',
+  /** Current canonical contact route. `/contact-us` (old) redirects here — see routes.tsx. */
+  contactUs: '/contact',
+  /** Legacy path, redirected to `contactUs` above. Not used for new links. */
+  contactUsLegacy: '/contact-us',
   privacyPolicy: '/privacy-policy',
   termsAndConditions: '/terms-and-conditions',
+  // Old fixed-slug service pages — kept as redirect targets to the new
+  // services hub, not deleted. See routes.tsx.
   inventoryConsulting: '/inventory-consulting',
   warehouseConsulting: '/warehouse-consulting',
   operationsConsulting: '/operations-consulting',
   sopDevelopment: '/sop-development',
   businessAnalytics: '/business-analytics',
   trainingImplementation: '/training-implementation',
+  /** Legacy Phase-1 top-level vertical paths — redirected to the `/services/*` structure below. */
+  inventoryHubLegacy: '/inventory-operations-consulting',
+  digitalMarketingHubLegacy: '/digital-marketing-services',
+  // Services structure: /services hub + two vertical hubs, each with its own service detail pages.
+  servicesHub: '/services',
+  inventoryHub: '/services/inventory-operations-consulting',
+  inventoryService: (slug: string) => `/services/inventory-operations-consulting/${slug}`,
+  digitalMarketingHub: '/services/digital-marketing',
+  digitalService: (slug: string) => `/services/digital-marketing/${slug}`,
+  // New industries structure.
+  industriesHub: '/industries',
+  industry: (slug: string) => `/industries/${slug}`,
   blog: '/blog',
+  blogPost: (slug: string) => `/blog/${slug}`,
   caseStudies: '/case-studies',
   freeDownloads: '/free-downloads',
   checklists: '/checklists',
@@ -105,14 +127,15 @@ export const BUSINESS_INFO = {
   },
   areaServed: ['Mumbai', 'MMR', 'Maharashtra', 'India'],
   services: [
-    'Inventory Health Assessment',
     'Inventory Audit',
-    'Warehouse Audit',
-    'Warehouse Consulting',
-    'Inventory Consulting',
-    'Operations Consulting',
+    'Inventory Reconciliation',
+    'ABC & FSN Analysis',
+    'Stock Optimization',
     'SOP Development',
-    'Process Improvement',
-    'Business Analytics',
+    'KPI & MIS Dashboards',
+    'Website Development',
+    'SEO & Local SEO',
+    'Google Ads & Meta Ads',
+    'Social Media Management',
   ],
 } as const;

@@ -1,24 +1,25 @@
-import { Link } from 'react-router-dom';
-import { Mail, Phone } from 'lucide-react';
+import { Mail, Phone, MessageCircle } from 'lucide-react';
 import { MarketingPageLayout } from '@/shared/layouts/MarketingPageLayout';
 import { Button } from '@/shared/components/Button';
+import { buildConsultationWhatsAppUrl } from '@/shared/utils/whatsapp';
 import { COMPANY_NAME, CONTACT, ROUTES } from '@/config/constants';
 
 export function ContactUsPage() {
   return (
     <MarketingPageLayout
       title={`Contact Us | ${COMPANY_NAME}`}
-      description={`Get in touch with ${COMPANY_NAME} in Mumbai for inventory audits, warehouse audits, optimization, and consulting services.`}
+      description={`Get in touch with ${COMPANY_NAME} for Inventory & Operations Consulting or Digital Marketing & Growth for your pharmacy, clinic, or healthcare business.`}
       path={ROUTES.contactUs}
       eyebrow="Get In Touch"
       heading="Contact Us"
     >
       <p>
-        Have a question about your assessment results, or want to talk through a consulting
-        engagement? Reach out directly — we typically respond within one business day.
+        Tell us a bit about your business and which side you&apos;re interested in — Inventory
+        &amp; Operations Consulting, Digital Marketing & Growth, or both — and we&apos;ll get back
+        to you, typically within one business day.
       </p>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <a
           href={`mailto:${CONTACT.email}`}
           className="flex items-center gap-3 rounded-xl border border-slate-200 p-5 shadow-soft transition-all hover:-translate-y-0.5 hover:border-brand hover:shadow-soft-lg"
@@ -26,9 +27,9 @@ export function ContactUsPage() {
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-dark">
             <Mail className="h-5 w-5 text-white" />
           </span>
-          <div>
+          <div className="min-w-0">
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Email</p>
-            <p className="text-sm font-medium text-slate-900">{CONTACT.email}</p>
+            <p className="break-all text-sm font-medium text-slate-900">{CONTACT.email}</p>
           </div>
         </a>
 
@@ -44,16 +45,31 @@ export function ContactUsPage() {
             <p className="text-sm font-medium text-slate-900">{CONTACT.phone}</p>
           </div>
         </a>
+
+        <a
+          href={buildConsultationWhatsAppUrl()}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-3 rounded-xl border border-slate-200 p-5 shadow-soft transition-all hover:-translate-y-0.5 hover:border-accent hover:shadow-soft-lg"
+        >
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent">
+            <MessageCircle className="h-5 w-5 text-white" />
+          </span>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">WhatsApp</p>
+            <p className="text-sm font-medium text-slate-900">Chat with us</p>
+          </div>
+        </a>
       </div>
 
       <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center">
         <p className="text-sm text-slate-600">
-          Not sure where to start? Take the free Inventory Health Assessment first — it takes about
-          10 minutes and gives us a shared starting point for any conversation.
+          Ready to talk through your inventory, operations, or digital marketing needs? Book a
+          free consultation and we&apos;ll take it from there.
         </p>
-        <Link to={ROUTES.assessmentStart} className="mt-4 inline-block">
-          <Button variant="primary">Start Free Assessment</Button>
-        </Link>
+        <a href={buildConsultationWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="mt-4 inline-block">
+          <Button variant="primary">Book a Consultation</Button>
+        </a>
       </div>
     </MarketingPageLayout>
   );

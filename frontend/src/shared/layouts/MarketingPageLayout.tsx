@@ -44,7 +44,7 @@ export function MarketingPageLayout({
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
-      <main id="main-content" className="relative mx-auto max-w-3xl px-6 pb-20 pt-32 sm:pb-24 sm:pt-36 lg:px-8">
+      <main id="main-content" className="relative mx-auto max-w-3xl px-6 pb-20 pt-14 sm:pb-24 sm:pt-20 lg:px-8">
         <SectionGlow tone="navy" />
         <div className="relative">
           <p className="text-xs font-semibold uppercase tracking-wide text-brand">{eyebrow}</p>

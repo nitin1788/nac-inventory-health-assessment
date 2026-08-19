@@ -17,6 +17,7 @@
     "@react-pdf/renderer": "^3.4.5",
     "framer-motion": "^11.11.9",
     "lucide-react": "^0.451.0",
+    "marked": "^14.1.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.53.0",

@@ -1,13 +1,13 @@
 import { MarketingPageLayout } from '@/shared/layouts/MarketingPageLayout';
 import { COMPANY_NAME, CONTACT, ROUTES } from '@/config/constants';
 
-const LAST_UPDATED = 'July 2026';
+const LAST_UPDATED = 'August 2026';
 
 export function TermsAndConditionsPage() {
   return (
     <MarketingPageLayout
       title={`Terms & Conditions | ${COMPANY_NAME}`}
-      description={`The terms and conditions governing use of the ${COMPANY_NAME} Inventory Health Assessment.`}
+      description={`The terms and conditions governing use of the ${COMPANY_NAME} website.`}
       path={ROUTES.termsAndConditions}
       eyebrow="Legal"
       heading="Terms & Conditions"
@@ -15,51 +15,51 @@ export function TermsAndConditionsPage() {
       <p className="text-sm text-slate-500">Last updated: {LAST_UPDATED}</p>
 
       <p>
-        These Terms &amp; Conditions govern your use of the free Inventory Health Assessment
-        ("the Assessment") provided by {COMPANY_NAME}. By using the Assessment, you agree to these
-        terms.
+        These Terms &amp; Conditions govern your use of this website, provided by {COMPANY_NAME}.
+        By using this website, you agree to these terms.
       </p>
 
       <section>
-        <h2 className="text-lg font-semibold text-slate-900">The Assessment Is Free and Informational</h2>
+        <h2 className="text-lg font-semibold text-slate-900">Informational Content</h2>
         <p className="mt-3">
-          The Assessment is provided free of charge and is intended for general informational
-          purposes only. It is based entirely on the answers you provide (self-reported) and does
-          not involve an on-site audit or independent verification of your operations.
+          The content on this website — including service, industry, and blog pages — is provided
+          for general informational purposes. It describes our Inventory &amp; Operations
+          Consulting and Digital Marketing & Growth offerings and does not itself constitute a
+          completed engagement, audit, or deliverable.
         </p>
       </section>
 
       <section>
-        <h2 className="text-lg font-semibold text-slate-900">Not Professional Consulting Advice</h2>
+        <h2 className="text-lg font-semibold text-slate-900">Not Professional Advice</h2>
         <p className="mt-3">
-          Your results, report, and any recommendations are general guidance based on your answers.
-          They do not constitute professional consulting, financial, legal, or operational advice,
-          and should not be relied upon as a substitute for a detailed, tailored operational audit.
-          For a comprehensive assessment specific to your business, please contact us directly.
+          General content on this site (including blog articles) is provided as general guidance
+          and does not constitute professional consulting, financial, legal, medical, or
+          operational advice specific to your business. For advice tailored to your situation,
+          please contact us directly to scope an engagement.
         </p>
       </section>
 
       <section>
         <h2 className="text-lg font-semibold text-slate-900">Accuracy of Information</h2>
         <p className="mt-3">
-          You are responsible for the accuracy of the information you submit. Your score, rating,
-          and recommendations are only as accurate as the answers provided.
+          We aim to keep the information on this site accurate and current, but we do not
+          guarantee it is free of errors or fully up to date at all times.
         </p>
       </section>
 
       <section>
         <h2 className="text-lg font-semibold text-slate-900">Acceptable Use</h2>
         <p className="mt-3">
-          You agree to use the Assessment only for its intended purpose — evaluating your own
-          business's inventory practices — and not to submit false information on behalf of another
-          party, attempt to disrupt the service, or misuse the platform in any way.
+          You agree to use this website only for its intended purpose — learning about our
+          services and getting in touch — and not to attempt to disrupt the service, submit false
+          information, or misuse the site in any way.
         </p>
       </section>
 
       <section>
         <h2 className="text-lg font-semibold text-slate-900">No Warranty</h2>
         <p className="mt-3">
-          The Assessment is provided "as is," without warranties of any kind, express or implied. We
+          This website is provided "as is," without warranties of any kind, express or implied. We
           do not guarantee that the service will be uninterrupted or error-free.
         </p>
       </section>
@@ -67,8 +67,8 @@ export function TermsAndConditionsPage() {
       <section>
         <h2 className="text-lg font-semibold text-slate-900">Limitation of Liability</h2>
         <p className="mt-3">
-          To the fullest extent permitted by law, {COMPANY_NAME} is not liable for any decisions made
-          or actions taken based on your Assessment results.
+          To the fullest extent permitted by law, {COMPANY_NAME} is not liable for any decisions
+          made or actions taken based on general content published on this website.
         </p>
       </section>
 
@@ -76,7 +76,7 @@ export function TermsAndConditionsPage() {
         <h2 className="text-lg font-semibold text-slate-900">Changes to These Terms</h2>
         <p className="mt-3">
           We may update these Terms from time to time. The "Last updated" date above reflects the
-          most recent revision. Continued use of the Assessment after changes means you accept the
+          most recent revision. Continued use of this website after changes means you accept the
           updated terms.
         </p>
       </section>

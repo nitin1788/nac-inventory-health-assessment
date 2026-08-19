@@ -18,13 +18,23 @@ export function NavbarLogo({ theme = 'dark' }: NavbarLogoProps) {
         height={358}
         className="h-[42px] w-auto shrink-0"
       />
-      <span
-        className={clsx(
-          'hidden whitespace-nowrap text-sm font-semibold tracking-tight sm:inline sm:text-base',
-          theme === 'light' ? 'text-white' : 'text-slate-900'
-        )}
-      >
-        {COMPANY_NAME}
+      <span className="hidden flex-col leading-tight sm:flex">
+        <span
+          className={clsx(
+            'whitespace-nowrap text-sm font-semibold tracking-tight sm:text-base',
+            theme === 'light' ? 'text-white' : 'text-slate-900'
+          )}
+        >
+          {COMPANY_NAME}
+        </span>
+        <span
+          className={clsx(
+            'whitespace-nowrap text-[10px] font-medium uppercase tracking-wider',
+            theme === 'light' ? 'text-white/60' : 'text-slate-500'
+          )}
+        >
+          Operations | Growth | Healthcare
+        </span>
       </span>
     </Link>
   );

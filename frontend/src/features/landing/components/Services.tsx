@@ -3,9 +3,15 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/shared/components/Button';
 import { fadeUpItem, VIEWPORT_ONCE } from '@/shared/motion/variants';
-import { CONSULTATION, ROUTES } from '@/config/constants';
+import { ROUTES } from '@/config/constants';
 import { buildConsultationWhatsAppUrl } from '@/shared/utils/whatsapp';
-import { SERVICE_CATEGORIES } from '../landing.data';
+import { INVENTORY_SERVICES } from '@/config/services.inventory.data';
+import { DIGITAL_SERVICES } from '@/config/services.digital.data';
+
+// Unused since the Phase 1 repositioning — superseded by
+// TwoVerticalsSection.tsx on the homepage. Kept, not deleted; updated
+// only enough to keep compiling against the new two-vertical data.
+const SERVICE_CATEGORIES = [...INVENTORY_SERVICES, ...DIGITAL_SERVICES];
 
 export function Services() {
   return (
@@ -68,9 +74,9 @@ export function Services() {
         </div>
 
         <div className="mt-14 flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <Link to={ROUTES.assessmentStart} className="w-full sm:w-auto">
+          <Link to={ROUTES.contactUs} className="w-full sm:w-auto">
             <Button variant="primary" size="lg" className="w-full sm:w-auto">
-              Start Free Inventory Health Assessment
+              Book a Consultation
             </Button>
           </Link>
           <a
@@ -80,7 +86,7 @@ export function Services() {
             className="w-full sm:w-auto"
           >
             <Button variant="secondary" size="lg" className="w-full sm:w-auto">
-              {CONSULTATION.ctaLabel}
+              Chat on WhatsApp
             </Button>
           </a>
         </div>

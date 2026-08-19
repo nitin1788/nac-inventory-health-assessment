@@ -1,28 +1,30 @@
 import { motion } from 'framer-motion';
-import { scaleIn, VIEWPORT_ONCE } from '@/shared/motion/variants';
-import { TRUST_PILLARS } from '../landing.data';
+import { fadeUpItem, VIEWPORT_ONCE } from '@/shared/motion/variants';
+import { TRUST_STATS } from '../landing.data';
 
+/** Dark navy trust/experience band — factual stats only, no fabricated client figures. */
 export function TrustStatistics() {
   return (
-    <section className="bg-gradient-to-b from-slate-50 to-white py-16 sm:py-20">
+    <section className="bg-brand py-12 sm:py-16">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-          {TRUST_PILLARS.map((pillar, index) => {
-            const Icon = pillar.icon;
+        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+          {TRUST_STATS.map((stat, index) => {
+            const Icon = stat.icon;
             return (
               <motion.div
-                key={pillar.label}
+                key={stat.label}
                 initial="hidden"
                 whileInView="show"
                 viewport={VIEWPORT_ONCE}
-                variants={scaleIn}
+                variants={fadeUpItem}
                 transition={{ delay: index * 0.08 }}
-                className="flex flex-col items-center gap-3 rounded-2xl border border-white/60 bg-white/70 px-4 py-6 text-center shadow-soft backdrop-blur-sm transition-shadow hover:shadow-soft-lg"
+                className="flex flex-col items-center gap-2 text-center sm:items-start sm:text-left"
               >
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand to-brand-dark text-white">
-                  <Icon className="h-6 w-6" />
-                </span>
-                <p className="text-sm font-semibold leading-snug text-slate-900">{pillar.label}</p>
+                <Icon className="h-5 w-5 text-accent" />
+                <p className="text-2xl font-bold text-white sm:text-3xl">{stat.value}</p>
+                <p className="text-xs font-medium uppercase tracking-wide text-white/60 sm:text-sm">
+                  {stat.label}
+                </p>
               </motion.div>
             );
           })}

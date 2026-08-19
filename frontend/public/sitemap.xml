@@ -2,79 +2,331 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://nitinanandconsulting.in/</loc>
-    <lastmod>2026-07-31</lastmod>
+    <lastmod>2026-08-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
+
   <url>
-    <loc>https://nitinanandconsulting.in/assessment/start</loc>
-    <lastmod>2026-07-31</lastmod>
+    <loc>https://nitinanandconsulting.in/services</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <url>
+    <loc>https://nitinanandconsulting.in/services/inventory-operations-consulting</loc>
+    <lastmod>2026-08-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://nitinanandconsulting.in/inventory-consulting</loc>
-    <lastmod>2026-07-31</lastmod>
+    <loc>https://nitinanandconsulting.in/services/inventory-operations-consulting/inventory-audit</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/services/inventory-operations-consulting/stock-verification</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/services/inventory-operations-consulting/inventory-reconciliation</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/services/inventory-operations-consulting/inventory-analysis</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/services/inventory-operations-consulting/abc-analysis</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/services/inventory-operations-consulting/fsn-analysis</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/services/inventory-operations-consulting/expiry-near-expiry-analysis</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/services/inventory-operations-consulting/dead-stock-analysis</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/services/inventory-operations-consulting/slow-moving-stock-analysis</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/services/inventory-operations-consulting/stock-optimization</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/services/inventory-operations-consulting/fefo-implementation</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/services/inventory-operations-consulting/reorder-min-max</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/services/inventory-operations-consulting/purchase-analysis</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/services/inventory-operations-consulting/operations-audit</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/services/inventory-operations-consulting/sop-development</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/services/inventory-operations-consulting/process-improvement</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/services/inventory-operations-consulting/kpi-mis-dashboards</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/services/inventory-operations-consulting/pharmacy-store-warehouse-operations</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://nitinanandconsulting.in/services/digital-marketing</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/services/digital-marketing/website-development</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/services/digital-marketing/landing-pages</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/services/digital-marketing/seo</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/services/digital-marketing/local-seo</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/services/digital-marketing/google-business-profile</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/services/digital-marketing/social-media-management</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/services/digital-marketing/social-media-content</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/services/digital-marketing/ai-content-creation</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/services/digital-marketing/google-ads</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/services/digital-marketing/meta-ads</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/services/digital-marketing/ppc-performance-marketing</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/services/digital-marketing/analytics-conversion-tracking</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://nitinanandconsulting.in/industries</loc>
+    <lastmod>2026-08-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://nitinanandconsulting.in/warehouse-consulting</loc>
-    <lastmod>2026-07-31</lastmod>
+    <loc>https://nitinanandconsulting.in/industries/retail-pharmacy</loc>
+    <lastmod>2026-08-18</lastmod>
     <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/industries/hospital-pharmacy</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/industries/chain-pharmacy</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/industries/medical-stores</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/industries/clinics</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/industries/hospitals</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/industries/diagnostic-centres</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/industries/pathology-labs</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/industries/dental-clinics</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/industries/physiotherapy-centres</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/industries/pharma-distributors</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://nitinanandconsulting.in/industries/medical-equipment-suppliers</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://nitinanandconsulting.in/blog</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://nitinanandconsulting.in/operations-consulting</loc>
-    <lastmod>2026-07-31</lastmod>
+    <loc>https://nitinanandconsulting.in/blog/pharmacy-inventory-audit-checklist</loc>
+    <lastmod>2026-08-18</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.6</priority>
   </url>
-  <url>
-    <loc>https://nitinanandconsulting.in/sop-development</loc>
-    <lastmod>2026-07-31</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://nitinanandconsulting.in/business-analytics</loc>
-    <lastmod>2026-07-31</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://nitinanandconsulting.in/training-implementation</loc>
-    <lastmod>2026-07-31</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
+
   <url>
     <loc>https://nitinanandconsulting.in/about</loc>
-    <lastmod>2026-07-31</lastmod>
+    <lastmod>2026-08-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://nitinanandconsulting.in/faq</loc>
-    <lastmod>2026-07-31</lastmod>
+    <lastmod>2026-08-18</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://nitinanandconsulting.in/contact-us</loc>
-    <lastmod>2026-07-31</lastmod>
+    <loc>https://nitinanandconsulting.in/contact</loc>
+    <lastmod>2026-08-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://nitinanandconsulting.in/privacy-policy</loc>
-    <lastmod>2026-07-31</lastmod>
+    <lastmod>2026-08-18</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://nitinanandconsulting.in/terms-and-conditions</loc>
-    <lastmod>2026-07-31</lastmod>
+    <lastmod>2026-08-18</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>

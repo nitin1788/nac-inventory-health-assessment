@@ -1,0 +1,27 @@
+<svg width="1000" height="420" viewBox="0 0 1000 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">ABC classification example for pharmacy stock</title>
+  <desc id="desc">A simple bar chart showing how SKUs are grouped into A, B, and C value bands</desc>
+  <rect width="1000" height="420" fill="#F8FAFC" />
+  <text x="40" y="50" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" fill="#0F2A52">Example: ABC Classification by Value Contribution</text>
+
+  <g transform="translate(60,90)">
+    <rect x="0" y="0" width="220" height="260" fill="#0F2A52" rx="8" />
+    <text x="110" y="140" text-anchor="middle" font-family="Arial" font-size="40" font-weight="700" fill="#FFFFFF">A</text>
+    <text x="110" y="175" text-anchor="middle" font-family="Arial" font-size="16" fill="#FFFFFF">~70% of value</text>
+    <text x="110" y="290" text-anchor="middle" font-family="Arial" font-size="15" fill="#334155">~20% of SKUs</text>
+  </g>
+
+  <g transform="translate(340,170)">
+    <rect x="0" y="0" width="220" height="180" fill="#3E5C8A" rx="8" />
+    <text x="110" y="90" text-anchor="middle" font-family="Arial" font-size="40" font-weight="700" fill="#FFFFFF">B</text>
+    <text x="110" y="125" text-anchor="middle" font-family="Arial" font-size="16" fill="#FFFFFF">~20% of value</text>
+    <text x="110" y="210" text-anchor="middle" font-family="Arial" font-size="15" fill="#334155">~30% of SKUs</text>
+  </g>
+
+  <g transform="translate(620,250)">
+    <rect x="0" y="0" width="220" height="100" fill="#C89B3C" rx="8" />
+    <text x="110" y="55" text-anchor="middle" font-family="Arial" font-size="40" font-weight="700" fill="#FFFFFF">C</text>
+    <text x="110" y="85" text-anchor="middle" font-family="Arial" font-size="16" fill="#FFFFFF">~10% of value</text>
+    <text x="110" y="130" text-anchor="middle" font-family="Arial" font-size="15" fill="#334155">~50% of SKUs</text>
+  </g>
+</svg>

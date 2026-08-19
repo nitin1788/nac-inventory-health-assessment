@@ -1,25 +1,28 @@
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { ArrowRight } from 'lucide-react';
 import { fadeUpItem, VIEWPORT_ONCE } from '@/shared/motion/variants';
+import { ROUTES } from '@/config/constants';
 import { INDUSTRIES_SERVED } from '../landing.data';
 
 export function IndustriesServed() {
   return (
-    <section className="bg-white py-20 sm:py-28 lg:py-32">
+    <section className="bg-white py-16 sm:py-24 lg:py-28">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-sm font-semibold uppercase tracking-wide text-brand">
             Industries We Serve
           </p>
           <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-            Built for Businesses That Move Inventory
+            Built for Pharmacy, Healthcare &amp; Allied Businesses
           </h2>
           <p className="mt-4 text-base leading-relaxed text-slate-600">
-            Practical experience across the sectors where inventory accuracy and warehouse
-            efficiency matter most.
+            A focused niche, not a side interest — practical experience across the healthcare
+            business types where inventory accuracy and digital visibility matter most.
           </p>
         </div>
 
-        <div className="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-3">
           {INDUSTRIES_SERVED.map((industry, index) => {
             const Icon = industry.icon;
             return (
@@ -39,6 +42,16 @@ export function IndustriesServed() {
               </motion.div>
             );
           })}
+        </div>
+
+        <div className="mt-10 text-center">
+          <Link
+            to={ROUTES.industriesHub}
+            className="inline-flex items-center gap-1 text-sm font-semibold text-brand hover:underline"
+          >
+            See all industries we serve
+            <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
       </div>
     </section>

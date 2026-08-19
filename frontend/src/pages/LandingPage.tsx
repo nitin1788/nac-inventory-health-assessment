@@ -4,9 +4,9 @@ import { COMPANY_NAME, ROUTES } from '@/config/constants';
 
 export function LandingPage() {
   useSeo({
-    title: `${COMPANY_NAME} | Inventory, Warehouse & Operations Consulting`,
+    title: `${COMPANY_NAME} | Inventory & Operations Consulting + Digital Marketing for Pharmacy & Healthcare`,
     description:
-      'Nitin Anand Consulting helps businesses improve inventory accuracy, warehouse operations and business performance through professional inventory assessments and consulting services.',
+      'Nitin Anand Consulting specializes in pharmacy, healthcare, and allied businesses — Inventory & Operations Consulting and Digital Marketing & Growth from one partner who understands both.',
     path: ROUTES.landing,
   });
 

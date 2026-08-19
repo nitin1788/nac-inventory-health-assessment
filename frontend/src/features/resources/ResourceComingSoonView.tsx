@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { MarketingPageLayout } from '@/shared/layouts/MarketingPageLayout';
 import { Button } from '@/shared/components/Button';
 import { COMPANY_NAME, ROUTES } from '@/config/constants';
+import { buildConsultationWhatsAppUrl } from '@/shared/utils/whatsapp';
 
 interface ResourceComingSoonViewProps {
   label: string;
@@ -27,16 +28,13 @@ export function ResourceComingSoonView({ label, path, previewCopy }: ResourceCom
       noindex
     >
       <p>{previewCopy}</p>
-      <p>
-        We&apos;re building this out — check back soon. In the meantime, the free Inventory Health
-        Assessment is the fastest way to get a scored, actionable read on your own operation.
-      </p>
+      <p>We&apos;re building this out — check back soon, or reach out directly in the meantime.</p>
       <div className="flex flex-col gap-3 sm:flex-row">
-        <Link to={ROUTES.assessmentStart} className="w-full sm:w-auto">
-          <Button variant="primary" className="w-full sm:w-auto">
-            Start Free Assessment
+        <a href={buildConsultationWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
+          <Button variant="whatsapp" className="w-full sm:w-auto">
+            Chat on WhatsApp
           </Button>
-        </Link>
+        </a>
         <Link to={ROUTES.contactUs} className="w-full sm:w-auto">
           <Button variant="secondary" className="w-full sm:w-auto">
             Contact Us
