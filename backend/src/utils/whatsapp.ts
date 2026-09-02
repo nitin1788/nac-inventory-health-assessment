@@ -1,4 +1,4 @@
-const WHATSAPP_NUMBER = '918779295873';
+const WHATSAPP_NUMBER = '919619994347';
 
 /**
  * Builds a wa.me deep link with the prefilled consultation-booking

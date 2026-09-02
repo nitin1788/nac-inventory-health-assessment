@@ -117,7 +117,7 @@ export const REPORT_TIERS: ReportTierOption[] = [
 export const BUSINESS_INFO = {
   name: COMPANY_NAME,
   legalType: 'ProfessionalService',
-  telephone: '+91 8779295873',
+  telephone: '+91 9619994347',
   address: {
     streetAddress: 'Amboli, Andheri West',
     addressLocality: 'Mumbai',

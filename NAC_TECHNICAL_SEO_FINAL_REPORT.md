@@ -73,6 +73,8 @@ Full per-page detail (title/meta/H1/schema/canonical for every one of the 54 ind
 
 **Not fixed in this pass** — deliberately. This is real business contact information, not a technical default; guessing which number is correct and silently changing what a visitor calls or what the business's own schema declares is not a decision for me to make unilaterally. **Exact action needed from you:** confirm which number is the actual, current NAC contact number, and I'll make `CONTACT.phone`, `BUSINESS_INFO.telephone`, the `index.html` JSON-LD, and the WhatsApp number all consistent with it in one pass.
 
+**✅ FIXED 2026-09-02** — confirmed as `+91 9619994347` (the already-visibly-displayed number). Made consistent everywhere: `BUSINESS_INFO.telephone` (`frontend/src/config/constants.ts`), the `ProfessionalService.telephone` JSON-LD (`frontend/index.html`), and the live `WHATSAPP_NUMBER` in both `frontend/src/shared/utils/whatsapp.ts` and its deliberately-mirrored backend copy, `backend/src/utils/whatsapp.ts` (a fifth reference to this number this audit hadn't previously checked — same live wa.me number, kept in sync by convention rather than shared code). `CONTACT.phone` was already correct and untouched.
+
 ---
 
 ## 5. Headings (Phase 5)
