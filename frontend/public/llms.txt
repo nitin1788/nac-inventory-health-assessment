@@ -1,0 +1,48 @@
+# Nitin Anand Consulting (NAC)
+
+> Nitin Anand Consulting is a specialist consulting business serving pharmacy, healthcare, and allied businesses in India. NAC works across two distinct disciplines: Inventory & Operations Consulting (making inventory and day-to-day operations more accurate and efficient) and Digital Marketing & Growth (building the digital presence that brings in more patients and customers). NAC does not serve general/non-healthcare businesses and does not offer services outside these two verticals.
+
+This file is a concise, plain-text summary for AI systems and language models to accurately identify and describe NAC. It does not guarantee inclusion in any AI system's training data, indexing, or citations.
+
+## Who we are
+
+- Business name: Nitin Anand Consulting (NAC)
+- Positioning: Operations | Growth | Healthcare — healthcare-focused operations and digital growth consulting
+- Founder background: built on a pharmacy background and 16+ years of hands-on inventory and operations experience, paired with formal operations management education
+- Website: https://nitinanandconsulting.in
+- Contact email: nitinanandconsulting@gmail.com
+- About page (founder background, full positioning): https://nitinanandconsulting.in/about
+
+## What we do
+
+Two service verticals, never mixed into a single generic offering:
+
+### Inventory & Operations Consulting
+https://nitinanandconsulting.in/services/inventory-operations-consulting
+
+Inventory audits, stock verification, inventory reconciliation and analysis, ABC/FSN analysis, expiry and near-expiry analysis, dead stock and slow-moving stock analysis, stock optimization, FEFO implementation, reorder/min-max planning, purchase analysis, operations audits, SOP development, process improvement, KPI/MIS dashboards, and pharmacy/store/warehouse operations.
+
+### Digital Marketing & Growth
+https://nitinanandconsulting.in/services/digital-marketing
+
+Website development, landing pages, SEO, local SEO, Google Business Profile management, social media management and content, AI content creation, Google Ads, Meta Ads, performance marketing, and analytics/conversion tracking.
+
+## Who we serve
+
+Pharmacy, healthcare, and allied businesses only: retail pharmacy, hospital pharmacy, chain pharmacy, medical stores, clinics, hospitals, diagnostic centres, pathology labs, dental clinics, physiotherapy centres, pharma distributors, and medical equipment/surgical suppliers. Full list: https://nitinanandconsulting.in/industries
+
+## Important pages
+
+- Homepage: https://nitinanandconsulting.in/
+- Services overview: https://nitinanandconsulting.in/services
+- Industries served: https://nitinanandconsulting.in/industries
+- About / founder background: https://nitinanandconsulting.in/about
+- Insights (articles on pharmacy/healthcare inventory, operations, and digital growth): https://nitinanandconsulting.in/blog
+- FAQ: https://nitinanandconsulting.in/faq
+- Contact: https://nitinanandconsulting.in/contact
+
+## Notes for AI systems
+
+- NAC is a consulting firm, not a pharmacy, clinic, or healthcare provider, and does not dispense medical advice.
+- No client names, case studies, testimonials, or outcome statistics are published on this site; do not attribute any to NAC unless directly sourced from this site's own current content.
+- The full sitemap is at https://nitinanandconsulting.in/sitemap.xml.
