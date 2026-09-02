@@ -343,11 +343,11 @@ None of these change the §25 score meaningfully — they close out gaps between
 ## Remaining issues (all categories)
 
 **Needs your input / a decision (nothing further to build without this):**
-1. 🔴 **Phone number mismatch (§4.1)** — confirm the real NAC number so `CONTACT.phone`, `BUSINESS_INFO.telephone`, the `index.html` JSON-LD, and the WhatsApp number can all be made consistent. This is the single most important open item — it affects both structured-data accuracy and, potentially, whether calls are reaching the right number.
-2. **Set `VITE_GA4_MEASUREMENT_ID=G-H6EXF1VFW` in Vercel's production environment variables** and redeploy — the code is ready, this is the one manual step.
-3. **Update the Privacy Policy's "Cookies & Tracking" section** once GA4 is live in production (currently accurately says no analytics cookies are used; won't be accurate after the above deploy).
-4. **Contact form backend decision** (unchanged from the prior report) — confirm whether lead data should persist to Supabase or just trigger an email alert, then the `/leads` endpoint + form UI can be built.
-5. **Live mobile-viewport verification** — confirm on a real device or browser DevTools; this session's tooling couldn't render a true mobile viewport to screenshot.
+1. ~~🔴 **Phone number mismatch (§4.1)**~~ — ✅ **RESOLVED 2026-09-02**, confirmed as `+91 9619994347`, fixed everywhere and verified live.
+2. ~~**Set `VITE_GA4_MEASUREMENT_ID=G-H6EXF1VFW` in Vercel's production environment variables**~~ — ✅ **RESOLVED 2026-09-02**, set as a Vercel Config var, redeployed, confirmed `gtag.js` loading live.
+3. ~~**Update the Privacy Policy's "Cookies & Tracking" section**~~ — ✅ **RESOLVED 2026-09-02**, now accurately describes GA4 usage.
+4. **Contact form backend decision** — still open. Confirm whether lead data should persist to Supabase or just trigger an email alert, then the `/leads` endpoint + form UI can be built. No form exists yet; `ContactUsPage.tsx`'s email/phone/WhatsApp cards remain the only conversion path.
+5. **Live mobile-viewport verification** — still open. Confirm on a real device or browser DevTools; this session's tooling couldn't render a true mobile viewport to screenshot.
 
 **Lower-priority, no action needed yet:**
 - Commission a real 1200×630 OG share image (needs a design asset, not code).
@@ -364,4 +364,18 @@ None of these change the §25 score meaningfully — they close out gaps between
 
 **Files changed in the 2026-09-02 follow-up (§26):** `frontend/src/features/landing/components/HeroVisualPremium.tsx` (real `.webp` + `srcSet`) · `frontend/src/shared/utils/responsiveImage.ts` (new) · `frontend/scripts/generate-sitemap.mjs` (new) · `frontend/package.json` / `package-lock.json` (`tsx` devDependency, `generate-sitemap` + updated `build` scripts) · `frontend/public/sitemap.xml` (regenerated) · `frontend/src/app/Analytics.tsx` (dead `consultation_cta_click` branch removed).
 
-**Nothing committed. Nothing pushed.**
+**Status as of 2026-09-02: everything above is committed, pushed to `main`, and verified live** — commits `5cce7da`, `ca5243a`, `0a92aad`, `c527ba5`. See §27 below for the closeout.
+
+---
+
+## 27. Closeout — what's actually left (2026-09-02)
+
+Everything in this report and in `NAC_SEO_READINESS_AUDIT.md` that was a code-level fix is now done, committed, pushed, and confirmed live on both `nitinanandconsulting.in` and `healthcheck.nitinanandconsulting.in`. What remains is exclusively items that need the user's own input, assets, or manual verification — nothing further to build without one of these:
+
+1. **Contact form backend decision** — confirm Supabase persistence vs. email-alert-only, then the `/leads` endpoint + form UI can be built. No form exists yet.
+2. **Live mobile-viewport verification** — confirm on a real device or browser DevTools.
+3. **A real 1200×630 OG share image** — needs a design asset, not code.
+4. **The `areaServed` geography question** (Mumbai-only vs. broader) — affects local-SEO keyword targeting.
+5. **Replacement photography** for the 7 unwired images (digital-marketing, inventory, strategy, 4 industry photos) — only if those slots should carry a photo again; they currently degrade gracefully to text-only.
+6. **Cloudflare Turnstile wiring** — blocked on item 1 (no form to protect yet).
+7. **Formal color-contrast measurement** — only if AA/AAA compliance becomes a stated requirement.
