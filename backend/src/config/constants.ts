@@ -38,3 +38,11 @@ export const ASSESSMENT_SUBMIT_RATE_LIMIT = {
   WINDOW_MS: 60 * 60 * 1000, // 1 hour
   MAX_REQUESTS: 5, // per IP — generous for genuine users, tight enough to blunt spam
 };
+
+export const BUSINESS_HEALTH_CHECK_RATE_LIMIT = {
+  WINDOW_MS: 60 * 60 * 1000, // 1 hour
+  MAX_REQUESTS: 10, // per IP — generous for a free public tool, tight enough to blunt spam
+};
+
+/** Max size, in bytes, of the decoded PDF accepted by the Business Health Check report endpoint. */
+export const BUSINESS_HEALTH_CHECK_MAX_PDF_BYTES = 6 * 1024 * 1024; // 6MB

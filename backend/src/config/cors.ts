@@ -19,7 +19,13 @@ import { env } from './env';
  * baseline, for extra origins (e.g. a Vercel preview URL) without
  * needing a code change/redeploy.
  */
-const PRODUCTION_ORIGINS = ['https://nitinanandconsulting.in', 'https://www.nitinanandconsulting.in'];
+const PRODUCTION_ORIGINS = [
+  'https://nitinanandconsulting.in',
+  'https://www.nitinanandconsulting.in',
+  // Standalone Business Health Check tool — separate static Vercel project,
+  // calls this backend directly for the PDF-attachment email send.
+  'https://healthcheck.nitinanandconsulting.in',
+];
 const DEVELOPMENT_ORIGINS = ['http://localhost:5173'];
 
 const configuredOrigins = env.CORS_ORIGIN.split(',')

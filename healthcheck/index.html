@@ -8,7 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
   :root{
     --indigo:#0F2A52;
@@ -841,19 +840,11 @@ async function generateBrandedPDF(invScore, opsScore, dmScore, overall){
 
 const STEP_ORDER = ["lead","inventory","operations","marketing","thankyou"];
 
-/* ---------------- EmailJS CONFIG ----------------
-   Fill these in after creating a free account at emailjs.com.
-   1. Add an Email Service (connect nitinanandconsulting@gmail.com)
-   2. Create a Template with variables matching EMAIL_PARAMS below
-   3. Paste your Service ID, Template ID, and Public Key here      */
-const EMAILJS_SERVICE_ID  = "service_lmwgp17";
-const EMAILJS_TEMPLATE_ID = "template_lfx8ibp";
-const EMAILJS_PUBLIC_KEY  = "VEkjejHEhAQWPg-By";
-const REPORT_TO_EMAIL     = "nitinanandconsulting@gmail.com";
-
-if (window.emailjs && EMAILJS_PUBLIC_KEY !== "YOUR_PUBLIC_KEY") {
-  emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
-}
+/* ---------------- BACKEND CONFIG ----------------
+   The NAC Express backend (same one the main assessment tool uses) — sends
+   the lead notification + the branded PDF as a real Resend attachment. See
+   backend/src/modules/businessHealthCheck/ in the repo. */
+const BACKEND_URL = "https://nac-inventory-health-assessment-api.onrender.com/api/v1";
 
 /* ---------------- GOOGLE SHEET LEAD LOG (optional) ----------------
    Fill this in after setting up the Apps Script Web App
@@ -1111,45 +1102,48 @@ function logToSheet(invScore, opsScore, dmScore, overall){
   }).catch(err => console.error('Sheet logging failed (non-critical):', err));
 }
 
-function sendLeadEmail(invScore, opsScore, dmScore, overall, pdfBase64){
-  const allAnswersText = ['inventory','operations','marketing'].map(cat=>{
-    const lines = QUESTIONS[cat].questions.map(q=>{
-      const val = state.answers[q.id];
-      const chosen = q.options.find(o=>o.v===val);
-      return `${q.q} — ${chosen ? chosen.t : 'Not answered'}`;
-    }).join('\n');
-    return `${QUESTIONS[cat].title.toUpperCase()}\n${lines}`;
-  }).join('\n\n');
+/* Converts jsPDF's datauristring output ("data:application/pdf;filename=...;base64,XXXX")
+   into a clean "data:application/pdf;base64,XXXX" data URL — the format the backend's
+   businessHealthCheck.validation.ts schema expects for pdfBase64. Returns '' if PDF
+   generation failed upstream, so the submission still goes through (backend rejects
+   an empty/invalid pdfBase64 with a clean 400, logged but not fatal to the user). */
+function toCleanPdfDataUrl(datauristring){
+  if (!datauristring) return '';
+  const base64Payload = datauristring.split('base64,')[1];
+  return base64Payload ? `data:application/pdf;base64,${base64Payload}` : '';
+}
 
-  const EMAIL_PARAMS = {
-    to_email: REPORT_TO_EMAIL,
-    biz_name: state.answers.bizName || '',
-    owner_name: state.answers.ownerName || '',
+/* Sends the lead + the real generated PDF to the NAC backend, which emails NAC's
+   internal inbox via Resend with the PDF as a genuine attachment (see
+   backend/src/modules/businessHealthCheck/). Replaces the previous EmailJS-based
+   send entirely — EmailJS couldn't carry the PDF (its 50KB variables-size limit
+   rejected it with a 413 well before this point). */
+function sendLeadEmail(invScore, opsScore, dmScore, overall, pdfBase64){
+  const REPORT_PAYLOAD = {
+    bizName: state.answers.bizName || '',
+    ownerName: state.answers.ownerName || '',
     phone: state.answers.phone || '',
     email: state.answers.email || '',
     area: state.answers.area || '',
-    overall_score: overall,
-    inventory_score: invScore,
-    operations_score: opsScore,
-    marketing_score: dmScore,
-    submitted_at: new Date().toLocaleString('en-IN'),
-    all_answers: allAnswersText
-    // NOTE: the full PDF is NOT sent via email — EmailJS's request size limit
-    // (well under a typical multi-page PDF's base64 size) rejects it with a
-    // 413 error. The full text data above covers everything; see the setup
-    // notes for how to get the polished PDF itself to you.
+    overallScore: overall,
+    inventoryScore: invScore,
+    operationsScore: opsScore,
+    marketingScore: dmScore,
+    pdfBase64: toCleanPdfDataUrl(pdfBase64)
   };
 
   function finish(){ state.step++; render(); }
 
-  if (window.emailjs && EMAILJS_SERVICE_ID !== "YOUR_SERVICE_ID") {
-    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, EMAIL_PARAMS)
-      .then(finish)
-      .catch(err=>{ console.error('EmailJS send failed', err); finish(); });
-  } else {
-    console.warn('EmailJS not configured yet — see README_next_steps.md. Lead data:', EMAIL_PARAMS);
-    finish();
-  }
+  fetch(`${BACKEND_URL}/business-health-check`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(REPORT_PAYLOAD)
+  })
+    .then(res => {
+      if (!res.ok) throw new Error('Report email request failed with status ' + res.status);
+    })
+    .then(finish)
+    .catch(err => { console.error('Business Health Check report submission failed', err); finish(); });
 }
 
 render();

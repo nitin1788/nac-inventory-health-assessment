@@ -31,9 +31,14 @@ export function createApp(): Application {
   // CORS — locked to the configured frontend origin
   app.use(cors(corsOptions));
 
-  // Body parsing
-  app.use(express.json({ limit: '1mb' }));
-  app.use(express.urlencoded({ extended: true, limit: '1mb' }));
+  // Body parsing. 8mb (not the previous 1mb) to accommodate the Business
+  // Health Check tool's report-email endpoint, which receives the
+  // client-generated branded PDF as base64 JSON (~3.5-4MB for a typical
+  // report). Every route's own Zod schema still strictly constrains
+  // shape/content regardless of this transport-level ceiling, so raising
+  // it doesn't loosen validation on any other endpoint.
+  app.use(express.json({ limit: '8mb' }));
+  app.use(express.urlencoded({ extended: true, limit: '8mb' }));
 
   // Request logging (method/path/status/duration only — no bodies)
   app.use(requestLoggerMiddleware);

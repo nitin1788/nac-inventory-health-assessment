@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { healthRouter } from './health.route';
 import { assessmentRouter, reportRouter } from '../modules/assessment/assessment.route';
 import { paymentRouter } from '../modules/payment/payment.route';
+import { businessHealthCheckRouter } from '../modules/businessHealthCheck/businessHealthCheck.route';
 
 /**
  * Central mounting point for every route module. As assessment,
@@ -14,5 +15,6 @@ apiRouter.use('/health', healthRouter);
 apiRouter.use('/assessments', assessmentRouter);
 apiRouter.use('/reports', reportRouter);
 apiRouter.use('/payments', paymentRouter);
+apiRouter.use('/business-health-check', businessHealthCheckRouter);
 
 // Milestone 4+: apiRouter.use('/questions', questionRouter);

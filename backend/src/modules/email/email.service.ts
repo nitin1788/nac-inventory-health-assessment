@@ -24,7 +24,8 @@ export function isLeadAlertConfigured(): boolean {
   return isEmailConfigured() && Boolean(env.NAC_LEAD_ALERT_EMAIL);
 }
 
-function getResendClient(): Resend {
+/** Exported so other modules (e.g. businessHealthCheck) can reuse the same lazily-initialized client instead of duplicating Resend setup. */
+export function getResendClient(): Resend {
   if (client) return client;
 
   if (!env.RESEND_API_KEY) {
