@@ -1,7 +1,7 @@
 import { MarketingPageLayout } from '@/shared/layouts/MarketingPageLayout';
 import { COMPANY_NAME, CONTACT, ROUTES } from '@/config/constants';
 
-const LAST_UPDATED = 'August 2026';
+const LAST_UPDATED = 'September 2026';
 
 export function PrivacyPolicyPage() {
   return (
@@ -71,8 +71,13 @@ export function PrivacyPolicyPage() {
       <section>
         <h2 className="text-lg font-semibold text-slate-900">Cookies &amp; Tracking</h2>
         <p className="mt-3">
-          We do not currently use advertising or analytics cookies. Any client-side storage used
-          by legacy tools on this site is not shared with us or any third party.
+          We use Google Analytics 4 to understand how visitors use this site — which pages are
+          viewed, and clicks on WhatsApp, phone, or email links. Google Analytics sets cookies in
+          your browser to do this. We do not send it your name, email address, phone number, or
+          any message content — only the destination of the link you clicked and standard,
+          non-identifying browsing data. Google processes this data under its own privacy policy.
+          We do not use advertising cookies. Any client-side storage used by legacy tools on this
+          site is not shared with us or any third party.
         </p>
       </section>
 
