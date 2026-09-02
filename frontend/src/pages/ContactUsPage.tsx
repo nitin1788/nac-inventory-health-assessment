@@ -3,6 +3,7 @@ import { MarketingPageLayout } from '@/shared/layouts/MarketingPageLayout';
 import { Button } from '@/shared/components/Button';
 import { buildConsultationWhatsAppUrl } from '@/shared/utils/whatsapp';
 import { COMPANY_NAME, CONTACT, ROUTES } from '@/config/constants';
+import { ContactForm } from '@/features/contact/ContactForm';
 
 export function ContactUsPage() {
   return (
@@ -71,6 +72,8 @@ export function ContactUsPage() {
           <Button variant="primary">Book a Consultation</Button>
         </a>
       </div>
+
+      <ContactForm />
     </MarketingPageLayout>
   );
 }
