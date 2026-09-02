@@ -90,7 +90,38 @@ Once both services are live with real env vars:
 
 ---
 
-## 8. Go-live checklist
+## 8. Inventory Health Check subdomain (static)
+
+`healthcheck.nitinanandconsulting.in` runs a separate, self-contained product from the
+`frontend`/`backend` apps above — the "Inventory Health Check" tool, a single static
+HTML file (`healthcheck/index.html`) with its scoring, PDF generation (jsPDF +
+html2canvas), and lead-email delivery (EmailJS) all client-side. It has no dependency on
+this repo's backend, Supabase, or PayU — deploying/updating the main site or its API
+never affects this subdomain, and vice versa.
+
+**Deployment (Vercel — separate project from the main `frontend` one):**
+1. In Vercel: **New Project**, import this same repo, set **Root Directory** to
+   `healthcheck`.
+2. Framework preset: **Other**. No build command, no install command — it's a single
+   static file (`healthcheck/vercel.json` sets baseline security headers only).
+3. No environment variables needed — the EmailJS service/template/public key are already
+   embedded in `healthcheck/index.html` by design (EmailJS public keys are meant to be
+   client-visible).
+4. Deploy, then in the project's **Domains** settings add
+   `healthcheck.nitinanandconsulting.in`.
+5. **DNS**: add a `CNAME` record for the `healthcheck` subdomain pointing at the target
+   Vercel gives you in step 4 (typically `cname.vercel-dns.com`), at whichever registrar/
+   DNS host manages `nitinanandconsulting.in`.
+6. Optional, not yet configured: the Google Sheets lead-logging webhook
+   (`SHEET_WEBHOOK_URL` inside `healthcheck/index.html`) — currently a placeholder, so
+   sheet logging silently no-ops. Email delivery via EmailJS works independently of this.
+
+**Updating the tool later:** edit `healthcheck/index.html` directly and redeploy — there
+is no build step to run.
+
+---
+
+## 9. Go-live checklist
 
 - [ ] Render service deployed, health check green, `supabase: configured`
 - [ ] All backend env vars set in Render (§2)
