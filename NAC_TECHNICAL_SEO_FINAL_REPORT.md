@@ -375,7 +375,7 @@ Everything in this report and in `NAC_SEO_READINESS_AUDIT.md` that was a code-le
 1. **Contact form backend decision** — confirm Supabase persistence vs. email-alert-only, then the `/leads` endpoint + form UI can be built. No form exists yet.
 2. **Live mobile-viewport verification** — confirm on a real device or browser DevTools.
 3. **A real 1200×630 OG share image** — needs a design asset, not code.
-4. **The `areaServed` geography question** (Mumbai-only vs. broader) — affects local-SEO keyword targeting.
+4. ~~**The `areaServed` geography question**~~ — ✅ **DECIDED 2026-09-02**: keep the existing tiered `["Mumbai", "MMR", "Maharashtra", "India"]` as-is (`constants.ts` `BUSINESS_INFO.areaServed`, matching `index.html` JSON-LD). Inventory & Operations Consulting is realistically in-person and concentrated around Mumbai/MMR; Digital Marketing & Growth is remote-deliverable, so the India-wide tier isn't a fabricated claim for that vertical. No site copy claimed either scope explicitly, so no code change was needed — this was a confirm-and-close, not a fix.
 5. **Replacement photography** for the 7 unwired images (digital-marketing, inventory, strategy, 4 industry photos) — only if those slots should carry a photo again; they currently degrade gracefully to text-only.
 6. **Cloudflare Turnstile wiring** — blocked on item 1 (no form to protect yet).
 7. **Formal color-contrast measurement** — only if AA/AAA compliance becomes a stated requirement.
