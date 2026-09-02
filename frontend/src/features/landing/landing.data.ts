@@ -40,8 +40,8 @@ export interface NavLink {
 /** Plain top-level nav links (no dropdown) — Services and Industries are rendered as mega-menu dropdowns directly in Navbar.tsx. */
 export const NAV_LINKS: NavLink[] = [
   { label: 'Home', href: ROUTES.landing },
-  { label: 'Insights', href: ROUTES.blog },
   { label: 'About', href: ROUTES.about },
+  { label: 'Insights', href: ROUTES.blog },
   { label: 'Contact', href: ROUTES.contactUs },
 ];
 

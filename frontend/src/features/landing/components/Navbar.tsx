@@ -268,9 +268,11 @@ export function Navbar() {
   };
 
   const homeLink = NAV_LINKS.find((link) => link.label === 'Home');
-  const trailingLinks = NAV_LINKS.filter((link) => link.label !== 'Home');
+  const aboutLink = NAV_LINKS.find((link) => link.label === 'About');
+  const trailingLinks = NAV_LINKS.filter((link) => link.label !== 'Home' && link.label !== 'About');
 
   const isHomeActive = homeLink ? location.pathname === homeLink.href : false;
+  const isAboutActive = aboutLink ? location.pathname === aboutLink.href : false;
   const isServicesActive =
     location.pathname.startsWith(ROUTES.servicesHub) ||
     location.pathname.startsWith(ROUTES.inventoryHub) ||
@@ -292,6 +294,7 @@ export function Navbar() {
 
         <div className="hidden items-center gap-8 lg:flex">
           {homeLink ? <DesktopNavLink to={homeLink.href} label={homeLink.label} isActive={isHomeActive} /> : null}
+          {aboutLink ? <DesktopNavLink to={aboutLink.href} label={aboutLink.label} isActive={isAboutActive} /> : null}
 
           <div ref={servicesRef} className="relative flex items-center gap-1">
             <DesktopNavLink to={ROUTES.servicesHub} label="Services" isActive={isServicesActive} />
@@ -394,6 +397,14 @@ export function Navbar() {
                   to={homeLink.href}
                   label={homeLink.label}
                   isActive={isHomeActive}
+                  onClick={closeMobileMenu}
+                />
+              ) : null}
+              {aboutLink ? (
+                <MobileNavLink
+                  to={aboutLink.href}
+                  label={aboutLink.label}
+                  isActive={isAboutActive}
                   onClick={closeMobileMenu}
                 />
               ) : null}
