@@ -1133,10 +1133,11 @@ function sendLeadEmail(invScore, opsScore, dmScore, overall, pdfBase64){
     operations_score: opsScore,
     marketing_score: dmScore,
     submitted_at: new Date().toLocaleString('en-IN'),
-    all_answers: allAnswersText,
-    // NOTE: attaching pdfBase64 as a dynamic attachment requires an EmailJS
-    // plan that supports dynamic attachments. See README for setup + fallback.
-    report_pdf_base64: pdfBase64 || ''
+    all_answers: allAnswersText
+    // NOTE: the full PDF is NOT sent via email — EmailJS's request size limit
+    // (well under a typical multi-page PDF's base64 size) rejects it with a
+    // 413 error. The full text data above covers everything; see the setup
+    // notes for how to get the polished PDF itself to you.
   };
 
   function finish(){ state.step++; render(); }
