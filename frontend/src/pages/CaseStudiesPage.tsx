@@ -6,7 +6,7 @@ export function CaseStudiesPage() {
     <ResourceComingSoonView
       label="Case Studies"
       path={ROUTES.caseStudies}
-      previewCopy="Real engagement outcomes across manufacturing, distribution, and retail operations."
+      previewCopy="Real engagement outcomes across pharmacy, healthcare, and allied businesses."
     />
   );
 }

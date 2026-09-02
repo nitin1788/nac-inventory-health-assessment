@@ -7,12 +7,15 @@ import { FinalCTABanner } from '@/features/landing/components/FinalCTABanner';
 import type { IndustryProfile } from '@/config/industries.data';
 import { Button } from '@/shared/components/Button';
 import { SectionGlow } from '@/shared/components/SectionGlow';
+import { Breadcrumbs } from '@/shared/components/Breadcrumbs';
 import { fadeUpItem, VIEWPORT_ONCE } from '@/shared/motion/variants';
 import { useSeo } from '@/shared/hooks/useSeo';
 import { useJsonLd } from '@/shared/hooks/useJsonLd';
+import { buildBreadcrumbJsonLd } from '@/shared/utils/breadcrumbs';
 import { buildConsultationWhatsAppUrl } from '@/shared/utils/whatsapp';
-import { COMPANY_NAME, ROUTES, SITE_URL } from '@/config/constants';
+import { COMPANY_NAME, ROUTES } from '@/config/constants';
 import { ResponsiveImage } from '@/shared/components/ResponsiveImage';
+import { buildResponsiveSrcSet } from '@/shared/utils/responsiveImage';
 
 interface IndustryLandingViewProps {
   industry: IndustryProfile;
@@ -26,21 +29,18 @@ interface IndustryLandingViewProps {
  * mechanism between industries and services.
  */
 export function IndustryLandingView({ industry }: IndustryLandingViewProps) {
-  const pageUrl = `${SITE_URL}${industry.path}`;
   const Icon = industry.icon;
+  const breadcrumbItems = [
+    { label: 'Home', path: ROUTES.landing },
+    { label: 'Industries', path: ROUTES.industriesHub },
+    { label: industry.name, path: industry.path },
+  ];
 
   useSeo({ title: `${industry.name} | ${COMPANY_NAME}`, description: industry.metaDescription, path: industry.path });
   useJsonLd({
     '@context': 'https://schema.org',
     '@graph': [
-      {
-        '@type': 'BreadcrumbList',
-        itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
-          { '@type': 'ListItem', position: 2, name: 'Industries', item: `${SITE_URL}${ROUTES.industriesHub}` },
-          { '@type': 'ListItem', position: 3, name: industry.name, item: pageUrl },
-        ],
-      },
+      buildBreadcrumbJsonLd(breadcrumbItems),
       {
         '@type': 'FAQPage',
         mainEntity: industry.faqs.map((faq) => ({
@@ -78,6 +78,10 @@ export function IndustryLandingView({ industry }: IndustryLandingViewProps) {
                 transition={{ duration: 0.5 }}
                 className={industry.image ? 'text-center lg:text-left' : undefined}
               >
+                <Breadcrumbs
+                  items={breadcrumbItems}
+                  className={industry.image ? 'mb-6 flex justify-center lg:justify-start' : 'mb-6 flex justify-center'}
+                />
                 <Link
                   to={ROUTES.industriesHub}
                   className="text-xs font-semibold uppercase tracking-wide text-brand hover:underline"
@@ -139,6 +143,8 @@ export function IndustryLandingView({ industry }: IndustryLandingViewProps) {
                 >
                   <ResponsiveImage
                     src={industry.image.src}
+                    srcSet={buildResponsiveSrcSet(industry.image.src, 1536)}
+                    sizes="(min-width: 1024px) 640px, 100vw"
                     alt={industry.image.alt}
                     width={900}
                     height={600}

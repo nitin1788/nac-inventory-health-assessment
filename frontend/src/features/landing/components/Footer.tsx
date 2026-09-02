@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Mail, Phone } from 'lucide-react';
 import { COMPANY_NAME, CONTACT, ROUTES } from '@/config/constants';
+import { RESOURCE_LINKS } from '../landing.data';
 import { FooterLogo } from './FooterLogo';
 
 const FOOTER_LINK_CLASSES =
@@ -26,7 +27,7 @@ export function Footer() {
         className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-light to-transparent"
       />
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-6">
+        <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-7">
           <div className="sm:col-span-2 lg:col-span-2">
             <FooterLogo />
             <p className="mt-4 max-w-sm text-sm leading-relaxed">
@@ -83,6 +84,19 @@ export function Footer() {
                   Contact
                 </Link>
               </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-white">Resources</h3>
+            <ul className="mt-4 space-y-3 text-sm">
+              {RESOURCE_LINKS.filter((resource) => resource.path !== ROUTES.blog).map((resource) => (
+                <li key={resource.path}>
+                  <Link to={resource.path} className={FOOTER_LINK_CLASSES}>
+                    {resource.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 

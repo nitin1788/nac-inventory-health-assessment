@@ -5,11 +5,13 @@ import { Navbar } from '@/features/landing/components/Navbar';
 import { Footer } from '@/features/landing/components/Footer';
 import { FinalCTABanner } from '@/features/landing/components/FinalCTABanner';
 import { SectionGlow } from '@/shared/components/SectionGlow';
+import { Breadcrumbs } from '@/shared/components/Breadcrumbs';
 import { fadeUpItem, VIEWPORT_ONCE } from '@/shared/motion/variants';
 import { useSeo } from '@/shared/hooks/useSeo';
 import { useJsonLd } from '@/shared/hooks/useJsonLd';
+import { buildBreadcrumbJsonLd } from '@/shared/utils/breadcrumbs';
 import { INDUSTRIES_LIST } from '@/config/industries.data';
-import { ROUTES, SITE_URL } from '@/config/constants';
+import { ROUTES } from '@/config/constants';
 
 /** Hub page listing every target industry as a card — rendered at /industries by pages/IndustriesHubPage.tsx. */
 export function IndustryHubView() {
@@ -19,14 +21,11 @@ export function IndustryHubView() {
       'Nitin Anand Consulting specializes in pharmacy, healthcare, and allied businesses — retail and hospital pharmacies, clinics, hospitals, diagnostic centres, labs, and more.',
     path: ROUTES.industriesHub,
   });
-  useJsonLd({
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
-      { '@type': 'ListItem', position: 2, name: 'Industries We Serve', item: `${SITE_URL}${ROUTES.industriesHub}` },
-    ],
-  });
+  const breadcrumbItems = [
+    { label: 'Home', path: ROUTES.landing },
+    { label: 'Industries', path: ROUTES.industriesHub },
+  ];
+  useJsonLd({ '@context': 'https://schema.org', ...buildBreadcrumbJsonLd(breadcrumbItems) });
 
   return (
     <div className="min-h-screen bg-white">
@@ -35,6 +34,7 @@ export function IndustryHubView() {
         <section className="relative overflow-hidden bg-white pb-16 pt-14 sm:pb-20 sm:pt-20">
           <SectionGlow tone="navy" />
           <div className="relative mx-auto max-w-4xl px-6 text-center lg:px-8">
+            <Breadcrumbs items={breadcrumbItems} className="mb-6 flex justify-center text-xs sm:text-sm" />
             <p className="text-xs font-semibold uppercase tracking-wide text-brand">Industries</p>
             <span className="mx-auto mt-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand to-brand-dark text-white shadow-soft">
               <Users className="h-7 w-7" />

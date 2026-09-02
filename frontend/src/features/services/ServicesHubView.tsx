@@ -5,10 +5,12 @@ import { Navbar } from '@/features/landing/components/Navbar';
 import { Footer } from '@/features/landing/components/Footer';
 import { FinalCTABanner } from '@/features/landing/components/FinalCTABanner';
 import { SectionGlow } from '@/shared/components/SectionGlow';
+import { Breadcrumbs } from '@/shared/components/Breadcrumbs';
 import { fadeUpItem, VIEWPORT_ONCE } from '@/shared/motion/variants';
 import { useSeo } from '@/shared/hooks/useSeo';
 import { useJsonLd } from '@/shared/hooks/useJsonLd';
-import { ROUTES, SITE_URL } from '@/config/constants';
+import { buildBreadcrumbJsonLd } from '@/shared/utils/breadcrumbs';
+import { ROUTES } from '@/config/constants';
 import { INVENTORY_SERVICES } from '@/config/services.inventory.data';
 import { DIGITAL_SERVICES } from '@/config/services.digital.data';
 
@@ -53,14 +55,11 @@ export function ServicesHubView() {
       'Two specialized service verticals for pharmacy, healthcare, and allied businesses: Inventory & Operations Consulting, and Digital Marketing & Growth.',
     path: ROUTES.servicesHub,
   });
-  useJsonLd({
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
-      { '@type': 'ListItem', position: 2, name: 'Services', item: `${SITE_URL}${ROUTES.servicesHub}` },
-    ],
-  });
+  const breadcrumbItems = [
+    { label: 'Home', path: ROUTES.landing },
+    { label: 'Services', path: ROUTES.servicesHub },
+  ];
+  useJsonLd({ '@context': 'https://schema.org', ...buildBreadcrumbJsonLd(breadcrumbItems) });
 
   return (
     <div className="min-h-screen bg-white">
@@ -69,6 +68,7 @@ export function ServicesHubView() {
         <section className="relative overflow-hidden bg-white pb-16 pt-14 sm:pb-20 sm:pt-20">
           <SectionGlow tone="navy" />
           <div className="relative mx-auto max-w-4xl px-6 text-center lg:px-8">
+            <Breadcrumbs items={breadcrumbItems} className="mb-6 flex justify-center text-xs sm:text-sm" />
             <p className="text-xs font-semibold uppercase tracking-wide text-brand">Services</p>
             <h1 className="mt-4 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
               Two Specialized Verticals

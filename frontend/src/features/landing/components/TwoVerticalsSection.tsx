@@ -5,7 +5,6 @@ import { fadeUpItem, VIEWPORT_ONCE } from '@/shared/motion/variants';
 import { ROUTES } from '@/config/constants';
 import { INVENTORY_SERVICES } from '@/config/services.inventory.data';
 import { DIGITAL_SERVICES } from '@/config/services.digital.data';
-import { ResponsiveImage } from '@/shared/components/ResponsiveImage';
 
 const INVENTORY_HIGHLIGHTS = [
   'Inventory Audit & Reconciliation',
@@ -34,6 +33,17 @@ const DIGITAL_HIGHLIGHTS = [
  * growth) identity; Digital Marketing & Growth carries the blue
  * identity — the two colors never swap roles anywhere on the site.
  * Deliberately never merges the two verticals into one generic list.
+ *
+ * No card thumbnail photos: the previously supplied source images
+ * (public/images/inventory/nac-pharmacy-inventory-consulting.webp,
+ * public/images/digital-marketing/nac-healthcare-digital-marketing.webp)
+ * both have fabricated performance numbers baked into an on-screen
+ * report/dashboard (e.g. an invented "Inventory Health Report" with
+ * specific fake SKU counts; an invented "23,985 website visitors / 1,257
+ * leads" marketing dashboard) — a no-fake-statistics violation that a CSS
+ * crop can't fix, since the raw files stay directly and publicly
+ * servable. Both files preserved, optimized, but unreferenced — see
+ * NAC_SEO_READINESS_AUDIT.md.
  */
 export function TwoVerticalsSection() {
   return (
@@ -57,17 +67,7 @@ export function TwoVerticalsSection() {
             variants={fadeUpItem}
             className="flex flex-col overflow-hidden rounded-2xl border border-accent/20 bg-white shadow-soft"
           >
-            <div className="h-32 w-full overflow-hidden bg-accent-light">
-              <ResponsiveImage
-                src="/images/inventory/nac-pharmacy-inventory-consulting.webp.png"
-                alt="NAC consultant reviewing pharmacy stock with a pharmacist using a tablet"
-                width={1536}
-                height={1024}
-                className="h-full w-full object-cover"
-                style={{ objectPosition: 'center 15%' }}
-              />
-            </div>
-            <div className="flex flex-1 flex-col p-8 pt-6">
+            <div className="flex flex-1 flex-col p-8">
             <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent text-white">
               <ClipboardList className="h-6 w-6" />
             </span>
@@ -102,17 +102,7 @@ export function TwoVerticalsSection() {
             transition={{ delay: 0.1 }}
             className="flex flex-col overflow-hidden rounded-2xl border border-sky/20 bg-white shadow-soft"
           >
-            <div className="h-32 w-full overflow-hidden bg-sky-light">
-              <ResponsiveImage
-                src="/images/digital-marketing/nac-healthcare-digital-marketing.webp.png"
-                alt="NAC consultants reviewing a digital marketing performance dashboard together"
-                width={1536}
-                height={1024}
-                className="h-full w-full object-cover"
-                style={{ objectPosition: 'center 20%' }}
-              />
-            </div>
-            <div className="flex flex-1 flex-col p-8 pt-6">
+            <div className="flex flex-1 flex-col p-8">
             <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky text-white">
               <Megaphone className="h-6 w-6" />
             </span>

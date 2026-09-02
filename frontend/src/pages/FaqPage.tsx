@@ -10,39 +10,64 @@ interface FaqItem {
 
 const FAQS: FaqItem[] = [
   {
-    question: 'Is the Inventory Health Assessment really free?',
+    question: 'What does Nitin Anand Consulting do?',
     answer:
-      'Yes. The assessment, your scored report, and the emailed PDF are completely free, with no obligation to purchase any consulting service.',
+      `${COMPANY_NAME} is a consulting company serving pharmacy, healthcare, and allied businesses across two specialized verticals: Inventory & Operations Consulting (audits, stock control, expiry management, SOPs, and process improvement) and Digital Marketing & Growth (websites, SEO, Google Business Profile, social media, and paid ads). We're a consulting firm — not a pharmacy, and not a healthcare provider.`,
   },
   {
-    question: 'How long does it take to complete?',
+    question: 'Who does NAC work with?',
     answer:
-      'Most people complete the 52 diagnostic questions in about 10 minutes. You can pause and resume — your answers are saved on your device until you finish.',
+      'Retail pharmacies, hospital pharmacies, chain pharmacies, medical stores, clinics, hospitals, diagnostic centres, pathology labs, dental clinics, physiotherapy centres, pharma distributors, and medical equipment/surgical suppliers — pharmacy, healthcare, and allied businesses of most sizes.',
   },
   {
-    question: 'What do I get at the end?',
+    question: 'What is Inventory & Operations Consulting?',
     answer:
-      "An instant on-screen results page with your overall score, health rating, and module-wise breakdown, plus a branded PDF report emailed to the address you provide — with the same findings and recommendations.",
+      'Our first vertical: inventory audits and reconciliation, stock control, expiry and near-expiry management, ABC/FSN analysis, store and warehouse operations, SOP development, process improvement, and MIS/KPI reporting — built around how pharmacy and healthcare stock actually behaves (batch numbers, expiry risk, tight margins).',
   },
   {
-    question: 'Is my company information kept confidential?',
+    question: 'What is Digital Marketing & Growth?',
     answer:
-      "Yes. Your responses are used only to generate your report and, if you choose to follow up, to contact you about our consulting services. See our Privacy Policy for full details.",
+      'Our second vertical: website development, SEO and local SEO, Google Business Profile setup and optimization, social media management and content, Google Ads/PPC, Meta Ads, performance marketing, and analytics — focused on helping pharmacy and healthcare businesses get found and get more enquiries.',
   },
   {
-    question: "I didn't receive my report email — what should I do?",
+    question: 'Does NAC work with retail pharmacies?',
     answer:
-      'Emails are typically delivered within a minute. Please check your Spam/Junk folder first. If it still hasn\'t arrived, contact us and we\'ll resend it.',
+      'Yes — single-store retail pharmacies are one of our core segments, on both the inventory/operations side (stock accuracy, expiry control) and the digital side (local SEO, Google Business Profile).',
   },
   {
-    question: 'Can I get help acting on my results?',
+    question: 'Does NAC work with hospital pharmacies?',
     answer:
-      `Yes — you can book a consultation directly from your results page, or reach out via our Contact page. ${COMPANY_NAME} offers inventory audits, warehouse audits, optimization, SOP development, and process improvement services.`,
+      'Yes. Hospital pharmacy engagements are usually scoped to a specific process or stocking point rather than the whole facility at once, given the added complexity of hospital-scale operations.',
   },
   {
-    question: 'Can I retake the assessment later?',
+    question: 'Does NAC work with chain pharmacies?',
     answer:
-      'Yes, you can complete a new assessment at any time — for example, after implementing changes, to track how your inventory health score has improved.',
+      'Yes — chain pharmacies are a core segment, particularly for standardizing SOPs and stock processes across multiple outlets, and for consistent local SEO/Google Business Profile management across locations.',
+  },
+  {
+    question: 'Can NAC help with pharmacy inventory and expiry management?',
+    answer:
+      'Yes — this is core to our Inventory & Operations vertical: inventory audits, expiry and near-expiry analysis, ABC/FSN analysis, dead and slow-moving stock reduction, and reorder-level (min-max) planning.',
+  },
+  {
+    question: 'Can NAC help with pharmacy digital marketing?',
+    answer:
+      'Yes — website development, local SEO, Google Business Profile optimization, and social media management for pharmacies, so more nearby customers can find and trust the business online.',
+  },
+  {
+    question: 'Does NAC provide website and SEO services?',
+    answer:
+      'Yes — website development and both general and local SEO are part of the Digital Marketing & Growth vertical, built specifically for pharmacy and healthcare businesses.',
+  },
+  {
+    question: 'Does NAC provide Google Ads/PPC?',
+    answer:
+      "Yes — Google Ads, PPC, and Meta Ads are part of our performance marketing services. We don't promise guaranteed rankings, leads, or ROI; every recommendation is scoped to what's realistic for your budget.",
+  },
+  {
+    question: 'How does a consulting engagement work?',
+    answer:
+      'It starts with a free consultation to understand your business and which vertical (or both) is the priority. From there we scope a focused engagement — we don\'t take a one-size-fits-all approach across businesses of very different sizes and setups. Reach out via our Contact page or WhatsApp to start that conversation.',
   },
 ];
 
@@ -60,7 +85,7 @@ export function FaqPage() {
   return (
     <MarketingPageLayout
       title={`Frequently Asked Questions | ${COMPANY_NAME}`}
-      description="Answers to common questions about the free Inventory Health Assessment, your scored report, data privacy, and how the process works."
+      description="Answers to common questions about NAC's pharmacy and healthcare consulting — Inventory & Operations Consulting, Digital Marketing & Growth, and how an engagement works."
       path={ROUTES.faq}
       eyebrow="Support"
       heading="Frequently Asked Questions"

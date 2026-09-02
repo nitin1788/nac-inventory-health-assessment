@@ -6,7 +6,7 @@ export function ChecklistsPage() {
     <ResourceComingSoonView
       label="Checklists"
       path={ROUTES.checklists}
-      previewCopy="Practical, printable checklists for common inventory and warehouse tasks."
+      previewCopy="Practical, printable checklists for common pharmacy and healthcare inventory, expiry, and store operations tasks."
     />
   );
 }

@@ -7,11 +7,14 @@ import { FinalCTABanner } from '@/features/landing/components/FinalCTABanner';
 import type { ServiceCategory } from '@/config/serviceTypes';
 import { Button } from '@/shared/components/Button';
 import { SectionGlow } from '@/shared/components/SectionGlow';
+import { Breadcrumbs } from '@/shared/components/Breadcrumbs';
 import { fadeUpItem, VIEWPORT_ONCE } from '@/shared/motion/variants';
 import { useSeo } from '@/shared/hooks/useSeo';
 import { useJsonLd } from '@/shared/hooks/useJsonLd';
+import { buildBreadcrumbJsonLd } from '@/shared/utils/breadcrumbs';
 import { buildConsultationWhatsAppUrl } from '@/shared/utils/whatsapp';
 import { COMPANY_NAME, ROUTES, SITE_URL } from '@/config/constants';
+import { getIndustriesForService } from '@/config/industries.data';
 
 interface ServiceLandingViewProps {
   service: ServiceCategory;
@@ -47,8 +50,14 @@ function getRelatedServices(verticalServices: ServiceCategory[], currentSlug: st
  */
 export function ServiceLandingView({ service, verticalServices, hubPath, hubLabel, vertical }: ServiceLandingViewProps) {
   const relatedServices = getRelatedServices(verticalServices, service.slug);
+  const relevantIndustries = getIndustriesForService(service.path);
   const pageUrl = `${SITE_URL}${service.path}`;
   const style = VERTICAL_STYLES[vertical];
+  const breadcrumbItems = [
+    { label: 'Home', path: ROUTES.landing },
+    { label: hubLabel, path: hubPath },
+    { label: service.title, path: service.path },
+  ];
 
   useSeo({
     title: `${service.title} | ${COMPANY_NAME}`,
@@ -59,14 +68,7 @@ export function ServiceLandingView({ service, verticalServices, hubPath, hubLabe
   useJsonLd({
     '@context': 'https://schema.org',
     '@graph': [
-      {
-        '@type': 'BreadcrumbList',
-        itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
-          { '@type': 'ListItem', position: 2, name: hubLabel, item: `${SITE_URL}${hubPath}` },
-          { '@type': 'ListItem', position: 3, name: service.title, item: pageUrl },
-        ],
-      },
+      buildBreadcrumbJsonLd(breadcrumbItems),
       {
         '@type': 'FAQPage',
         mainEntity: service.faqs.map((faq) => ({
@@ -100,6 +102,7 @@ export function ServiceLandingView({ service, verticalServices, hubPath, hubLabe
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
+              <Breadcrumbs items={breadcrumbItems} className="mb-6 flex justify-center text-xs sm:text-sm" />
               <Link to={hubPath} className={`text-xs font-semibold uppercase tracking-wide hover:underline ${style.text}`}>
                 {hubLabel}
               </Link>
@@ -192,6 +195,27 @@ export function ServiceLandingView({ service, verticalServices, hubPath, hubLabe
             </div>
           </div>
         </section>
+
+        {relevantIndustries.length > 0 ? (
+          <section className="bg-white py-16 sm:py-24 lg:py-28">
+            <div className="mx-auto max-w-5xl px-6 lg:px-8">
+              <h2 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+                Relevant For These Industries
+              </h2>
+              <div className="mt-8 flex flex-wrap gap-3">
+                {relevantIndustries.map((industry) => (
+                  <Link
+                    key={industry.path}
+                    to={industry.path}
+                    className={`rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:border-transparent hover:text-white hover:bg-gradient-to-r ${style.gradient}`}
+                  >
+                    {industry.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+        ) : null}
 
         {relatedServices.length > 0 ? (
           <section className="bg-slate-50 py-16 sm:py-24 lg:py-28">

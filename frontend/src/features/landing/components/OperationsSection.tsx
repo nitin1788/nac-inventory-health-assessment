@@ -5,6 +5,7 @@ import { fadeUpItem, VIEWPORT_ONCE } from '@/shared/motion/variants';
 import { ROUTES } from '@/config/constants';
 import { Button } from '@/shared/components/Button';
 import { ResponsiveImage } from '@/shared/components/ResponsiveImage';
+import { buildResponsiveSrcSet } from '@/shared/utils/responsiveImage';
 
 const OPERATIONS_SERVICES = [
   'Inventory Audit',
@@ -73,7 +74,9 @@ export function OperationsSection() {
             className="overflow-hidden rounded-2xl border border-accent/15 shadow-soft-lg"
           >
             <ResponsiveImage
-              src="/images/operations/nac-healthcare-operations-consulting.webp.png"
+              src="/images/operations/nac-healthcare-operations-consulting.webp"
+              srcSet={buildResponsiveSrcSet('/images/operations/nac-healthcare-operations-consulting.webp', 1536)}
+              sizes="(min-width: 1024px) 50vw, 100vw"
               alt="NAC consultants reviewing a warehouse process flow and SOP documents"
               width={1536}
               height={1024}

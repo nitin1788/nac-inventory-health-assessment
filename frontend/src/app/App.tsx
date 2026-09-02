@@ -1,6 +1,7 @@
 import { AppProviders } from '@/app/AppProviders';
 import { AppRoutes } from '@/app/routes';
 import { ScrollManager } from '@/app/ScrollManager';
+import { Analytics } from '@/app/Analytics';
 
 export function App() {
   return (
@@ -12,6 +13,7 @@ export function App() {
         Skip to main content
       </a>
       <ScrollManager />
+      <Analytics />
       <AppRoutes />
     </AppProviders>
   );

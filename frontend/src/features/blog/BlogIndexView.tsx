@@ -4,10 +4,12 @@ import { Navbar } from '@/features/landing/components/Navbar';
 import { Footer } from '@/features/landing/components/Footer';
 import { FinalCTABanner } from '@/features/landing/components/FinalCTABanner';
 import { SectionGlow } from '@/shared/components/SectionGlow';
+import { Breadcrumbs } from '@/shared/components/Breadcrumbs';
 import { clsx } from '@/shared/utils/clsx';
 import { useSeo } from '@/shared/hooks/useSeo';
 import { useJsonLd } from '@/shared/hooks/useJsonLd';
-import { ROUTES, SITE_URL } from '@/config/constants';
+import { buildBreadcrumbJsonLd } from '@/shared/utils/breadcrumbs';
+import { ROUTES } from '@/config/constants';
 import { getAllPosts, getAllCategories } from './blog.registry';
 import { BlogCard } from './components/BlogCard';
 
@@ -23,14 +25,11 @@ export function BlogIndexView() {
       'Practical articles on pharmacy and healthcare inventory, operations, and digital marketing from Nitin Anand Consulting.',
     path: ROUTES.blog,
   });
-  useJsonLd({
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
-      { '@type': 'ListItem', position: 2, name: 'Insights', item: `${SITE_URL}${ROUTES.blog}` },
-    ],
-  });
+  const breadcrumbItems = [
+    { label: 'Home', path: ROUTES.landing },
+    { label: 'Insights', path: ROUTES.blog },
+  ];
+  useJsonLd({ '@context': 'https://schema.org', ...buildBreadcrumbJsonLd(breadcrumbItems) });
 
   const visiblePosts = activeCategory ? posts.filter((post) => post.category === activeCategory) : posts;
 
@@ -41,6 +40,7 @@ export function BlogIndexView() {
         <section className="relative overflow-hidden bg-white pb-16 pt-14 sm:pb-20 sm:pt-20">
           <SectionGlow tone="navy" />
           <div className="relative mx-auto max-w-4xl px-6 text-center lg:px-8">
+            <Breadcrumbs items={breadcrumbItems} className="mb-6 flex justify-center text-xs sm:text-sm" />
             <p className="text-xs font-semibold uppercase tracking-wide text-brand">Insights</p>
             <span className="mx-auto mt-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand to-brand-dark text-white shadow-soft">
               <Newspaper className="h-7 w-7" />

@@ -1,11 +1,11 @@
-import { Link } from 'react-router-dom';
-import { ChevronRight } from 'lucide-react';
 import { Navbar } from '@/features/landing/components/Navbar';
 import { Footer } from '@/features/landing/components/Footer';
 import { FinalCTABanner } from '@/features/landing/components/FinalCTABanner';
 import { ResponsiveImage } from '@/shared/components/ResponsiveImage';
+import { Breadcrumbs } from '@/shared/components/Breadcrumbs';
 import { useSeo } from '@/shared/hooks/useSeo';
 import { useJsonLd } from '@/shared/hooks/useJsonLd';
+import { buildBreadcrumbJsonLd } from '@/shared/utils/breadcrumbs';
 import { COMPANY_NAME, ROUTES, SITE_URL } from '@/config/constants';
 import type { BlogPost } from './blog.types';
 import { getRelatedPosts } from './blog.registry';
@@ -18,6 +18,11 @@ export function BlogPostView({ post }: { post: BlogPost }) {
   const absoluteImageUrl = post.featuredImage.startsWith('http') ? post.featuredImage : `${SITE_URL}${post.featuredImage}`;
   const relatedPosts = getRelatedPosts(post);
   const bodyHtml = renderMarkdownToHtml(post.bodyMarkdown);
+  const breadcrumbItems = [
+    { label: 'Home', path: ROUTES.landing },
+    { label: 'Insights', path: ROUTES.blog },
+    { label: post.title, path: ROUTES.blogPost(post.slug) },
+  ];
 
   useSeo({
     title: `${post.title} | ${COMPANY_NAME}`,
@@ -30,14 +35,7 @@ export function BlogPostView({ post }: { post: BlogPost }) {
   useJsonLd({
     '@context': 'https://schema.org',
     '@graph': [
-      {
-        '@type': 'BreadcrumbList',
-        itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
-          { '@type': 'ListItem', position: 2, name: 'Insights', item: `${SITE_URL}${ROUTES.blog}` },
-          { '@type': 'ListItem', position: 3, name: post.title, item: pageUrl },
-        ],
-      },
+      buildBreadcrumbJsonLd(breadcrumbItems),
       {
         '@type': 'Article',
         headline: post.title,
@@ -59,17 +57,7 @@ export function BlogPostView({ post }: { post: BlogPost }) {
       <main id="main-content">
         <article className="pb-20 pt-10 sm:pt-14">
           <div className="mx-auto max-w-3xl px-6 lg:px-8">
-            <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500">
-              <Link to={ROUTES.landing} className="hover:text-brand">
-                Home
-              </Link>
-              <ChevronRight className="h-3 w-3" />
-              <Link to={ROUTES.blog} className="hover:text-brand">
-                Insights
-              </Link>
-              <ChevronRight className="h-3 w-3" />
-              <span className="truncate text-slate-700">{post.title}</span>
-            </nav>
+            <Breadcrumbs items={breadcrumbItems} className="text-xs text-slate-500" />
 
             <p className="mt-6 text-xs font-semibold uppercase tracking-wide text-brand">{post.category}</p>
             <h1 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">{post.title}</h1>

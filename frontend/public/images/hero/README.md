@@ -1,8 +1,7 @@
-Delivered file (2026-08-19): `nac-hero-consultant.webp.png` — actual PNG data despite the
-`.webp` in the filename (confirmed via file signature). Referenced as-is; not renamed/converted.
+File: `nac-hero-consultant.webp` (converted from the delivered `nac-hero-consultant.webp.png`,
+which was actual PNG data — see `../README.md`, 2026-08-21 entry). Genuine WebP now, plus an
+`nac-hero-consultant-800w.webp` mobile variant.
+
+No fabricated statistics/names found in this one — kept, wired in as-is.
 
 Used by: `frontend/src/features/landing/components/HeroVisualPremium.tsx` (homepage hero, right side).
-
-Note: this filename doesn't match the `nac-healthcare-business-consultant.*` name given in the
-2026-08-19 photo-mapping instructions — it's the original file from the first image-architecture
-pass, never renamed. Flagged for the user; not renamed unilaterally.

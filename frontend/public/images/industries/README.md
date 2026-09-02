@@ -1,26 +1,38 @@
-**2026-08-20: 12 new files landed here (one per industry) but none are wired in.**
+All 12 industry files, previously delivered as `*.webp.png` (real PNG data despite the filename),
+were converted 2026-08-21 to genuine, compressed WebP at the same path minus the erroneous `.png`
+suffix, plus `-800w.webp` mobile variants — see `../README.md` and
+`frontend/scripts/optimize-images.mjs`.
 
-Every file (`nac-retail-pharmacy-inventory-consulting.webp.png`, `hospital-pharmacy-inventory-consulting.webp.png`,
-`nac-chain-pharmacy-performance-consulting.webp.png`, `nac-medical-store-inventory-consulting.webp.png`,
-`clinic-operations-consulting.webp.png`, `nac-hospital-operations-consulting.webp.png`,
-`nac-diagnostic-centre-operations-consulting.webp.png`, `pathology-lab-workflow-consulting.webp.png`,
-`nac-dental-clinic-operations-consulting.webp.png`, `physiotherapy-centre-workflow-consulting.webp.png`,
-`nac-pharma-distributor-warehouse-consulting.webp.png`, `nac-medical-equipment-surgical-suppliers-consulting.webp.png`)
-is a pre-composited graphic-design card, not raw photography: every one has a rounded, drop-shadowed
-text panel baked into the bottom-left corner (industry name + subtitle + a circular icon badge,
-identical template across all 12), several also have a fabricated on-screen dashboard with invented
-numbers (e.g. Hospitals: "Hospital Operations Overview" with fake KPI charts; Diagnostic Centres:
-"128 Test Count / 45 min Average TAT / 92% Within TAT"). The same male consultant model (glasses,
-beard) is also the recurring lead figure in essentially all 12.
+Every one of the 12 is a pre-composited graphic-design card, not raw photography: each has a
+rounded, drop-shadowed text panel baked into a corner (industry name + subtitle + icon badge),
+and the same recurring consultant model appears in most of them. That styling issue alone was
+previously flagged (2026-08-20 note, now superseded) but not treated as a hard blocker.
 
-Using these as delivered would mean the site's own real heading/copy sits next to a second,
-conflicting baked-in heading on the photo itself — this conflicts with "real photography as the
-primary visual language," "do not put text over faces / no text overlays," and "no fake
-statistics." Not wired into `industries.data.ts` for that reason — flagged for the user rather
-than implemented. See the 2026-08-20 implementation report for detail.
+**2026-08-21: 4 of the 12 also contain outright fabricated claims and are unwired from
+`industries.data.ts` as a result** (file kept on disk, optimized, just not referenced — falls back
+to the existing text-only industry hero layout):
 
-This also broke the two industry-photo entries from the previous pass (`retail-pharmacy`,
-`hospitals`), which pointed at two now-deleted files
-(`nac-pharmacy-business-consulting.webp.png`, `nac-hospital-healthcare-consulting.webp.png`).
-Both entries were reverted to the text-only layout (same as the other 10 industries) to avoid a
-broken image on those two pages.
+| Industry | File | Problem |
+|---|---|---|
+| Hospitals | `nac-hospital-operations-consulting.webp` | Fabricated "Hospital Operations Overview" dashboard (325 patients, 78% bed occupancy, 32 min avg wait, 24 discharges) |
+| Diagnostic Centres | `nac-diagnostic-centre-operations-consulting.webp` | Fabricated "Daily Operations Overview" dashboard (128 test count, 45 min avg TAT, 92% within TAT) |
+| Clinics | `clinic-operations-consulting.webp` | Fabricated named doctor badge ("Dr. Rohan Mehta") |
+| Pharma Distributors | `nac-pharma-distributor-warehouse-consulting.webp` | Fabricated distributor company name/logo ("SUREMED DISTRIBUTORS") on staff uniforms |
+
+A prior pass tried to work around the Hospitals/Diagnostic-Centres dashboards with a tight
+`objectPosition` crop (see git history on `industries.data.ts`) — that only hides the fabricated
+panel in the rendered page. The raw file is still directly and publicly servable at its full
+resolution with the numbers fully legible (e.g. to an image crawler or anyone opening the file
+URL directly), so it doesn't actually resolve a no-fake-statistics violation. Unwiring is the
+correct fix.
+
+**The remaining 8 are kept, wired in as-is** (Retail Pharmacy, Hospital Pharmacy, Chain Pharmacy,
+Medical Stores, Pathology Labs, Dental Clinics, Physiotherapy Centres, Medical Equipment &
+Surgical Suppliers) — they have baked-in headline/tagline text (a styling redundancy with the
+page's own on-page heading, not a factual fabrication) but no fabricated numbers or names.
+
+This also documents the two industry-photo entries from an earlier pass
+(`retail-pharmacy`, `hospitals`) that briefly pointed at two now-deleted files
+(`nac-pharmacy-business-consulting.webp.png`, `nac-hospital-healthcare-consulting.webp.png`) and
+were reverted to text-only at the time — since superseded by the current 12-file set described
+above.

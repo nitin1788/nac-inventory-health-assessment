@@ -6,7 +6,7 @@ export function TemplatesPage() {
     <ResourceComingSoonView
       label="Templates"
       path={ROUTES.templates}
-      previewCopy="Ready-to-use spreadsheet and document templates for inventory and warehouse management."
+      previewCopy="Ready-to-use spreadsheet and document templates for pharmacy and healthcare inventory and operations management."
     />
   );
 }

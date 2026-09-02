@@ -14,6 +14,14 @@ const envSchema = z.object({
   VITE_WHATSAPP_COMMUNITY_URL: z.string().optional().or(z.literal('')),
   /** Overrides the default wa.me consultation-booking deep link (see shared/utils/whatsapp.ts) when set. */
   VITE_BOOK_CONSULTATION_URL: z.string().optional().or(z.literal('')),
+  /**
+   * Google Analytics 4 Measurement ID (format "G-XXXXXXXXXX"), from the
+   * GA4 property's Admin > Data Streams > (your web stream) page. Left
+   * blank by default — see app/Analytics.tsx, which loads nothing at all
+   * (no script, no cookies) until this is set. Never fabricate a value
+   * here; leave blank until the real ID is available.
+   */
+  VITE_GA4_MEASUREMENT_ID: z.string().optional().or(z.literal('')),
 });
 
 function loadEnv() {
@@ -35,4 +43,5 @@ export const env = {
   turnstileSiteKey: parsedEnv.VITE_TURNSTILE_SITE_KEY || null,
   whatsappCommunityUrl: parsedEnv.VITE_WHATSAPP_COMMUNITY_URL || null,
   bookConsultationUrl: parsedEnv.VITE_BOOK_CONSULTATION_URL || null,
+  ga4MeasurementId: parsedEnv.VITE_GA4_MEASUREMENT_ID || null,
 };

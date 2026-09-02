@@ -7,10 +7,12 @@ import { Footer } from '@/features/landing/components/Footer';
 import { FinalCTABanner } from '@/features/landing/components/FinalCTABanner';
 import type { ServiceCategory } from '@/config/serviceTypes';
 import { SectionGlow } from '@/shared/components/SectionGlow';
+import { Breadcrumbs } from '@/shared/components/Breadcrumbs';
 import { fadeUpItem, VIEWPORT_ONCE } from '@/shared/motion/variants';
 import { useSeo } from '@/shared/hooks/useSeo';
 import { useJsonLd } from '@/shared/hooks/useJsonLd';
-import { SITE_URL } from '@/config/constants';
+import { buildBreadcrumbJsonLd } from '@/shared/utils/breadcrumbs';
+import { ROUTES } from '@/config/constants';
 
 interface ServiceVerticalHubViewProps {
   path: string;
@@ -43,15 +45,13 @@ export function ServiceVerticalHubView({
   accentGradient,
   accentTextClass,
 }: ServiceVerticalHubViewProps) {
+  const breadcrumbItems = [
+    { label: 'Home', path: ROUTES.landing },
+    { label: title, path },
+  ];
+
   useSeo({ title: `${title} | Nitin Anand Consulting`, description: metaDescription, path });
-  useJsonLd({
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
-      { '@type': 'ListItem', position: 2, name: title, item: `${SITE_URL}${path}` },
-    ],
-  });
+  useJsonLd({ '@context': 'https://schema.org', ...buildBreadcrumbJsonLd(breadcrumbItems) });
 
   return (
     <div className="min-h-screen bg-white">
@@ -60,6 +60,7 @@ export function ServiceVerticalHubView({
         <section className="relative overflow-hidden bg-white pb-16 pt-14 sm:pb-20 sm:pt-20">
           <SectionGlow tone="navy" />
           <div className="relative mx-auto max-w-4xl px-6 text-center lg:px-8">
+            <Breadcrumbs items={breadcrumbItems} className="mb-6 flex justify-center text-xs sm:text-sm" />
             <p className="text-xs font-semibold uppercase tracking-wide text-brand">{eyebrow}</p>
             <span
               className={`mx-auto mt-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${accentGradient} text-white shadow-soft`}

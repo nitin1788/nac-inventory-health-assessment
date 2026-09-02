@@ -6,7 +6,7 @@ export function FreeDownloadsPage() {
     <ResourceComingSoonView
       label="Free Downloads"
       path={ROUTES.freeDownloads}
-      previewCopy="Free tools and guides to help you improve inventory and warehouse operations on your own."
+      previewCopy="Free tools and guides to help pharmacy and healthcare businesses improve inventory, operations, and digital marketing on their own."
     />
   );
 }

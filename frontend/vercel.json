@@ -2,6 +2,25 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "framework": "vite",
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.nitinanandconsulting.in" }],
+      "destination": "https://nitinanandconsulting.in/:path*",
+      "permanent": true
+    },
+    { "source": "/contact-us", "destination": "/contact", "permanent": true },
+    { "source": "/inventory-consulting", "destination": "/services/inventory-operations-consulting", "permanent": true },
+    { "source": "/warehouse-consulting", "destination": "/services/inventory-operations-consulting", "permanent": true },
+    { "source": "/operations-consulting", "destination": "/services/inventory-operations-consulting", "permanent": true },
+    { "source": "/sop-development", "destination": "/services/inventory-operations-consulting", "permanent": true },
+    { "source": "/business-analytics", "destination": "/services/inventory-operations-consulting", "permanent": true },
+    { "source": "/training-implementation", "destination": "/services/inventory-operations-consulting", "permanent": true },
+    { "source": "/inventory-operations-consulting", "destination": "/services/inventory-operations-consulting", "permanent": true },
+    { "source": "/inventory-operations-consulting/:slug", "destination": "/services/inventory-operations-consulting", "permanent": true },
+    { "source": "/digital-marketing-services", "destination": "/services/digital-marketing", "permanent": true },
+    { "source": "/digital-marketing-services/:slug", "destination": "/services/digital-marketing", "permanent": true }
+  ],
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
   "headers": [
     {

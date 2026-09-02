@@ -49,7 +49,7 @@ export const INDUSTRIES_LIST: IndustryProfile[] = [
     intro:
       'Retail pharmacies operate on thin margins with stock that has real expiry risk and strict handling requirements. We work with retail pharmacies on both sides of the business — tighter inventory and expiry control on the operations side, and stronger local visibility (Google Business Profile, local SEO) to bring in more nearby customers.',
     image: {
-      src: '/images/industries/nac-retail-pharmacy-inventory-consulting.webp.png',
+      src: '/images/industries/nac-retail-pharmacy-inventory-consulting.webp',
       alt: 'Consultant reviewing shelf stock with a pharmacist inside a retail pharmacy',
     },
     relevantServices: [
@@ -80,7 +80,7 @@ export const INDUSTRIES_LIST: IndustryProfile[] = [
     intro:
       'Hospital pharmacies handle higher stock volumes, more SKUs, and tighter accountability requirements than a standalone store. Our inventory reconciliation, SOP development, and stock optimization work is built to handle that scale and complexity.',
     image: {
-      src: '/images/industries/hospital-pharmacy-inventory-consulting.webp.png',
+      src: '/images/industries/hospital-pharmacy-inventory-consulting.webp',
       alt: 'Consultant reviewing hospital pharmacy inventory with pharmacy staff',
     },
     relevantServices: [
@@ -111,7 +111,7 @@ export const INDUSTRIES_LIST: IndustryProfile[] = [
     intro:
       'The core challenge for a chain pharmacy is consistency — the same standards applied across every location, not just the flagship store. We help standardize SOPs, purchasing decisions, and KPI reporting across your full network of stores.',
     image: {
-      src: '/images/industries/nac-chain-pharmacy-performance-consulting.webp.png',
+      src: '/images/industries/nac-chain-pharmacy-performance-consulting.webp',
       alt: 'Consultant discussing multi-store performance and stock standards with chain pharmacy staff',
     },
     relevantServices: [
@@ -142,7 +142,7 @@ export const INDUSTRIES_LIST: IndustryProfile[] = [
     intro:
       'Medical stores share many of the same operating realities as pharmacies — batch/expiry-sensitive stock, thin margins, and strong reliance on local reputation. We support both the inventory side and the digital growth side of running one.',
     image: {
-      src: '/images/industries/nac-medical-store-inventory-consulting.webp.png',
+      src: '/images/industries/nac-medical-store-inventory-consulting.webp',
       alt: 'Consultant reviewing medical store inventory and stock records with the store owner',
     },
     relevantServices: [
@@ -172,10 +172,11 @@ export const INDUSTRIES_LIST: IndustryProfile[] = [
       'Nitin Anand Consulting supports clinics with operations audits, SOP development, and website/local SEO to build a professional digital presence.',
     intro:
       'A clinic\'s reputation is built as much on how smoothly the practice runs as on the care itself — appointment flow, supply handling, and how easily a new patient can find and trust you online. We support both sides.',
-    image: {
-      src: '/images/industries/clinic-operations-consulting.webp.png',
-      alt: 'Consultant reviewing workflow with a clinic doctor in the reception area',
-    },
+    // No image: the supplied source photo has a fabricated named doctor's
+    // badge ("Dr. Rohan Mehta") baked into it — a fabricated identity, not
+    // usable per the no-fake-claims rule. Falls back to the text-only
+    // hero layout (see IndustryLandingView's `industry.image &&` check).
+    // File preserved, optimized, but unreferenced — see NAC_SEO_READINESS_AUDIT.md.
     relevantServices: [
       { label: 'Operations Audit', path: '/services/inventory-operations-consulting/operations-audit' },
       { label: 'SOP Development', path: '/services/inventory-operations-consulting/sop-development' },
@@ -203,15 +204,14 @@ export const INDUSTRIES_LIST: IndustryProfile[] = [
       'Nitin Anand Consulting provides operations audits and inventory consulting for hospitals, scoped for facility-wide complexity.',
     intro:
       'Hospital operations span multiple departments, stocking points, and stakeholders. Our operations audit and inventory consulting work is scoped to that complexity — focused engagements on a specific department or process, not an attempt to solve everything at once.',
-    image: {
-      src: '/images/industries/nac-hospital-operations-consulting.webp.png',
-      alt: 'Consultant reviewing hospital operations with a doctor near the ward signage',
-      // Tighter, left-biased crop: the source photo has a fabricated
-      // on-screen KPI dashboard on its right edge that a standard 4:3 crop
-      // wouldn't fully exclude.
-      objectPosition: '0% 20%',
-      aspectClassName: 'aspect-square',
-    },
+    // No image: the source photo's on-screen monitor shows a fabricated
+    // "Hospital Operations Overview" dashboard with invented KPI numbers
+    // (325 patients, 78% bed occupancy, etc). A CSS crop only hides this
+    // in the rendered page — the raw file at /images/industries/... is
+    // still directly and publicly servable with the fake stats intact, so
+    // cropping doesn't actually fix a "no fake statistics" violation.
+    // Falls back to the text-only hero layout. File preserved, optimized,
+    // but unreferenced — see NAC_SEO_READINESS_AUDIT.md.
     relevantServices: [
       { label: 'Operations Audit', path: '/services/inventory-operations-consulting/operations-audit' },
       { label: 'Inventory Analysis', path: '/services/inventory-operations-consulting/inventory-analysis' },
@@ -239,14 +239,10 @@ export const INDUSTRIES_LIST: IndustryProfile[] = [
       'Nitin Anand Consulting works with diagnostic centres on reagent/consumable stock control and local SEO to attract more patient referrals.',
     intro:
       'Diagnostic centres carry consumables and reagents with their own expiry and storage sensitivities, alongside a strong dependence on being easy to find and trust online for both walk-ins and doctor referrals.',
-    image: {
-      src: '/images/industries/nac-diagnostic-centre-operations-consulting.webp.png',
-      alt: 'Consultant reviewing operations with diagnostic centre staff near the imaging room',
-      // Same reasoning as Hospitals — crop stays left of the source
-      // photo's fabricated on-screen stats monitor.
-      objectPosition: '0% 15%',
-      aspectClassName: 'aspect-square',
-    },
+    // No image: same issue as Hospitals — the source photo's on-screen
+    // monitor shows a fabricated "128 Test Count / 45 min Average TAT /
+    // 92% Within TAT" dashboard. Falls back to the text-only hero layout.
+    // File preserved, optimized, but unreferenced — see NAC_SEO_READINESS_AUDIT.md.
     relevantServices: [
       { label: 'Expiry / Near-Expiry Analysis', path: '/services/inventory-operations-consulting/expiry-near-expiry-analysis' },
       { label: 'Reorder / Min-Max', path: '/services/inventory-operations-consulting/reorder-min-max' },
@@ -275,7 +271,7 @@ export const INDUSTRIES_LIST: IndustryProfile[] = [
     intro:
       'Pathology labs depend on precise consumable and reagent stock control and, often, referral relationships that a professional, easy-to-find digital presence supports. We work across both.',
     image: {
-      src: '/images/industries/pathology-lab-workflow-consulting.webp.png',
+      src: '/images/industries/pathology-lab-workflow-consulting.webp',
       alt: 'Consultant reviewing lab workflow and consumables with pathology lab technicians',
     },
     relevantServices: [
@@ -306,7 +302,7 @@ export const INDUSTRIES_LIST: IndustryProfile[] = [
     intro:
       'Dental clinics manage a mix of consumables, instruments, and materials alongside a strong dependence on local reputation and an easy-to-find online presence for new patient enquiries.',
     image: {
-      src: '/images/industries/nac-dental-clinic-operations-consulting.webp.png',
+      src: '/images/industries/nac-dental-clinic-operations-consulting.webp',
       alt: 'Consultant discussing operations with a dentist inside a dental treatment room',
     },
     relevantServices: [
@@ -337,7 +333,7 @@ export const INDUSTRIES_LIST: IndustryProfile[] = [
     intro:
       'Physiotherapy centres compete heavily on local visibility and word-of-mouth trust. We support the operational side (process improvement, equipment/consumable tracking) alongside the digital side (local SEO, social content) that drives new patient enquiries.',
     image: {
-      src: '/images/industries/physiotherapy-centre-workflow-consulting.webp.png',
+      src: '/images/industries/physiotherapy-centre-workflow-consulting.webp',
       alt: 'Consultant reviewing workflow with a physiotherapist on the treatment floor',
     },
     relevantServices: [
@@ -367,10 +363,11 @@ export const INDUSTRIES_LIST: IndustryProfile[] = [
       'Nitin Anand Consulting works with pharma distributors on inventory analysis, purchase analysis, and reorder-level consulting at distribution scale.',
     intro:
       'Distribution operations run on volume, turnover, and supplier reliability. Our inventory analysis, purchase analysis, and reorder/min-max work is built to operate at that scale, not just single-store retail volume.',
-    image: {
-      src: '/images/industries/nac-pharma-distributor-warehouse-consulting.webp.png',
-      alt: 'Consultant reviewing warehouse stock with distribution staff among pallet racking',
-    },
+    // No image: the source photo has a fabricated distributor company
+    // name/logo ("SUREMED DISTRIBUTORS") on staff uniforms, implying a
+    // specific named client — not usable per the no-fake-claims rule.
+    // Falls back to the text-only hero layout. File preserved, optimized,
+    // but unreferenced — see NAC_SEO_READINESS_AUDIT.md.
     relevantServices: [
       { label: 'Inventory Analysis', path: '/services/inventory-operations-consulting/inventory-analysis' },
       { label: 'Purchase Analysis', path: '/services/inventory-operations-consulting/purchase-analysis' },
@@ -399,7 +396,7 @@ export const INDUSTRIES_LIST: IndustryProfile[] = [
     intro:
       'Medical equipment and surgical suppliers carry higher-value stock with different turnover patterns than retail pharmacy, and typically sell to institutional or B2B buyers rather than walk-in customers — both the inventory approach and the marketing approach need to reflect that.',
     image: {
-      src: '/images/industries/nac-medical-equipment-surgical-suppliers-consulting.webp.png',
+      src: '/images/industries/nac-medical-equipment-surgical-suppliers-consulting.webp',
       alt: 'Consultant reviewing medical equipment inventory with supplier staff among stocked shelving',
     },
     relevantServices: [
@@ -420,3 +417,16 @@ export const INDUSTRIES_LIST: IndustryProfile[] = [
     ],
   },
 ];
+
+/**
+ * Reverse lookup for a service page: which industries list this service
+ * path in their `relevantServices`. Closes the internal-linking loop the
+ * other direction — industry pages already link to services, this lets a
+ * service page link back to the industries it's most relevant for. See
+ * ServiceLandingView.tsx's "Relevant For These Industries" section.
+ */
+export function getIndustriesForService(servicePath: string): IndustryRelatedService[] {
+  return INDUSTRIES_LIST.filter((industry) =>
+    industry.relevantServices.some((service) => service.path === servicePath)
+  ).map((industry) => ({ label: industry.name, path: industry.path }));
+}
