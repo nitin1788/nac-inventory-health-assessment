@@ -41,7 +41,7 @@ export const INVENTORY_SERVICES: ServiceCategory[] = [
     metaDescription:
       'Inventory audits from Nitin Anand Consulting for pharmacies, medical stores, and healthcare businesses — batch and expiry-aware physical verification with a clear discrepancy report.',
     intro:
-      'A pharmacy or medical store carries stock with batch numbers, expiry dates, and Schedule-drug handling that a generic inventory audit checklist ignores. Our inventory audits are built around how pharmacy and healthcare stock actually moves — physical verification against records, with discrepancies traced to a cause, not just a number.',
+      'A pharmacy or medical store carries stock with batch numbers, expiry dates, and Schedule-drug handling that a generic inventory audit checklist ignores. Our inventory audits are built around how pharmacy and healthcare stock actually moves — physical verification against records, with discrepancies traced to a cause, not just a number. Based in Mumbai, we run these audits in person across Mumbai, the MMR, and wider Maharashtra.',
     benefits: [
       { title: 'Know What You Actually Have', description: 'A verified, current picture of stock on hand — not just what the register or software says.' },
       { title: 'Fewer Billing and Compliance Surprises', description: 'Catch mismatches, mis-shelved batches, and record gaps before they become a bigger problem.' },
@@ -464,7 +464,7 @@ export const INVENTORY_SERVICES: ServiceCategory[] = [
     metaDescription:
       'Operations audits from Nitin Anand Consulting for pharmacy, medical store, and healthcare operations — a structured review of day-to-day workflow beyond just inventory numbers.',
     intro:
-      'Inventory problems are often downstream of a broader operations issue — unclear responsibilities, redundant steps, or a workflow that was never redesigned as the business grew. An operations audit looks at how the store or warehouse actually runs, day to day, not just what the stock numbers show.',
+      'Inventory problems are often downstream of a broader operations issue — unclear responsibilities, redundant steps, or a workflow that was never redesigned as the business grew. An operations audit looks at how the store or warehouse actually runs, day to day, not just what the stock numbers show. Bringing in a healthcare operations consultant for this kind of outside look often surfaces exactly the blind spots a team too close to the daily routine can\'t see — we conduct these audits in person across Mumbai and Maharashtra.',
     benefits: [
       { title: 'See the Whole Picture', description: 'Workflow issues identified beyond what inventory numbers alone reveal.' },
       { title: 'Clear Ownership', description: 'Findings on where responsibilities are unclear or duplicated.' },
@@ -592,7 +592,7 @@ export const INVENTORY_SERVICES: ServiceCategory[] = [
     metaDescription:
       'Pharmacy, store, and warehouse operations consulting from Nitin Anand Consulting — end-to-end operational support for how your business runs day to day.',
     intro:
-      'This is the broadest engagement in our Inventory & Operations vertical — a combined look at layout, workflow, staffing structure, and stock handling for pharmacies, medical stores, and healthcare warehouses, when the need spans more than one specific service above.',
+      'Think of this as bringing in a pharmacy operations consultant for the full picture — a combined look at layout, workflow, staffing structure, and stock handling for pharmacies, medical stores, and healthcare warehouses, when the need spans more than one specific service above. This kind of hands-on engagement is delivered in person across Mumbai, the MMR, and Maharashtra.',
     benefits: [
       { title: 'One Coordinated Engagement', description: 'A single view across inventory, layout, and workflow instead of piecemeal fixes.' },
       { title: 'Built for Healthcare Retail', description: 'Recommendations shaped by pharmacy and healthcare operating realities, not generic retail advice.' },

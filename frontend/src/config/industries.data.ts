@@ -47,7 +47,7 @@ export const INDUSTRIES_LIST: IndustryProfile[] = [
     metaDescription:
       'Nitin Anand Consulting works with retail pharmacies on inventory audits, expiry control, and local SEO/Google Business Profile visibility.',
     intro:
-      'Retail pharmacies operate on thin margins with stock that has real expiry risk and strict handling requirements. We work with retail pharmacies on both sides of the business — tighter inventory and expiry control on the operations side, and stronger local visibility (Google Business Profile, local SEO) to bring in more nearby customers.',
+      'Retail pharmacies operate on thin margins with stock that has real expiry risk and strict handling requirements. We work with retail pharmacies on both sides of the business — hands-on inventory and expiry control, delivered in person across Mumbai and Maharashtra, on the operations side, and stronger local visibility (Google Business Profile, local SEO) to bring in more nearby customers, wherever you\'re based.',
     image: {
       src: '/images/industries/nac-retail-pharmacy-inventory-consulting.webp',
       alt: 'Consultant reviewing shelf stock with a pharmacist inside a retail pharmacy',
@@ -78,12 +78,13 @@ export const INDUSTRIES_LIST: IndustryProfile[] = [
     metaDescription:
       'Nitin Anand Consulting supports hospital pharmacies with inventory reconciliation, SOP development, and stock optimization for higher-volume, higher-stakes operations.',
     intro:
-      'Hospital pharmacies handle higher stock volumes, more SKUs, and tighter accountability requirements than a standalone store. Our inventory reconciliation, SOP development, and stock optimization work is built to handle that scale and complexity.',
+      'Hospital pharmacies handle higher stock volumes, more SKUs, and tighter accountability requirements than a standalone store. Our inventory reconciliation, SOP development, and stock optimization work is built to handle that scale and complexity, delivered on-site across Mumbai and Maharashtra.',
     image: {
       src: '/images/industries/hospital-pharmacy-inventory-consulting.webp',
       alt: 'Consultant reviewing hospital pharmacy inventory with pharmacy staff',
     },
     relevantServices: [
+      { label: 'Inventory Audit', path: '/services/inventory-operations-consulting/inventory-audit' },
       { label: 'Inventory Reconciliation', path: '/services/inventory-operations-consulting/inventory-reconciliation' },
       { label: 'SOP Development', path: '/services/inventory-operations-consulting/sop-development' },
       { label: 'Reorder / Min-Max', path: '/services/inventory-operations-consulting/reorder-min-max' },
@@ -140,7 +141,7 @@ export const INDUSTRIES_LIST: IndustryProfile[] = [
     metaDescription:
       'Nitin Anand Consulting works with medical stores on inventory audits, stock optimization, and digital visibility to grow local customer reach.',
     intro:
-      'Medical stores share many of the same operating realities as pharmacies — batch/expiry-sensitive stock, thin margins, and strong reliance on local reputation. We support both the inventory side and the digital growth side of running one.',
+      'Medical stores share many of the same operating realities as pharmacies — batch/expiry-sensitive stock, thin margins, and strong reliance on local reputation. We support both the inventory side — in person, across Mumbai and Maharashtra — and the digital growth side of running one, wherever you\'re located.',
     image: {
       src: '/images/industries/nac-medical-store-inventory-consulting.webp',
       alt: 'Consultant reviewing medical store inventory and stock records with the store owner',
@@ -355,14 +356,23 @@ export const INDUSTRIES_LIST: IndustryProfile[] = [
   },
   {
     icon: Truck,
-    slug: 'pharma-distributors',
-    path: '/industries/pharma-distributors',
-    name: 'Pharma Distributors',
-    description: 'Higher-volume inventory, purchase, and reorder consulting for pharma distribution operations.',
+    slug: 'healthcare-distributors',
+    path: '/industries/healthcare-distributors',
+    name: 'Healthcare Distributors',
+    description: 'Higher-volume inventory, purchase, and reorder consulting for healthcare and pharma distribution operations.',
     metaDescription:
-      'Nitin Anand Consulting works with pharma distributors on inventory analysis, purchase analysis, and reorder-level consulting at distribution scale.',
+      'Nitin Anand Consulting works with healthcare and pharma distributors on inventory analysis, purchase analysis, and reorder-level consulting at distribution scale.',
     intro:
       'Distribution operations run on volume, turnover, and supplier reliability. Our inventory analysis, purchase analysis, and reorder/min-max work is built to operate at that scale, not just single-store retail volume.',
+    // Renamed from "Pharma Distributors" to "Healthcare Distributors"
+    // (slug, path, name, copy) to match the term already used on the
+    // homepage's Industries We Serve grid (landing.data.ts
+    // INDUSTRIES_SERVED) and NAC's stated positioning — see
+    // NAC_TECHNICAL_SEO_FINAL_REPORT.md's keyword coverage report for
+    // the naming-inconsistency finding this resolves. Old URL
+    // (/industries/pharma-distributors) 301-redirects here — see
+    // vercel.json and routes.tsx.
+    //
     // No image: the source photo has a fabricated distributor company
     // name/logo ("SUREMED DISTRIBUTORS") on staff uniforms, implying a
     // specific named client — not usable per the no-fake-claims rule.

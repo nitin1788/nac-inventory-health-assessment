@@ -58,6 +58,8 @@ export const ROUTES = {
   // New industries structure.
   industriesHub: '/industries',
   industry: (slug: string) => `/industries/${slug}`,
+  /** Legacy slug, renamed to "healthcare-distributors" — see industries.data.ts and routes.tsx. */
+  industryPharmaDistributorsLegacy: '/industries/pharma-distributors',
   blog: '/blog',
   blogPost: (slug: string) => `/blog/${slug}`,
   caseStudies: '/case-studies',

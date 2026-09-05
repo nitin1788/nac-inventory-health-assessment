@@ -39,9 +39,16 @@ export function OperationsSection() {
             </h2>
             <p className="mt-5 text-base leading-relaxed text-slate-600">
               Pharmacy and healthcare stock carries real complexity — batch numbers, expiry dates,
-              and tight margins that a generic inventory approach ignores. We help you get accurate
-              stock counts, reduce dead and expiring stock, and put clear, repeatable processes in
-              place across your store or warehouse.
+              and tight margins that a generic inventory approach ignores. A structured{' '}
+              <Link
+                to={ROUTES.inventoryService('inventory-audit')}
+                className="font-medium text-accent-dark hover:underline"
+              >
+                pharmacy inventory audit
+              </Link>{' '}
+              is often the starting point — we help you get accurate stock counts, reduce dead and
+              expiring stock, and put clear, repeatable processes in place across your store or
+              warehouse.
             </p>
 
             <ul className="mt-6 flex flex-wrap gap-2">

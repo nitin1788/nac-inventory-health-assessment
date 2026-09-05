@@ -103,6 +103,11 @@ export function AppRoutes() {
         {/* New industries structure. */}
         <Route path={ROUTES.industriesHub} element={<IndustriesHubPage />} />
         <Route path={`${ROUTES.industriesHub}/:slug`} element={<IndustryPage />} />
+        {/* "Pharma Distributors" renamed to "Healthcare Distributors" — old slug redirected, not deleted. */}
+        <Route
+          path={ROUTES.industryPharmaDistributorsLegacy}
+          element={<Navigate to={ROUTES.industry('healthcare-distributors')} replace />}
+        />
 
         {/* Old fixed-slug service pages — redirected to the new services
             hub rather than left as a dead end or deleted, since they may

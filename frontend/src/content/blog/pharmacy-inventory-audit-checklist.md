@@ -34,7 +34,7 @@ Unlike a general retail count, every line item should capture:
 
 This is what makes a pharmacy audit useful for more than just a stock-accuracy number — it feeds
 directly into [expiry / near-expiry analysis](/services/inventory-operations-consulting/expiry-near-expiry-analysis)
-and FEFO compliance checks at the same time.
+and [FEFO compliance checks](/services/inventory-operations-consulting/fefo-implementation) at the same time.
 
 ## 3. Classify what you find
 

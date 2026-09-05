@@ -19,7 +19,8 @@
     { "source": "/inventory-operations-consulting", "destination": "/services/inventory-operations-consulting", "permanent": true },
     { "source": "/inventory-operations-consulting/:slug", "destination": "/services/inventory-operations-consulting", "permanent": true },
     { "source": "/digital-marketing-services", "destination": "/services/digital-marketing", "permanent": true },
-    { "source": "/digital-marketing-services/:slug", "destination": "/services/digital-marketing", "permanent": true }
+    { "source": "/digital-marketing-services/:slug", "destination": "/services/digital-marketing", "permanent": true },
+    { "source": "/industries/pharma-distributors", "destination": "/industries/healthcare-distributors", "permanent": true }
   ],
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
   "headers": [

@@ -17,7 +17,7 @@ const FAQS: FaqItem[] = [
   {
     question: 'Who does NAC work with?',
     answer:
-      'Retail pharmacies, hospital pharmacies, chain pharmacies, medical stores, clinics, hospitals, diagnostic centres, pathology labs, dental clinics, physiotherapy centres, pharma distributors, and medical equipment/surgical suppliers — pharmacy, healthcare, and allied businesses of most sizes.',
+      'Retail pharmacies, hospital pharmacies, chain pharmacies, medical stores, clinics, hospitals, diagnostic centres, pathology labs, dental clinics, physiotherapy centres, healthcare distributors, and medical equipment/surgical suppliers — pharmacy, healthcare, and allied businesses of most sizes.',
   },
   {
     question: 'What is Inventory & Operations Consulting?',
