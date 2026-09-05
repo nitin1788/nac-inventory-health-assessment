@@ -1,0 +1,26 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Pharmacy Stock Management: A Practical Guide</title>
+  <desc id="desc">Branded cover graphic for the NAC blog article on pharmacy stock management</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F2A52" />
+      <stop offset="100%" stop-color="#132F5E" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <rect x="0" y="0" width="1200" height="6" fill="#C89B3C" />
+  <g opacity="0.08">
+    <circle cx="1040" cy="120" r="220" fill="#C89B3C" />
+    <circle cx="120" cy="560" r="160" fill="#FFFFFF" />
+  </g>
+  <g transform="translate(90,220)">
+    <rect x="0" y="70" width="30" height="60" rx="4" fill="#FFFFFF" fill-opacity="0.10" stroke="#C89B3C" stroke-width="3" />
+    <rect x="38" y="40" width="30" height="90" rx="4" fill="#FFFFFF" fill-opacity="0.10" stroke="#C89B3C" stroke-width="3" />
+    <rect x="76" y="10" width="30" height="120" rx="4" fill="#FFFFFF" fill-opacity="0.14" stroke="#C89B3C" stroke-width="3" />
+    <path d="M4 60 L18 46 L32 60" stroke="#C89B3C" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+  </g>
+  <text x="90" y="120" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" letter-spacing="2" fill="#C89B3C">NITIN ANAND CONSULTING</text>
+  <text x="90" y="190" font-family="Arial, Helvetica, sans-serif" font-size="50" font-weight="700" fill="#FFFFFF">Pharmacy Stock Management:</text>
+  <text x="90" y="250" font-family="Arial, Helvetica, sans-serif" font-size="50" font-weight="700" fill="#FFFFFF">A Practical Guide</text>
+  <text x="90" y="540" font-family="Arial, Helvetica, sans-serif" font-size="24" fill="#FFFFFF" fill-opacity="0.7">Inventory &amp; Operations Consulting</text>
+</svg>

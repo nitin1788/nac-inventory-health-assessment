@@ -26,12 +26,13 @@ export function AboutPage() {
       <section>
         <h2 className="text-lg font-semibold text-slate-900">Founder Background</h2>
         <p className="mt-3">
-          {COMPANY_NAME} was founded by Nitin Anand, a healthcare business consultant with a
-          pharmacy background and 16+ years of hands-on inventory and operations experience,
-          paired with formal operations management education. That combination of real
-          pharmacy/healthcare industry understanding and structured operations training shapes
-          how we approach both verticals — operations recommendations grounded in how a pharmacy
-          or healthcare business actually runs, not generic consulting theory.
+          {COMPANY_NAME} was founded by Nitin Anand, a Mumbai-based healthcare business consultant
+          serving pharmacy and healthcare businesses across India, with a pharmacy background and
+          16+ years of hands-on inventory and operations experience, paired with formal operations
+          management education. That combination of real pharmacy/healthcare industry
+          understanding and structured operations training shapes how we approach both verticals —
+          operations recommendations grounded in how a pharmacy or healthcare business actually
+          runs, not generic consulting theory.
         </p>
       </section>
 

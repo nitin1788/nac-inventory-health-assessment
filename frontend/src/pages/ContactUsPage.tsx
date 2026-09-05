@@ -20,6 +20,12 @@ export function ContactUsPage() {
         to you, typically within one business day.
       </p>
 
+      <p className="text-sm text-slate-600">
+        We&apos;re based in Mumbai and work in person with pharmacy and healthcare businesses
+        across Mumbai and Maharashtra for Inventory &amp; Operations engagements — Digital
+        Marketing &amp; Growth clients can be anywhere in India.
+      </p>
+
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <a
           href={`mailto:${CONTACT.email}`}
