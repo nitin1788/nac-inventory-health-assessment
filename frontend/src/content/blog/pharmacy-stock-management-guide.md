@@ -8,7 +8,7 @@ category: "Inventory & Operations"
 tags: ["pharmacy", "stock management", "inventory optimization", "medical store"]
 primaryKeyword: "pharmacy stock management"
 secondaryKeywords: ["pharmacy inventory management", "medical store stock management", "pharmacy expiry management", "pharmacy inventory optimization"]
-featuredImage: "/blog-images/pharmacy-stock-management-guide/featured.svg"
+featuredImage: "/blog-images/pharmacy-stock-management-guide/featured.webp"
 imageAlt: "Branded cover graphic for Pharmacy Stock Management: A Practical Guide"
 ---
 

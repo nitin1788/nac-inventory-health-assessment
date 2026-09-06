@@ -8,7 +8,7 @@ category: "Inventory & Operations"
 tags: ["pharmacy", "inventory audit", "reconciliation", "abc analysis"]
 primaryKeyword: "pharmacy inventory audit"
 secondaryKeywords: ["retail pharmacy stock check", "pharmacy inventory reconciliation checklist"]
-featuredImage: "/blog-images/pharmacy-inventory-audit-checklist/featured.svg"
+featuredImage: "/blog-images/pharmacy-inventory-audit-checklist/featured.webp"
 imageAlt: "Branded cover graphic for A Practical Pharmacy Inventory Audit Checklist"
 ---
 
