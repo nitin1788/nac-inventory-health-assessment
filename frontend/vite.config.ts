@@ -24,5 +24,18 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true,
+    rollupOptions: {
+      output: {
+        // Splits the framework/animation libraries (which change far
+        // less often than app code) into their own chunk, so a browser
+        // that already has this cached from a previous visit doesn't
+        // re-download it just because app code changed in a new
+        // deployment. Purely a caching/build-config change — no
+        // behavior difference, same code, just grouped differently.
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom', 'framer-motion'],
+        },
+      },
+    },
   },
 });

@@ -80,6 +80,11 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link to={ROUTES.faq} className={FOOTER_LINK_CLASSES}>
+                  FAQ
+                </Link>
+              </li>
+              <li>
                 <Link to={ROUTES.contactUs} className={FOOTER_LINK_CLASSES}>
                   Contact
                 </Link>

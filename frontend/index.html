@@ -25,10 +25,27 @@
     -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!--
+      Loaded non-render-blocking: media="print" makes the browser fetch
+      it at normal priority without waiting for it before first paint,
+      then onload flips it to apply to all media once it's ready. The
+      <noscript> fallback covers the (rare) no-JS case. Standard,
+      well-established pattern (see web.dev's "defer non-critical CSS")
+      — text still renders immediately via the system font, then swaps
+      to Inter once loaded, same as font-display: swap already did.
+    -->
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
     <meta
       name="description"
       content="Nitin Anand Consulting is a pharmacy business consulting and healthcare digital marketing partner — Inventory & Operations Consulting and Digital Marketing & Growth for pharmacies, medical stores, clinics, and hospitals."
