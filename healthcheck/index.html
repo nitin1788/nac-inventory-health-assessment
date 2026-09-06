@@ -1093,22 +1093,69 @@ function renderThankYou(){
   `;
 }
 
+// Neither html2canvas (6 full-page renders) nor the backend fetch had any
+// upper bound before this fix — either one hanging (a stalled network
+// request, a backgrounded mobile tab pausing html2canvas's rAF-driven
+// render loop, a slow/dropped connection) left the Submit button on
+// "Submitting..." forever, since nothing downstream could ever fire to
+// reset it. These bounds guarantee the chain always settles one way or
+// the other.
+const PDF_GENERATION_TIMEOUT_MS = 30000;
+const SUBMIT_REQUEST_TIMEOUT_MS = 20000;
+
+/** Races `promise` against a timer; rejects with `message` if the timer wins. Always clears the timer either way. */
+function withTimeout(promise, ms, message){
+  let timer;
+  const timeout = new Promise((_, reject) => { timer = setTimeout(() => reject(new Error(message)), ms); });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+}
+
+function clearSubmitError(){
+  const el = document.getElementById('submitError');
+  if(el) el.remove();
+}
+
+/** Resets the Submit button to a retryable state and shows a real error — never a fake success. */
+function showSubmitError(btn, message){
+  btn.disabled = false;
+  btn.textContent = 'Submit ✓';
+  clearSubmitError();
+  const errEl = document.createElement('div');
+  errEl.id = 'submitError';
+  errEl.style.cssText = 'color:var(--danger); font-size:13px; margin-top:10px; text-align:center;';
+  errEl.textContent = message;
+  btn.closest('.nav-row').insertAdjacentElement('afterend', errEl);
+}
+
 function handleSubmit(btn){
   // record the last question's answer (already captured via choice click listeners)
   btn.disabled = true;
   btn.textContent = 'Submitting...';
+  clearSubmitError();
 
   const invScore = calcCategoryScore('inventory');
   const opsScore = calcCategoryScore('operations');
   const dmScore = calcCategoryScore('marketing');
   const overall = Math.round((invScore+opsScore+dmScore)/3);
 
-  // Build the full 5-page branded PDF off-screen — client never sees it
-  generateBrandedPDF(invScore, opsScore, dmScore, overall)
-    .then(pdfBase64 => sendLeadEmail(invScore, opsScore, dmScore, overall, pdfBase64))
+  // Build the full 5-page branded PDF off-screen — client never sees it.
+  // Bounded by PDF_GENERATION_TIMEOUT_MS; on timeout/failure we still send
+  // the report, just without the attachment (same graceful degradation as
+  // before, now time-bounded instead of open-ended).
+  withTimeout(generateBrandedPDF(invScore, opsScore, dmScore, overall), PDF_GENERATION_TIMEOUT_MS, 'PDF generation timed out')
     .catch(err => {
-      console.error('PDF generation failed', err);
-      sendLeadEmail(invScore, opsScore, dmScore, overall, null);
+      console.error('PDF generation failed or timed out — submitting the report without a PDF attachment', err);
+      return null;
+    })
+    .then(pdfBase64 => withTimeout(
+      sendLeadEmail(invScore, opsScore, dmScore, overall, pdfBase64),
+      SUBMIT_REQUEST_TIMEOUT_MS,
+      'Report submission timed out'
+    ))
+    .then(() => { state.step++; render(); })
+    .catch(err => {
+      console.error('Business Health Check submission failed', err);
+      showSubmitError(btn, "We couldn't send your report — please check your connection and tap Submit again.");
     });
 
   // Fire-and-forget: log the lead to Google Sheets in parallel (doesn't block the flow above)
@@ -1152,7 +1199,11 @@ function toCleanPdfDataUrl(datauristring){
    internal inbox via Resend with the PDF as a genuine attachment (see
    backend/src/modules/businessHealthCheck/). Replaces the previous EmailJS-based
    send entirely — EmailJS couldn't carry the PDF (its 50KB variables-size limit
-   rejected it with a 413 well before this point). */
+   rejected it with a 413 well before this point).
+   Returns the fetch promise as-is (real success/failure) rather than
+   swallowing failures internally — the caller (handleSubmit) is what
+   decides how to react, so a genuine failure can surface as an error
+   instead of silently rendering the thank-you page as if it succeeded. */
 function sendLeadEmail(invScore, opsScore, dmScore, overall, pdfBase64){
   const REPORT_PAYLOAD = {
     bizName: state.answers.bizName || '',
@@ -1167,18 +1218,22 @@ function sendLeadEmail(invScore, opsScore, dmScore, overall, pdfBase64){
     pdfBase64: toCleanPdfDataUrl(pdfBase64)
   };
 
-  function finish(){ state.step++; render(); }
+  // AbortController gives an actual cancelled network request (not just an
+  // ignored promise) once SUBMIT_REQUEST_TIMEOUT_MS elapses — belt-and-braces
+  // alongside the withTimeout() race in handleSubmit.
+  const controller = new AbortController();
+  const abortTimer = setTimeout(() => controller.abort(), SUBMIT_REQUEST_TIMEOUT_MS);
 
-  fetch(`${BACKEND_URL}/business-health-check`, {
+  return fetch(`${BACKEND_URL}/business-health-check`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(REPORT_PAYLOAD)
+    body: JSON.stringify(REPORT_PAYLOAD),
+    signal: controller.signal
   })
     .then(res => {
       if (!res.ok) throw new Error('Report email request failed with status ' + res.status);
     })
-    .then(finish)
-    .catch(err => { console.error('Business Health Check report submission failed', err); finish(); });
+    .finally(() => clearTimeout(abortTimer));
 }
 
 render();
