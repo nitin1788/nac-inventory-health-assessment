@@ -10,7 +10,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0F2A52" />
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://nitinanandconsulting.in/" />
+    <!--
+      No static canonical tag here on purpose. This file is served
+      identically for every route (client-side routing, see
+      vercel.json's catch-all rewrite), so a hardcoded canonical would
+      point every non-home page at "/" until React hydrates and
+      useSeo() sets the correct one — exactly the kind of mismatched
+      signal that produces GSC's "Alternate page with proper canonical
+      tag" classification for pages that are not actually duplicates.
+      useSeo() (see src/shared/hooks/useSeo.ts) creates this tag
+      dynamically on every page, including the homepage, so removing
+      the static default here changes nothing about correct behavior —
+      it only removes an actively wrong one for every other route.
+    -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -34,19 +46,19 @@
       content="Inventory & Operations Consulting and Digital Marketing Services for pharmacies, clinics, hospitals, and allied healthcare businesses."
     />
     <meta property="og:url" content="https://nitinanandconsulting.in/" />
-    <meta property="og:image" content="https://nitinanandconsulting.in/android-chrome-512x512.png" />
-    <meta property="og:image:width" content="512" />
-    <meta property="og:image:height" content="512" />
+    <meta property="og:image" content="https://nitinanandconsulting.in/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:locale" content="en_IN" />
 
     <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Nitin Anand Consulting | Pharmacy & Healthcare Consulting" />
     <meta
       name="twitter:description"
       content="Inventory & Operations Consulting and Digital Marketing Services for pharmacies, clinics, hospitals, and allied healthcare businesses."
     />
-    <meta name="twitter:image" content="https://nitinanandconsulting.in/android-chrome-512x512.png" />
+    <meta name="twitter:image" content="https://nitinanandconsulting.in/og-image.png" />
 
     <!-- Structured Data: ProfessionalService (Organization + Local Business) and WebSite -->
     <script type="application/ld+json">

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { COMPANY_NAME, ROUTES } from '@/config/constants';
-import nacLogoFull from '@/assets/images/nac-logo-full.png';
+import nacLogoFull from '@/assets/images/nac-logo-full.webp';
 
 /**
  * Full lockup (icon + wordmark) for the footer — already carries the
@@ -14,8 +14,8 @@ export function FooterLogo() {
       <img
         src={nacLogoFull}
         alt={`${COMPANY_NAME} logo`}
-        width={1043}
-        height={587}
+        width={341}
+        height={192}
         loading="lazy"
         decoding="async"
         className="h-16 w-full object-contain"

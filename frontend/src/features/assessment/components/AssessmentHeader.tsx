@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { COMPANY_NAME, ROUTES } from '@/config/constants';
-import nacLogoIcon from '@/assets/images/nac-logo-icon.png';
+import nacLogoIcon from '@/assets/images/nac-logo-icon.webp';
 
 /** Minimal brand header for the assessment flow — not the full marketing navbar. */
 export function AssessmentHeader() {
@@ -9,7 +9,7 @@ export function AssessmentHeader() {
     <header className="border-b border-slate-100 bg-white">
       <div className="mx-auto flex max-w-3xl items-center justify-between px-6 py-4 lg:px-8">
         <Link to={ROUTES.landing} className="flex items-center gap-3">
-          <img src={nacLogoIcon} alt={`${COMPANY_NAME} logo`} width={743} height={358} className="h-9 w-auto" />
+          <img src={nacLogoIcon} alt={`${COMPANY_NAME} logo`} width={262} height={126} className="h-9 w-auto" />
           <span className="hidden text-sm font-semibold tracking-tight text-slate-900 sm:inline">
             {COMPANY_NAME}
           </span>

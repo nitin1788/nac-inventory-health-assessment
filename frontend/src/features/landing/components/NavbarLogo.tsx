@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { clsx } from '@/shared/utils/clsx';
 import { COMPANY_NAME, ROUTES } from '@/config/constants';
-import nacLogoIcon from '@/assets/images/nac-logo-icon.png';
+import nacLogoIcon from '@/assets/images/nac-logo-icon.webp';
 
 interface NavbarLogoProps {
   /** Text color to pair with the surface the logo sits on. */
@@ -14,8 +14,8 @@ export function NavbarLogo({ theme = 'dark' }: NavbarLogoProps) {
       <img
         src={nacLogoIcon}
         alt={`${COMPANY_NAME} logo`}
-        width={743}
-        height={358}
+        width={262}
+        height={126}
         className="h-[42px] w-auto shrink-0"
       />
       <span className="hidden flex-col leading-tight sm:flex">
